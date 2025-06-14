@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- RimWorld and Harmony still target .NET Framework 4.8 -->
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+
+    <!-- This property will be set by the build script; defaults to 1.6 -->
+    <GameVersion Condition=" '$(GameVersion)' == '' ">1.6</GameVersion>
+
+    <!-- Generate version-specific pre-processor symbol e.g. RW14, RW15, RW16 -->
+    <DefineConstants>TRACE;RW$(GameVersion:replace('.', ''))</DefineConstants>
+
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!-- References to RimWorld assemblies are provided at build time by a script that
+       sets $(RimWorldDir) and $(GameVersion). Substitute your local paths. -->
+  <ItemGroup Condition=" '$(GameVersion)' == '1.4' ">
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(RimWorld14Dir)/RimWorldWin64_Data/Managed/Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(RimWorld14Dir)/RimWorldWin64_Data/Managed/UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(GameVersion)' == '1.5' ">
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(RimWorld15Dir)/RimWorldWin64_Data/Managed/Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(RimWorld15Dir)/RimWorldWin64_Data/Managed/UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(GameVersion)' == '1.6' ">
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(RimWorld16Dir)/RimWorldWin64_Data/Managed/Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(RimWorld16Dir)/RimWorldWin64_Data/Managed/UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Harmony – same dll for all game versions -->
+  <ItemGroup>
+    <PackageReference Include="0Harmony" Version="2.2.2" />
+  </ItemGroup>
+
+</Project> 
