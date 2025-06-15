@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "aEbbfNoeYhM=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\bread\\Documents\\git-projects\\Fog-O-Pawn\\Source\\FogOfPawn.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\bread\\.nuget\\packages\\microsoft.netframework.referenceassemblies\\1.0.3\\microsoft.netframework.referenceassemblies.1.0.3.nupkg.sha512",
+    "C:\\Users\\bread\\.nuget\\packages\\microsoft.netframework.referenceassemblies.net48\\1.0.3\\microsoft.netframework.referenceassemblies.net48.1.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

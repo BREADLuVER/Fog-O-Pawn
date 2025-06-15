@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+  <FogOfPawn.SkillRevealed.Label>{0}'s true {1} skill revealed</FogOfPawn.SkillRevealed.Label>
+  <FogOfPawn.SkillRevealed.Text>You've discovered that {0}'s actual skill level in {1} is {2}. Any reported value you saw before was inaccurate.</FogOfPawn.SkillRevealed.Text>
+
+  <FogOfPawn.UnknownTrait>Unknown Trait</FogOfPawn.UnknownTrait>
+  <FogOfPawn.UnknownTrait.Tooltip>This trait is currently unknown. Its nature will be revealed through the pawn's actions or over time.</FogOfPawn.UnknownTrait.Tooltip>
+
+  <FogOfPawn.TraitRevealed.Label>{0} revealed trait: {1}</FogOfPawn.TraitRevealed.Label>
+  <FogOfPawn.TraitRevealed.Text>Through their actions, you've discovered a hidden trait in {0}: {1}.\n\n{2}</FogOfPawn.TraitRevealed.Text>
+
+</LanguageData> 

@@ -1,0 +1,82 @@
+Fog of Pawn – Development Road-map (RimWorld 1.6 only)
+Revision 2025-06-14 – serves as the single “look-back” document for the project.
+A. High-level Milestones
+M0 Project scaffold & CI
+Git repo, MIT licence, README, issue templates
+About.xml 1.6</supportedVersions>
+Solution (.sln) + csproj targeting net48
+GitHub Actions matrix build: rw15, rw16 (upload DLL artefacts)
+Minimal Harmony bootstrap (“Hello World” in log)
+M1 Core data layer
+CompPawnFog class (+ CompProperties) with IExposable
+GameComponent_FogTracker that initialises fog on new pawns exposed on the map
+Truthfulness algorithm & fake-value generation (XML-driven weights)
+Dev-mode gizmo “Reveal all fog for this pawn”
+DELIVERABLE: save/load round-trip works; log shows fog stats for each new colonist.
+M2 Skill UI & reveal logic
+Harmony patch: PawnCardUtility.DrawSkills ( 1.6 sigs)
+Range display “Reported: 6–10” (+ fake passion flames)
+SkillRecord.Learn postfix → reveal after +300 XP
+Letter/message when first skill is revealed
+DELIVERABLE: player sees uncertain skills that turn real after practice.
+M3 Trait masking
+Transpiler on ITab_Pawn_Character.FillTab (trait rows)
+Placeholder rows “???” while keeping total count visible
+Reveal triggers: Pyromaniac fire, drug binge, social fight, etc.
+DELIVERABLE: negative/positive trait discovery pop-ups with flavour text.
+M4 Genes & xenotype handling
+Xenotype icon swap to generic silhouette until revealed
+Ability cast interception (block until gene is known)
+Reveal via gene extraction / first visible activation / visible body part
+DELIVERABLE: pawn cannot use hidden gene powers; icon flips on discovery.
+M5 Addictions & health fog
+Mask addictions in Health tab until withdrawal or usage
+Optional full health-tab fog (setting)
+DELIVERABLE: drug-addicted pawn surprises player after first dose.
+M6 Mod-settings UI
+ModSettings_FogOfPawn sliders & check-boxes
+Truthful %, Exaggerate %, Fake %
+XP-to-reveal value
+Toggles: skills / traits / genes / addictions
+“Reveal everything (DEV)” button
+DELIVERABLE: settings persist; reroll existing comps when values change.
+M7 Polish & release
+Localisation keyed strings (EN + template for others)
+Art: generic xenotype sprite, fake passion flames, trait “?” icon
+Performance pass (profiling in 4x speed for 1 game year)
+Compatibility smoke-test matrix:
+Core only 1.6
+Popular UI mods (RIMHUD, Character Editor)
+Gene mods (Vanilla Genes Expanded)
+Steam Workshop page, screenshots, description, change-notes
+GitHub release tagged v1.0
+B. Cross-cutting Concerns
+• Version gates
+#if RW15 / #if RW16 wrappers for every API difference (kept in Compat/ folder).
+Minimal Harmony surface
+Prefix/Postfix only; use AccessTools to locate fields/methods by name string once; cache FieldInfo/MethodInfo.
+Safe failure-to-load
+If a patch fails (method not found) log warning and disable module, not whole mod.
+External mod hooks (future)
+Provide public C# API: FogAPI.IsSkillFogged(Pawn, SkillDef) etc.
+Multiplayer flag
+Keep all comp fields synced via IExposable; postpone official MP support until after v1.0.
+C. Timeline Estimate
+(1 coder @ 10-12h / week)
+Week 1 M0, start M1
+Week 2 Finish M1, M2 skill UI
+Week 3 M3 traits
+Week 4 M4 genes
+Week 5 M5 addictions + preliminary settings
+Week 6 M6 full settings, art pass
+Week 7 M7 polish, testing, release candidate
+Week 8 Buffer for bug-fixes & Workshop launch
+D. Definition of “Done”
+A pawn joining the colony in RW 1.6:
+May display inaccurate skill ranges and passions.
+Conceals a subset of traits, addictions, genes according to settings.
+Gradually reveals data through play; each reveal triggers an in-game message.
+Underlying gameplay (jobs, AI, combat) uses real values at all times.
+No errors in the log with Harmony DEBUG enabled.
+Mod enables/disables cleanly in existing saves without bricking them.
+Keep this roadmap nearby; every PR should reference the milestone & checklist item it fulfils.

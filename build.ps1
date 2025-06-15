@@ -1,29 +1,31 @@
 param(
-    [string[]]$Versions = @('1.4','1.5','1.6'),
-    [string]$Configuration = 'Release'
+    [ValidateSet("15","16")]
+    [string]$GameVersion = "15",
+
+    [string]$RimWorldDir
 )
 
-$ErrorActionPreference = 'Stop'
-
-$projectPath = "./Source/FogOfPawn/FogOfPawn.csproj"
-
-foreach ($ver in $Versions) {
-    Write-Host "Building for RimWorld $ver ..." -ForegroundColor Cyan
-
-    # You need to set these environment variables to your local RimWorld installs
-    switch ($ver) {
-        '1.4' { $env:RimWorld14Dir = $env:RimWorld14Dir ?? 'C:/Program Files (x86)/Steam/steamapps/common/RimWorld' }
-        '1.5' { $env:RimWorld15Dir = $env:RimWorld15Dir ?? 'C:/Program Files (x86)/Steam/steamapps/common/RimWorld 1.5' }
-        '1.6' { $env:RimWorld16Dir = $env:RimWorld16Dir ?? 'C:/Program Files (x86)/Steam/steamapps/common/RimWorld 1.6' }
-    }
-
-    dotnet build $projectPath -c $Configuration -p:GameVersion=$ver
-    if ($LASTEXITCODE -ne 0) { throw "Build failed for $ver" }
-
-    $outDir = "./Assemblies/$ver"
-    New-Item -ItemType Directory -Force -Path $outDir | Out-Null
-
-    Copy-Item ./Source/FogOfPawn/bin/$Configuration/FogOfPawn.dll $outDir -Force
+if (-not $RimWorldDir) {
+    Write-Error "You must pass -RimWorldDir <path to RimWorld folder>"
+    exit 1
 }
 
-Write-Host "All builds completed successfully." -ForegroundColor Green 
+$managedDir = Join-Path $RimWorldDir "RimWorldWin64_Data\Managed"
+if (-not (Test-Path (Join-Path $managedDir 'Assembly-CSharp.dll'))) {
+    Write-Error "Assembly-CSharp.dll not found in $managedDir. Verify RimWorldDir."
+    exit 1
+}
+
+$assembliesDir = Join-Path (Resolve-Path .) "$GameVersion/Assemblies"
+if (-not (Test-Path $assembliesDir)) { New-Item -ItemType Directory -Path $assembliesDir | Out-Null }
+
+# Build via dotnet passing game managed dir path
+$props = @(
+    "-p:GameVersion=$GameVersion",
+    "-p:GameManagedDir=$managedDir",
+    "-p:OutDir=$assembliesDir",
+    "--configuration", "Release",
+    "--no-incremental"
+)
+
+dotnet build .\Source\FogOfPawn.csproj @props 
