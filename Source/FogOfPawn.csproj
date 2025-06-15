@@ -4,11 +4,9 @@
     <LangVersion>latest</LangVersion>
     <AssemblyName>FogOfPawn</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <!-- Pass /p:GameVersion=16 or 15 when building to select preprocessor define -->
     <GameVersion Condition="'$(GameVersion)' == ''">15</GameVersion>
   </PropertyGroup>
 
-  <!-- Preprocessor symbols per game version -->
   <PropertyGroup Condition="'$(GameVersion)' == '16'">
     <DefineConstants>TRACE;RW16</DefineConstants>
   </PropertyGroup>
@@ -16,14 +14,13 @@
     <DefineConstants>TRACE;RW15</DefineConstants>
   </PropertyGroup>
 
-  <!-- Harmony reference (assumed copied to Libraries) -->
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>..\Libraries\0Harmony.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
 
-  <!-- Game DLL references resolved via build parameter GameManagedDir -->
   <ItemGroup Condition="'$(GameManagedDir)' != ''">
     <Reference Include="Assembly-CSharp">
       <HintPath>$(GameManagedDir)\Assembly-CSharp.dll</HintPath>
@@ -37,8 +34,14 @@
       <HintPath>$(GameManagedDir)\UnityEngine.dll</HintPath>
       <Private>false</Private>
     </Reference>
+     <Reference Include="Verse">
+      <HintPath>$(GameManagedDir)\Verse.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>$(GameManagedDir)\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
 
-  <!-- RimWorld & Verse references will be added by the external build script for each version -->
-  <!-- Verse namespace lives inside Assembly-CSharp; no separate DLL needed. -->
-</Project> 
+</Project>

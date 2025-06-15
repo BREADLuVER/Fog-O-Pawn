@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Defs>
-    <!-- Add the Fog comp to every humanlike pawn. We will remove it from starting colonists in code. -->
-    <ThingCompDef ParentName="PawnBase">
-        <compClass>FogOfPawn.CompPawnFog</compClass>
-        <compPropertiesClass>FogOfPawn.CompProperties_PawnFog</compPropertiesClass>
-    </ThingCompDef>
-</Defs> 

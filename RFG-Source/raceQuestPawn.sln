@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "raceQuestPawn", "raceQuestPawn\raceQuestPawn.csproj", "{FC41E232-A864-437B-8A66-32A408DC6EB1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{74F5E0FC-F70E-4ED5-8DD4-AFE100231F8E} = {74F5E0FC-F70E-4ED5-8DD4-AFE100231F8E}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventController_rQP", "EventController\EventController_rQP.csproj", "{74F5E0FC-F70E-4ED5-8DD4-AFE100231F8E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FC41E232-A864-437B-8A66-32A408DC6EB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC41E232-A864-437B-8A66-32A408DC6EB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC41E232-A864-437B-8A66-32A408DC6EB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC41E232-A864-437B-8A66-32A408DC6EB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74F5E0FC-F70E-4ED5-8DD4-AFE100231F8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74F5E0FC-F70E-4ED5-8DD4-AFE100231F8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74F5E0FC-F70E-4ED5-8DD4-AFE100231F8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74F5E0FC-F70E-4ED5-8DD4-AFE100231F8E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7E37C491-62AA-432C-AB00-0CE1F9E67DE1}
+	EndGlobalSection
+EndGlobal

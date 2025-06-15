@@ -1,0 +1,9 @@
+C:\Users\bread\Documents\git-projects\Fog-O-Pawn\Source\obj\Debug\net48\FogOfPawn.csproj.AssemblyReference.cache
+C:\Users\bread\Documents\git-projects\Fog-O-Pawn\Source\obj\Debug\net48\FogOfPawn.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\bread\Documents\git-projects\Fog-O-Pawn\Source\obj\Debug\net48\FogOfPawn.AssemblyInfoInputs.cache
+C:\Users\bread\Documents\git-projects\Fog-O-Pawn\Source\obj\Debug\net48\FogOfPawn.AssemblyInfo.cs
+C:\Users\bread\Documents\git-projects\Fog-O-Pawn\Source\obj\Debug\net48\FogOfPawn.csproj.CoreCompileInputs.cache
+C:\Users\bread\Documents\git-projects\Fog-O-Pawn\Source\bin\Debug\net48\FogOfPawn.dll
+C:\Users\bread\Documents\git-projects\Fog-O-Pawn\Source\bin\Debug\net48\FogOfPawn.pdb
+C:\Users\bread\Documents\git-projects\Fog-O-Pawn\Source\obj\Debug\net48\FogOfPawn.dll
+C:\Users\bread\Documents\git-projects\Fog-O-Pawn\Source\obj\Debug\net48\FogOfPawn.pdb
