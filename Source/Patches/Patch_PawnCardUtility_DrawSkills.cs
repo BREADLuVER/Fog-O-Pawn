@@ -1,3 +1,4 @@
+#if RW_HAS_PAWNCARDUTILITY
 using HarmonyLib;
 using RimWorld;
 using UnityEngine;
@@ -5,7 +6,7 @@ using Verse;
 
 namespace FogOfPawn.Patches
 {
-    [HarmonyPatch(typeof(ITab_Pawn_Character), "DrawSkills")]
+    [HarmonyPatch(typeof(PawnCardUtility), "DrawSkills")]
     public static class Patch_PawnCardUtility_DrawSkills
     {
         private const float SkillHeight = 24f;
@@ -56,4 +57,5 @@ namespace FogOfPawn.Patches
             }
         }
     }
-} 
+}
+#endif 

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\bread\\Documents\\git-projects\\Fog-O-Pawn\\Source\\FogOfPawn.csproj": {}
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\Fog-O-Pawn\\Source\\FogOfPawn.csproj": {}
   },
   "projects": {
-    "C:\\Users\\bread\\Documents\\git-projects\\Fog-O-Pawn\\Source\\FogOfPawn.csproj": {
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\Fog-O-Pawn\\Source\\FogOfPawn.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\bread\\Documents\\git-projects\\Fog-O-Pawn\\Source\\FogOfPawn.csproj",
+        "projectUniqueName": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\Fog-O-Pawn\\Source\\FogOfPawn.csproj",
         "projectName": "FogOfPawn",
-        "projectPath": "C:\\Users\\bread\\Documents\\git-projects\\Fog-O-Pawn\\Source\\FogOfPawn.csproj",
+        "projectPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\Fog-O-Pawn\\Source\\FogOfPawn.csproj",
         "packagesPath": "C:\\Users\\bread\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\bread\\Documents\\git-projects\\Fog-O-Pawn\\Source\\obj\\",
+        "outputPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\Fog-O-Pawn\\Source\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\bread\\AppData\\Roaming\\NuGet\\NuGet.Config"

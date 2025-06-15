@@ -40,7 +40,7 @@ namespace FogOfPawn
             {
                 defaultLabel = "Dev: Reveal Fog",
                 defaultDesc = "Instantly reveals all fogged attributes for this pawn.",
-                icon = ContentFinder<Texture2D>.Get("UI/Icons/Info"),
+                icon = null,
                 action = RevealAll
             };
         }

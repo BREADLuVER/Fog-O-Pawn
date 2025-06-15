@@ -9,7 +9,7 @@ namespace FogOfPawn.Patches
     {
         public static void Postfix()
         {
-            Log.Message("[FogOfPawn] Hello World from MainMenuDrawer.MainMenuOnGUI Postfix!");
+            
         }
     }
 } 

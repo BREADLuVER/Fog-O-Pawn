@@ -21,25 +21,21 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(GameManagedDir)' != ''">
+  <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>$(GameManagedDir)\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>$(GameManagedDir)\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.dll">
-      <HintPath>$(GameManagedDir)\UnityEngine.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-     <Reference Include="Verse">
-      <HintPath>$(GameManagedDir)\Verse.dll</HintPath>
+      <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>$(GameManagedDir)\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>

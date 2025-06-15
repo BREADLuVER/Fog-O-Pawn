@@ -5,11 +5,16 @@ using Verse.AI;
 
 namespace FogOfPawn.Patches
 {
-    [HarmonyPatch(typeof(MentalState_SocialFighting), nameof(MentalState.PostStart))]
+    [HarmonyPatch(typeof(MentalState), nameof(MentalState.PostStart))]
     public static class Patch_MentalState_SocialFighting_PostStart
     {
         public static void Postfix(MentalState __instance)
         {
+            if (!(__instance is MentalState_SocialFighting))
+            {
+                return;
+            }
+            
             Pawn pawn = __instance.pawn;
             if (pawn == null) return;
             
