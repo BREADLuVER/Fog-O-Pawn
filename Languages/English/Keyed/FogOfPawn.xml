@@ -10,4 +10,7 @@
   <FogOfPawn.TraitRevealed.Label>{0} revealed trait: {1}</FogOfPawn.TraitRevealed.Label>
   <FogOfPawn.TraitRevealed.Text>Through their actions, you've discovered a hidden trait in {0}: {1}.\n\n{2}</FogOfPawn.TraitRevealed.Text>
 
+  <FogOfPawn.Settings.TraitHideChance>Chance for a trait to start hidden</FogOfPawn.Settings.TraitHideChance>
+  <FogOfPawn.Settings.TraitHideChanceTooltip>Percentage of traits that will be concealed when a pawn joins. 0% = all visible, 100% = all hidden.</FogOfPawn.Settings.TraitHideChanceTooltip>
+
 </LanguageData> 

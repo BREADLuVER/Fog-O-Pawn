@@ -25,6 +25,8 @@ namespace FogOfPawn
         public bool allowUnderstate = true;
         public bool deceiverJoinersOnly = true;
 
+        public float traitHideChance = 0.3f; // 0 none, 1 all hidden
+
         private const int MinXp = 100;
         private const int MaxXp = 1000;
 
@@ -49,6 +51,8 @@ namespace FogOfPawn
             Scribe_Values.Look(ref maxAlteredSkills, "maxAlteredSkills", 3);
             Scribe_Values.Look(ref allowUnderstate, "allowUnderstate", true);
             Scribe_Values.Look(ref deceiverJoinersOnly, "deceiverJoinersOnly", true);
+
+            Scribe_Values.Look(ref traitHideChance, "traitHideChance", 0.3f);
         }
 
         public void DoWindowContents(Rect inRect)
@@ -91,6 +95,11 @@ namespace FogOfPawn
             maxAlteredSkills = (int)list.Slider(maxAlteredSkills, 1, 5);
             list.CheckboxLabeled("FogOfPawn.Settings.AllowUnderstate".Translate(), ref allowUnderstate);
             list.CheckboxLabeled("FogOfPawn.Settings.DeceiverJoinerOnly".Translate(), ref deceiverJoinersOnly);
+
+            list.GapLine();
+            list.Label("FogOfPawn.Settings.TraitHideChance".Translate() + $": {(int)(traitHideChance*100)} %", -1f, "FogOfPawn.Settings.TraitHideChanceTooltip".Translate());
+            traitHideChance = list.Slider(traitHideChance, 0f, 1f);
+            list.GapLine();
 
             list.End();
 

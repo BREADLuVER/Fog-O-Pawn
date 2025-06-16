@@ -24,6 +24,9 @@ namespace FogOfPawn
 
             ApplyMasks(pawn, comp, settings);
 
+            // Apply trait fog masks after skills
+            ApplyTraitMasks(pawn, comp, settings);
+
             comp.compInitialized = true;
 
             FogLog.Verbose($"Initialized fog for {pawn.NameShortColored}. Tier={comp.tier}");
@@ -35,7 +38,9 @@ namespace FogOfPawn
             comp.reportedSkills.Clear();
             comp.reportedPassions.Clear();
             comp.revealedSkills.Clear();
+            comp.revealedTraits.Clear();
             ApplyMasks(pawn, comp, FogSettingsCache.Current);
+            ApplyTraitMasks(pawn, comp, FogSettingsCache.Current);
         }
 
         private static DeceptionTier ChooseTier(Pawn pawn, PawnGenerationRequest? request, FogOfPawnSettings settings)
@@ -155,6 +160,33 @@ namespace FogOfPawn
                 {
                     comp.reportedSkills[skill.def] = Rand.RangeInclusive(3, 6);
                     comp.reportedPassions[skill.def] = Passion.None;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Decide which traits start hidden based on a simple random chance per trait.
+        /// Revealed traits are added to <see cref="CompPawnFog.revealedTraits"/>; anything
+        /// not present is considered fogged and will be masked in the UI.
+        /// </summary>
+        private static void ApplyTraitMasks(Pawn pawn, CompPawnFog comp, FogOfPawnSettings settings)
+        {
+            if (!settings.fogTraits || pawn.story?.traits == null)
+            {
+                // Reveal all traits when trait fogging is disabled or pawn has none.
+                foreach (var t in pawn.story?.traits?.allTraits ?? Enumerable.Empty<Trait>())
+                {
+                    comp.revealedTraits.Add(t.def);
+                }
+                return;
+            }
+
+            foreach (var trait in pawn.story.traits.allTraits)
+            {
+                bool hide = Rand.Value < settings.traitHideChance;
+                if (!hide)
+                {
+                    comp.revealedTraits.Add(trait.def);
                 }
             }
         }
