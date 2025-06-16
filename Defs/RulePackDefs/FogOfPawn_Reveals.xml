@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <RulePackDef>
+    <defName>FogOfPawn_RevealSkill</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>root-> [PAWN_nameDef] casually admits their [SKILL_label] skill is actually [REAL].</li>
+        <li>root-> In conversation, you learn [PAWN_nameDef] undersold their [SKILL_label]; it's [REAL].</li>
+        <li>root-> [PAWN_nameDef] boasts: "I'm a solid [REAL] at [SKILL_label]!"</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>FogOfPawn_RevealTrait</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>root-> [PAWN_nameDef] reveals their true nature: [TRAIT_label].</li>
+        <li>root-> You notice tell-tale signs — [PAWN_nameDef] is [TRAIT_label].</li>
+        <li>root-> Rumour confirmed: [PAWN_nameDef] is actually [TRAIT_label].</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+</Defs> 

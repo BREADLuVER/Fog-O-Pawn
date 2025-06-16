@@ -1,0 +1,30 @@
+Logging & diagnostic guideline
+(attach this to your internal dev wiki / plan)
+Purpose
+Surface anything discovered via reflection that may shift in future RimWorld builds (method names, field names, parameter lists, enum changes).
+Keep production logs clean for players; only emit diagnostic output in Dev mode.
+Never spam: every distinct signature/path is logged once per session.
+When to log
+Dynamic-reflection look-ups
+Example: locating SkillUI.DrawSkillsOf, TraitUI.DrawTraitRow, gene render helpers.
+Log the full type + method name and parameter types only if we don’t have a compile–time constant.
+Fallback / unexpected branches
+If a primary patch target is missing and we fall back to a secondary, record it once.
+First-time masking per pawn (for QA)
+One condensed block enumerating real→reported swaps.
+Error-handling
+Any caught exception inside our Harmony patches should be logged with Log.Warning (non-fatal) or Log.Error (fatal) but still guard against repeat spam.
+How to log
+Gate with if (Prefs.DevMode) – nothing is emitted for normal players.
+Use static HashSet<string/int> sentinels to remember what we’ve already printed this session.
+Format examples:
+Apply to plan.txt
+Do not log
+Per-frame ticks or every draw call.
+Values that churn constantly (e.g. XP counters) unless tracing a bug and gated behind an ad-hoc VERBOSE_LOG symbol.
+Safe failure path
+If a required method/field isn’t found, log once with clear tag [FogOfPawn FAIL] and disable that feature gracefully. The mod must keep running.
+Review cycle
+After each RimWorld update (or Harmony conflict report) run the game in Dev mode and scan the console for [FogOfPawn REFLECT] or [FogOfPawn FAIL] lines—these tell us exactly what signature shifted and needs patch adjustment.
+Follow this scheme and our logs will stay informative for developers, invisible for players, and future-proof against game updates.
+run powershell -NoProfile -Command "& { .\build.ps1 }" after implemenation

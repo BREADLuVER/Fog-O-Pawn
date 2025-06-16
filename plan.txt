@@ -1,0 +1,211 @@
+You are helping build a RimWorld mod called **"Fog of Pawn"**.
+
+The goal of the mod is to obscure certain details of a pawn when they first join the colony. Instead of giving the player perfect knowledge (as in vanilla RimWorld), we add a fog layer to some pawn attributes and slowly reveal their true values based on player interaction, behavior, or time. This creates emergent storytelling moments (e.g., "I thought this guy was a doctor... turns out he's not").
+
+We **do not mutate vanilla pawn data** — we instead store *fogged* or *reported* values in a sidecar component (`CompPawnFog`). This allows game logic to use the real values, while the UI shows "reported" or "uncertain" info until discovery events occur.
+
+---
+
+## ✅ Fog Rules
+
+These pawn attributes are **fogged at spawn** and gradually revealed:
+
+- **Skills**: Instead of exact values, we show "Reported: 6–10" or "Unknown". Real skill is revealed after 300 XP.
+- **Passions**: May be fake or exaggerated. Real passion revealed when the associated skill is revealed.
+- **Traits**: Problematic traits (e.g. Pyromaniac) are hidden. Reveal triggers include mental breaks or relevant actions.
+- **Addictions**: Fully hidden unless the pawn consumes drugs or enters withdrawal.
+- **Backstory Text**: Only title shown (e.g., "Drifter"). Full description is unlocked via social interaction or time (e.g. 7 days).
+
+These details are **always visible**:
+- Name, age range (not exact number), ideology, incapable work types, faction, backstory title.
+
+---
+
+## 🎲 Deception Randomization
+
+Each pawn is assigned a `truthfulness` value (0–1) on spawn. This controls deception odds.
+
+- **Skills**:
+  - Accurate (real): 70–80%
+  - Exaggerated: +2 to +6 shown (10–15%)
+  - Faked: Claims 6–10, actual 0–3 (5–10%)
+
+- **Passions**:
+  - Honest: matches real
+  - Fake: passion icon shown but none exists
+  - Disabled: flame shown for disabled skill
+
+- **Traits**:
+  - Good: 80% shown
+  - Neutral: 60% shown
+  - Problematic (e.g. Pyro): 20% shown
+
+- **Addictions**: 50% hidden unless discovered via behavior.
+
+---
+
+
+🔨 Harmony Targets
+PawnCardUtility.DrawSkills: replace real skill with fogged label
+
+TraitUI.DrawTraitRow: show "???" if not yet discovered
+
+SkillRecord.Learn: unlock fog when XP exceeds 300
+
+Reveal helper methods:
+
+RevealSkill(Pawn, SkillDef)
+
+RevealTrait(Pawn, TraitDef)
+
+RevealAddiction(Pawn)
+
+
+🔔 Example Behavior
+A pawn joins claiming "Medical: 8". UI shows "Reported: 8 (unconfirmed)".
+After a botched surgery and gaining 400 XP, the fog lifts: the pawn has Medical 0.
+Player receives a letter: "You've discovered that Kelvin has no medical experience!"
+
+🚧 Fog of Pawn – Development Roadmap (RimWorld 1.6 only)
+A. High-level Milestones
+M0 – Project scaffold & CI
+
+Git repo, MIT license, About.xml w/ <supportedVersions>1.6</...>
+
+Solution + csproj targeting .NET Framework 4.8
+
+GitHub Actions for matrix build (1.5/1.6), DLL upload
+
+Hello World Harmony patch
+
+M1 – Core data layer
+
+CompPawnFog + CompProperties
+
+GameComponent_FogTracker to attach fog to all new pawns on map
+
+truthfulness generator + lie logic
+
+Dev gizmo: "Reveal all fog for this pawn"
+
+✅ DELIVERABLE: Save/load roundtrip works; log prints fog state on join
+
+M2 – Skills fog + reveal
+
+Patch PawnCardUtility.DrawSkills
+
+Show fake values + passion icons
+
+Patch SkillRecord.Learn to unlock after 300 XP
+
+Add popup letter/message when skill is revealed
+
+✅ DELIVERABLE: Player can observe pawn and see real values unlock
+
+M3 – Trait concealment
+
+Adopt the same **swap-during-draw** pattern used for skills: immediately before traits are drawn, temporarily remove or rename any unrevealed traits, then restore the real list in a Postfix. No transpile required.
+
+Targets (1.6 UI):
+  • `TraitUI.DrawTraitRow` or whichever helper renders trait rows.
+  • Fallback: temporarily clear `pawn.story.traits.allTraits` inside `ITab_Pawn_Character.FillTab` Prefix.
+
+Reveal triggers: mental breaks, violent acts, fire-starting, time passed.
+
+✅ DELIVERABLE: Traits hidden with "???" and gradually unlocked – approach resilient to UI mods.
+
+M4 – Integrate with genes
+
+Ensure that Trait concealment considers genes that edits skills and passion
+
+
+M5 – Addictions & Health
+
+Mask addictions in Health tab until triggered
+
+Optional: full health fog toggle
+
+✅ DELIVERABLE: Drug users shock player after first dose
+
+M6 – Mod Settings
+
+Create ModSettings_FogOfPawn
+
+Exposed values:
+
+% Truthful / Exaggerated / Faked
+
+XP to reveal
+
+Toggles: fog skills / traits / addictions
+
+Dev reveal button
+
+✅ DELIVERABLE: All settings persist and take effect immediately
+
+M7 – Polish & Release
+
+Localized string keys
+
+Trait "???" icon, fake passion sprite
+
+Test with UI mods (RIMHUD, Character Editor)
+
+Publish to GitHub + Steam Workshop
+
+B. Cross-cutting Concerns
+Version gating via #if RW15 / #if RW16 (put in Compat/)
+
+All patches via Harmony Prefix/Postfix (avoid transpile unless necessary)
+
+Fail-safe: Log + skip failing patch rather than crash mod
+
+External mod support: Expose C# API: FogAPI.IsSkillFogged(Pawn, SkillDef) etc.
+
+🎉 You are now ready to build a structured, scalable fog-of-war system for RimWorld pawns — blending mechanics and storytelling.
+
+
+Progress résumé (Status: mid-M3)
+What’s fully in place
+Foundation (M0–M1)
+Project scaffold, Harmony bootstrap, DLL packaging script.
+CompPawnFog side-car with reported skills, fake passions, reveal flags, truthfulness, timers.
+Safe initialisation patch on PawnGenerator.GeneratePawn; logs show truthfulness % for every new pawn.
+Save/load round-trip proven in game.
+Skill fog layer (M2)
+Runtime swap patch on SkillUI.DrawSkillsOf that replaces levelInt & passion only for the draw frame, keeping vanilla UI intact and compatible with other mods.
+Randomised deception (truthful / exaggerated / understated) driven by pawn-level truthfulness.
+Dev gizmos:
+Reveal Fog (marks all skills/traits revealed)
+Reset Fog (re-applies fog for test loops).
+Debug logging condensed to a single line per pawn.
+Mod settings UI (part of M6)
+Slider: Deception Intensity (0-100 %).
+Slider: XP to reveal (100-1000).
+Toggles: fog Skills / Traits / Addictions.
+Settings serialise and are globally accessible.
+Road-map document (plan.txt) updated to reflect new approach for trait concealment (swap-during-draw rather than transpile).
+What’s partially done / needs polish
+Reveal logic – only the XP-based skill reveal is wired; messaging and per-skill letter still todo.
+Truthfulness weighting isn’t yet fed by Deception-Intensity slider.
+Trait, addiction fogging not implemented; only design notes exist.
+Next concrete steps
+Connect settings to behaviour
+Scale truthful/exaggerated/fake odds by deceptionIntensity.
+Replace hard-coded 300 XP in Patch_SkillRecord_Learn with Settings.xpToReveal.
+Respect toggle flags (skip fog generation if the category is off).
+Trait concealment (finish M3)
+Prefix: cache real pawn.story.traits.allTraits, replace unrevealed ones with dummy “UnknownTrait” objects or blank list.
+Postfix: restore original list.
+Triggers: mental break start, first melee kill, first fire for Pyro, timed auto-reveal.
+Add simple letter/message on reveal.
+Addictions & Health (M5)
+Conceal addictions in Health tab; reveal on drug use or withdrawal.
+Optional toggle to mask all health conditions.
+Settings polish (complete M6)
+Advanced fold-out for precise truth/exaggerate/fake percentages.
+Option for notification style (yellow Message vs blue Letter).
+UX assets & localisation (M7)
+“???” trait icon, generic xenotype silhouette, fake passion sprite.
+Translate all strings via key-based .xml.
+Compatibility tests with UI mods (RimHUD, Character Editor)

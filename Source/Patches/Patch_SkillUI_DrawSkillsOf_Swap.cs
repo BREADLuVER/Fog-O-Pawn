@@ -3,6 +3,7 @@ using HarmonyLib;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using FogOfPawn; // FogLog
 
 namespace FogOfPawn.Patches
 {
@@ -11,9 +12,10 @@ namespace FogOfPawn.Patches
     /// skill level & passion just for the duration of the draw call.
     /// </summary>
     [StaticConstructorOnStartup]
-    [HarmonyPatch]
     public static class Patch_SkillUI_DrawSkillsOf_Swap
     {
+        private static readonly HashSet<int> LoggedPawns = new HashSet<int>();
+
         // We resolve the target method via reflection at static-init because SkillUI lives in game asm.
         static Patch_SkillUI_DrawSkillsOf_Swap()
         {
@@ -21,21 +23,21 @@ namespace FogOfPawn.Patches
             var skillUIType = AccessTools.TypeByName("RimWorld.SkillUI") ?? AccessTools.TypeByName("SkillUI");
             if (skillUIType == null)
             {
-                Log.Warning("[FogOfPawn] Could not locate SkillUI type – skill fogging disabled.");
+                FogLog.Fail("SkillUIType", "Could not locate SkillUI type – skill fogging disabled.");
                 return;
             }
 
             var method = AccessTools.Method(skillUIType, "DrawSkillsOf");
             if (method == null)
             {
-                Log.Warning("[FogOfPawn] Could not locate SkillUI.DrawSkillsOf – skill fogging disabled.");
+                FogLog.Fail("SkillUI.DrawSkillsOf", "Could not locate SkillUI.DrawSkillsOf – skill fogging disabled.");
                 return;
             }
 
             harmony.Patch(method,
                 prefix: new HarmonyMethod(typeof(Patch_SkillUI_DrawSkillsOf_Swap), nameof(Prefix)),
                 postfix: new HarmonyMethod(typeof(Patch_SkillUI_DrawSkillsOf_Swap), nameof(Postfix)));
-            Log.Message("[FogOfPawn] SkillUI.DrawSkillsOf patched for fog masking (swap mode).");
+            FogLog.Reflect("SkillUI.DrawSkillsOf.Patched", "SkillUI.DrawSkillsOf patched for fog masking (swap mode).");
         }
 
         // Cache original data per-call so we can restore in Postfix.
@@ -44,11 +46,16 @@ namespace FogOfPawn.Patches
         {
             __state = null;
 
+            if (!FogSettingsCache.Current.fogSkills)
+            {
+                return;
+            }
+
             var comp = p.GetComp<CompPawnFog>();
             if (comp == null || !comp.compInitialized) return;
 
             var cache = new Dictionary<SkillRecord, (int, Passion)>();
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            System.Text.StringBuilder sb = null;
 
             foreach (var sk in p.skills.skills)
             {
@@ -56,6 +63,11 @@ namespace FogOfPawn.Patches
                 {
                     int originalLevel = sk.levelInt;
                     cache[sk] = (originalLevel, sk.passion);
+
+                    if (Prefs.DevMode)
+                    {
+                        sb ??= new System.Text.StringBuilder();
+                    }
 
                     // Substitute reported / unknown values.
                     if (comp.reportedSkills.TryGetValue(sk.def, out var rep) && rep.HasValue)
@@ -83,7 +95,13 @@ namespace FogOfPawn.Patches
             if (cache.Count > 0)
             {
                 __state = cache;
-                Log.Message($"[FogOfPawn DEBUG] Masking skills for {p.LabelShort}\n{sb.ToString()}");
+
+                if (Prefs.DevMode && !LoggedPawns.Contains(p.thingIDNumber))
+                {
+                    LoggedPawns.Add(p.thingIDNumber);
+                    if (sb != null)
+                        FogLog.Verbose($"Masking skills for {p.LabelShort}\n{sb}");
+                }
             }
         }
 

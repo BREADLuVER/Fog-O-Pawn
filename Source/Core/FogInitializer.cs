@@ -28,17 +28,38 @@ namespace FogOfPawn
 
         private static void InitializeSkills(Pawn pawn, CompPawnFog comp)
         {
+            var settings = FogSettingsCache.Current;
+            if (!settings.fogSkills) return;
+
+            float chaos = Mathf.Clamp01(settings.deceptionIntensity);
+
             foreach (var skill in pawn.skills.skills)
             {
-                // Determine deception type based on truthfulness
+                // Determine deception type based on pawn truthfulness and global chaos factor.
                 float roll = Rand.Value;
-                float truthfulness = comp.truthfulness;
+                float truthfulBias = Mathf.Lerp(0.7f, 0.1f, chaos); // 0.7 when chaos=0, 0.1 when chaos=1
 
-                // More truthful pawns are more likely to be accurate
-                // Probabilities are placeholders, will be moved to ModSettings
-                bool accurate = roll < (0.7f * truthfulness + 0.1f); // 10-80%
-                bool exaggerated = !accurate && roll < 0.9f; // ~10-20%
-                // bool faked = !accurate && !exaggerated;                // ~10-20%
+                bool accurate     = roll < (truthfulBias * comp.truthfulness + 0.05f);
+                bool deceptive = !accurate; // any form of lie
+
+                bool exaggerated = false;
+                bool understated = false;
+                bool faked = false;
+
+                if (deceptive)
+                {
+                    // Split deceptive outcomes evenly unless chaos shifts towards faked claims
+                    float lieRoll = Rand.Value;
+                    float exaggerateCutoff = 0.45f - chaos * 0.15f; // fewer exaggerations at high chaos
+                    float understateCutoff  = exaggerateCutoff + 0.45f; // roughly symmetry unless chaos pushes
+
+                    if (lieRoll < exaggerateCutoff)
+                        exaggerated = true;
+                    else if (lieRoll < understateCutoff)
+                        understated = true;
+                    else
+                        faked = true;
+                }
 
                 if (accurate)
                 {
@@ -47,22 +68,29 @@ namespace FogOfPawn
                 }
                 else if (exaggerated)
                 {
-                    // Exaggerate: +2 to +6
-                    comp.reportedSkills[skill.def] = Mathf.Clamp(skill.Level + Rand.Range(2, 6), 0, 20);
-                    // 50% chance to also fake a passion if there is none.
+                    // Exaggerate: +2 to +6 (range scales with chaos)
+                    int bump = Rand.Range(2, chaos < 0.5f ? 4 : 6);
+                    comp.reportedSkills[skill.def] = Mathf.Clamp(skill.Level + bump, 0, 20);
                     comp.reportedPassions[skill.def] = (skill.passion == Passion.None && Rand.Chance(0.5f)) ? Passion.Minor : skill.passion;
+                }
+                else if (understated)
+                {
+                    // Downplay: -2 to -4 but never below 0
+                    int drop = Rand.Range(2, chaos < 0.5f ? 3 : 4);
+                    comp.reportedSkills[skill.def] = Mathf.Clamp(skill.Level - drop, 0, 20);
+                    // Passion may also be hidden (pretend None)
+                    comp.reportedPassions[skill.def] = skill.passion == Passion.None ? Passion.None : (Rand.Chance(0.5f) ? Passion.None : skill.passion);
                 }
                 else // Faked
                 {
-                    // Fake: report 6-10, when actual is 0-3
                     if (skill.Level <= 3)
                     {
-                        comp.reportedSkills[skill.def] = Rand.Range(6, 10);
+                        int fakeMin = chaos < 0.5f ? 4 : 6;
+                        comp.reportedSkills[skill.def] = Rand.Range(fakeMin, 10);
                         comp.reportedPassions[skill.def] = Rand.Chance(0.75f) ? Passion.Minor : Passion.None;
                     }
                     else
                     {
-                        // Can't "fake" a high skill, so just report accurately.
                         comp.reportedSkills[skill.def] = skill.Level;
                         comp.reportedPassions[skill.def] = skill.passion;
                     }

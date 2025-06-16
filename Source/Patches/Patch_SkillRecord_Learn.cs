@@ -1,6 +1,7 @@
 using HarmonyLib;
 using RimWorld;
 using Verse;
+using FogOfPawn;
 
 namespace FogOfPawn.Patches
 {
@@ -15,7 +16,15 @@ namespace FogOfPawn.Patches
                 return;
             }
 
-            if (__instance.xpSinceLastLevel >= 300)
+            if (!FogSettingsCache.Current.fogSkills)
+            {
+                return;
+            }
+
+            int thresholdSetting = FogSettingsCache.Current.xpToReveal;
+            float learnFactor = ___pawn.GetStatValue(StatDefOf.GlobalLearningFactor);
+            int adjustedThreshold = (int)(thresholdSetting * learnFactor);
+            if (__instance.xpSinceLastLevel >= adjustedThreshold)
             {
                 comp.RevealSkill(__instance.def);
             }
