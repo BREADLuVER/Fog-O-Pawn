@@ -165,47 +165,35 @@ External mod support: Expose C# API: FogAPI.IsSkillFogged(Pawn, SkillDef) etc.
 🎉 You are now ready to build a structured, scalable fog-of-war system for RimWorld pawns — blending mechanics and storytelling.
 
 
-Progress résumé (Status: mid-M3)
-What’s fully in place
-Foundation (M0–M1)
-Project scaffold, Harmony bootstrap, DLL packaging script.
-CompPawnFog side-car with reported skills, fake passions, reveal flags, truthfulness, timers.
-Safe initialisation patch on PawnGenerator.GeneratePawn; logs show truthfulness % for every new pawn.
-Save/load round-trip proven in game.
-Skill fog layer (M2)
-Runtime swap patch on SkillUI.DrawSkillsOf that replaces levelInt & passion only for the draw frame, keeping vanilla UI intact and compatible with other mods.
-Randomised deception (truthful / exaggerated / understated) driven by pawn-level truthfulness.
-Dev gizmos:
-Reveal Fog (marks all skills/traits revealed)
-Reset Fog (re-applies fog for test loops).
-Debug logging condensed to a single line per pawn.
-Mod settings UI (part of M6)
-Slider: Deception Intensity (0-100 %).
-Slider: XP to reveal (100-1000).
-Toggles: fog Skills / Traits / Addictions.
-Settings serialise and are globally accessible.
-Road-map document (plan.txt) updated to reflect new approach for trait concealment (swap-during-draw rather than transpile).
-What’s partially done / needs polish
-Reveal logic – only the XP-based skill reveal is wired; messaging and per-skill letter still todo.
-Truthfulness weighting isn’t yet fed by Deception-Intensity slider.
-Trait, addiction fogging not implemented; only design notes exist.
-Next concrete steps
-Connect settings to behaviour
-Scale truthful/exaggerated/fake odds by deceptionIntensity.
-Replace hard-coded 300 XP in Patch_SkillRecord_Learn with Settings.xpToReveal.
-Respect toggle flags (skip fog generation if the category is off).
-Trait concealment (finish M3)
-Prefix: cache real pawn.story.traits.allTraits, replace unrevealed ones with dummy “UnknownTrait” objects or blank list.
-Postfix: restore original list.
-Triggers: mental break start, first melee kill, first fire for Pyro, timed auto-reveal.
-Add simple letter/message on reveal.
-Addictions & Health (M5)
-Conceal addictions in Health tab; reveal on drug use or withdrawal.
-Optional toggle to mask all health conditions.
-Settings polish (complete M6)
-Advanced fold-out for precise truth/exaggerate/fake percentages.
-Option for notification style (yellow Message vs blue Letter).
-UX assets & localisation (M7)
-“???” trait icon, generic xenotype silhouette, fake passion sprite.
-Translate all strings via key-based .xml.
-Compatibility tests with UI mods (RimHUD, Character Editor)
+Progress résumé (Status: late-M3)
+
+✔️  What’s fully implemented
+• Foundation (M0-M1) – project scaffold, Harmony bootstrap, CI build script.
+• CompPawnFog side-car with save/load round-trip.
+• Skill fog layer (M2) – swap-during-draw; compatible with other UI mods.
+• Settings UI – sliders/toggles hot-apply.
+• Tiered deception system v2 (Truthful / Slight / Scammer / Sleeper) driven by global "Lie Frequency".
+• Social-interaction & passive-time reveal channels.
+• GrammarResolver flavour messages for reveals.
+• Dev gizmos – print profile, tier setters (with pawn-value validation), XP boost.
+• Logging wrapper (`FogLog`) with REFLECT / FAIL / PROFILE tags.
+
+🟡  In progress / needs polish
+• Trait concealment patch (swap-during-draw) – code not started.
+• Narrative hooks:  
+   – `OnScammerRemoved` (+mood thought).  
+   – `OnSleeperFullyRevealed` (blue letter).
+• Addictions & Genes fog design.
+
+🔜  Immediate next tasks
+1. Trait Concealment (finish M3)  
+   • Prefix/Postfix mask on `TraitUI.DrawTraitRow` (fallback ITab).  
+   • Reveal triggers: mental break, fire starting, time.  
+   • "Unknown Trait" icon/tooltip.
+2. Hook narrative stubs into thoughts / letters.
+3. Settings polish – max altered skills slider localisation text, optional notification style.
+
+🛣️  Upcoming milestones
+• M5 – Addictions & Health fog.  
+• M6 – advanced settings fold-out, localisation pass.  
+• M7 – polish & Steam Workshop release.

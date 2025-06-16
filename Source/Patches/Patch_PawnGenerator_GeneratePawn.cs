@@ -39,7 +39,7 @@ namespace FogOfPawn.Patches
                 // Log that we are attempting to apply fog
                 Log.Message($"[FogOfPawn] Applying fog for newly generated pawn: {__result.NameShortColored}");
 
-                FogInitializer.InitializeFogFor(__result);
+                FogInitializer.InitializeFogFor(__result, request);
             }
             catch (System.Exception ex)
             {

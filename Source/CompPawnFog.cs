@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using RimWorld;
 using Verse;
 using Verse.Grammar;
@@ -19,7 +20,7 @@ namespace FogOfPawn
         // Meta
         public bool compInitialized;
         public int ticksSinceJoin;
-        public float truthfulness;
+        public float truthfulness; // legacy, no longer used
 
         // Skills
         public Dictionary<SkillDef, float?> reportedSkills = new Dictionary<SkillDef, float?>();
@@ -33,17 +34,12 @@ namespace FogOfPawn
         public bool healthRevealed;
         public bool genesRevealed;
 
+        public DeceptionTier tier = DeceptionTier.Truthful;
+        public bool tierManuallySet;
+
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
             if (!Prefs.DevMode) yield break;
-
-            yield return new Command_Action
-            {
-                defaultLabel = "Dev: Reveal Fog",
-                defaultDesc = "Instantly reveals all fogged attributes for this pawn.",
-                icon = null,
-                action = RevealAll
-            };
 
             yield return new Command_Action
             {
@@ -93,6 +89,56 @@ namespace FogOfPawn
                         FogUtility.RevealRandomFoggedAttribute(pawnParent, preferSkill: false);
                 }
             };
+
+            yield return new Command_Action
+            {
+                defaultLabel = "Dev: Print Deception Profile",
+                defaultDesc = "Logs this pawn's deception tier and altered skills.",
+                action = () =>
+                {
+                    if (parent is Pawn p)
+                    {
+                        var comp = this;
+                        FogLog.Verbose($"[PROFILE] {p.LabelShort}: Tier={comp.tier}, RevealedSkills={comp.revealedSkills.Count}, ReportedSkills={string.Join(",", comp.reportedSkills.Where(kv=>kv.Value!=null).Select(kv=>kv.Key.defName))}");
+                    }
+                }
+            };
+
+            foreach (var kv in new System.Collections.Generic.Dictionary<string, DeceptionTier>
+            {
+                {"Truthful", DeceptionTier.Truthful},
+                {"Slight", DeceptionTier.SlightlyDeceived},
+                {"Scammer", DeceptionTier.DeceiverScammer},
+                {"Sleeper", DeceptionTier.DeceiverSleeper}
+            })
+            {
+                yield return new Command_Action
+                {
+                    defaultLabel = $"Dev: Set {kv.Key}",
+                    action = () =>
+                    {
+                        if (parent is not Pawn pawn) return;
+
+                        // Validate suitability for Scammer/Sleeper based on pawn value.
+                        float pv = FogInitializer.GetPawnValue(pawn);
+                        if (kv.Value == DeceptionTier.DeceiverScammer && pv > 300f)
+                        {
+                            Messages.Message($"{pawn.LabelShort} is too competent to be a Scammer (value {pv:F0}).", MessageTypeDefOf.RejectInput, false);
+                            return;
+                        }
+                        if (kv.Value == DeceptionTier.DeceiverSleeper && pv < 200f)
+                        {
+                            Messages.Message($"{pawn.LabelShort} is too weak to be a Sleeper (value {pv:F0}).", MessageTypeDefOf.RejectInput, false);
+                            return;
+                        }
+
+                        tier = kv.Value;
+                        tierManuallySet = true;
+                        FogInitializer.RegenerateMasksFor(pawn, this);
+                        FogLog.Verbose($"[PROFILE] Manually set tier of {parent.LabelShort} to {tier}");
+                    }
+                };
+            }
         }
 
         public void RevealSkill(SkillDef skillDef)
@@ -209,6 +255,8 @@ namespace FogOfPawn
             Scribe_Values.Look(ref compInitialized, "compInitialized", false);
             Scribe_Values.Look(ref ticksSinceJoin, "ticksSinceJoin", 0);
             Scribe_Values.Look(ref truthfulness, "truthfulness", 0f);
+            Scribe_Values.Look(ref tier, "deceptionTier", DeceptionTier.Truthful);
+            Scribe_Values.Look(ref tierManuallySet, "tierManual", false);
             
             Scribe_Collections.Look(ref reportedSkills, "reportedSkills", LookMode.Def, LookMode.Value);
             Scribe_Collections.Look(ref reportedPassions, "reportedPassions", LookMode.Def, LookMode.Value);

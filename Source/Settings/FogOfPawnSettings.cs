@@ -21,6 +21,10 @@ namespace FogOfPawn
         public bool allowPassiveSkillReveal = true;
         public bool allowPassiveTraitReveal = true;
 
+        public int maxAlteredSkills = 3;
+        public bool allowUnderstate = true;
+        public bool deceiverJoinersOnly = true;
+
         private const int MinXp = 100;
         private const int MaxXp = 1000;
 
@@ -41,6 +45,10 @@ namespace FogOfPawn
             Scribe_Values.Look(ref allowSocialTraitReveal, "allowSocialTraitReveal", true);
             Scribe_Values.Look(ref allowPassiveSkillReveal, "allowPassiveSkillReveal", true);
             Scribe_Values.Look(ref allowPassiveTraitReveal, "allowPassiveTraitReveal", true);
+
+            Scribe_Values.Look(ref maxAlteredSkills, "maxAlteredSkills", 3);
+            Scribe_Values.Look(ref allowUnderstate, "allowUnderstate", true);
+            Scribe_Values.Look(ref deceiverJoinersOnly, "deceiverJoinersOnly", true);
         }
 
         public void DoWindowContents(Rect inRect)
@@ -77,6 +85,12 @@ namespace FogOfPawn
             list.CheckboxLabeled("FogOfPawn.Settings.AllowSocialTraitReveal".Translate(), ref allowSocialTraitReveal);
             list.CheckboxLabeled("FogOfPawn.Settings.AllowPassiveSkillReveal".Translate(), ref allowPassiveSkillReveal);
             list.CheckboxLabeled("FogOfPawn.Settings.AllowPassiveTraitReveal".Translate(), ref allowPassiveTraitReveal);
+
+            list.GapLine();
+            list.Label("FogOfPawn.Settings.MaxAlteredSkills".Translate() + $": {maxAlteredSkills}");
+            maxAlteredSkills = (int)list.Slider(maxAlteredSkills, 1, 5);
+            list.CheckboxLabeled("FogOfPawn.Settings.AllowUnderstate".Translate(), ref allowUnderstate);
+            list.CheckboxLabeled("FogOfPawn.Settings.DeceiverJoinerOnly".Translate(), ref deceiverJoinersOnly);
 
             list.End();
 
