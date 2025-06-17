@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <IncidentDef>
+    <defName>FogOfPawn_SleeperJoin</defName>
+    <workerClass>FogOfPawn.IncidentWorker_SleeperJoin</workerClass>
+    <category>Misc</category>
+    <targetTags>
+      <li>Map_PlayerHome</li>
+    </targetTags>
+    <letterLabel>FOG: Sleeper joins</letterLabel>
+    <letterText>A drifter named {PAWN_nameFull} arrives and asks to join your colony.</letterText>
+    <baseChance>0.2</baseChance>
+  </IncidentDef>
+
+  <IncidentDef>
+    <defName>FogOfPawn_ScammerJoin</defName>
+    <workerClass>FogOfPawn.IncidentWorker_ScammerJoin</workerClass>
+    <category>Misc</category>
+    <targetTags>
+      <li>Map_PlayerHome</li>
+    </targetTags>
+    <letterLabel>FOG: Scammer joins</letterLabel>
+    <letterText>A wanderer named {PAWN_nameFull} asks for hospitality and joins your colony.</letterText>
+    <baseChance>0.2</baseChance>
+  </IncidentDef>
+</Defs> 

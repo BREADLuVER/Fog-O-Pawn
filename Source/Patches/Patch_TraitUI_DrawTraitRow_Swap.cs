@@ -38,17 +38,20 @@ namespace FogOfPawn.Patches
             };
 
             var harmony = new Harmony("FogOfPawn.TraitUI.Swap");
+            // In RW 1.6 the old RimWorld.TraitUI class was removed; that triggers the edge-case path below.
+            // We simply fall back to masking via ITab_Pawn_Character.FillTab, so this is an expected scenario
+            // rather than a hard failure.  Log with Reflect (dev-visible) instead of Fail.
             var traitUIType = AccessTools.TypeByName("RimWorld.TraitUI") ?? AccessTools.TypeByName("TraitUI");
             if (traitUIType == null)
             {
-                FogLog.Fail("TraitUIType", "Could not locate TraitUI type – trait fogging disabled.");
+                FogLog.Reflect("TraitUITypeMissing", "TraitUI class missing (RW 1.6) – using fallback trait masking.");
                 return;
             }
 
             var drawMethod = AccessTools.Method(traitUIType, "DrawTraitRow");
             if (drawMethod == null)
             {
-                FogLog.Fail("TraitUI.DrawTraitRow", "Could not locate TraitUI.DrawTraitRow – trait fogging disabled.");
+                FogLog.Reflect("TraitUI.DrawTraitRowMissing", "DrawTraitRow method missing – using fallback trait masking.");
                 return;
             }
 
