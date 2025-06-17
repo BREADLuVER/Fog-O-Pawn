@@ -18,7 +18,7 @@ namespace FogOfPawn.Patches
         private static readonly TraitDef UnknownTraitDef;
 
         // Sentinels so we only log once per session.
-        private static readonly HashSet<string> _loggedPawns = new();
+        private static readonly HashSet<int> _loggedPawns = new();
 
         static Patch_TraitUI_DrawTraitRow_Swap()
         {
@@ -65,7 +65,7 @@ namespace FogOfPawn.Patches
         /// Swap unrevealed traits to the placeholder just for the duration of the row draw.
         /// We accept generic parameter order; Harmony will match by type.
         /// </summary>
-        private static void Prefix(Rect rect, Pawn pawn, Trait trait, out (TraitDef, int)? __state)
+        private static void Prefix(Rect rect, Pawn pawn, Trait trait, out TraitDef __state)
         {
             __state = null;
 
@@ -77,9 +77,8 @@ namespace FogOfPawn.Patches
             if (comp.revealedTraits.Contains(trait.def)) return; // already revealed
 
             // Store original and swap.
-            __state = (trait.def, trait.degree);
-            trait.def    = UnknownTraitDef;
-            trait.degree = 0;
+            __state = trait.def;
+            trait.def = UnknownTraitDef;
 
             if (Prefs.DevMode && _loggedPawns.Add(pawn.thingIDNumber))
             {
@@ -90,12 +89,11 @@ namespace FogOfPawn.Patches
         /// <summary>
         /// Restore original TraitDef/degree after vanilla row rendering.
         /// </summary>
-        private static void Postfix(Trait trait, (TraitDef, int)? __state)
+        private static void Postfix(Trait trait, TraitDef __state)
         {
             if (__state == null) return;
 
-            trait.def    = __state.Value.Item1;
-            trait.degree = __state.Value.Item2;
+            trait.def = __state;
         }
     }
 } 

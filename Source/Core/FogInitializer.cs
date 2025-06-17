@@ -2,6 +2,7 @@ using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using System.Collections.Generic;
 
 namespace FogOfPawn
 {
@@ -181,6 +182,7 @@ namespace FogOfPawn
                 return;
             }
 
+            List<Trait> hiddenList = null;
             foreach (var trait in pawn.story.traits.allTraits)
             {
                 bool hide = Rand.Value < settings.traitHideChance;
@@ -188,6 +190,18 @@ namespace FogOfPawn
                 {
                     comp.revealedTraits.Add(trait.def);
                 }
+                else
+                {
+                    hiddenList ??= new List<Trait>();
+                    hiddenList.Add(trait);
+                }
+            }
+
+            // Dev logging – list hidden traits once per pawn per session
+            if (Prefs.DevMode && hiddenList != null && _loggedTraitMask.Add(pawn.thingIDNumber))
+            {
+                string summary = string.Join(", ", hiddenList.Select(t => t.def.defName));
+                FogLog.Verbose($"[PROFILE] {pawn.LabelShort}: HiddenTraits=[{summary}]");
             }
         }
 
@@ -204,5 +218,7 @@ namespace FogOfPawn
 
             return skillScore + passionScore + (goodTraits * 5) - (badTraits * 3);
         }
+
+        private static readonly HashSet<int> _loggedTraitMask = new();
     }
 } 
