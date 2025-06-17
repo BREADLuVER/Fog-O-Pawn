@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using HarmonyLib;
 using RimWorld;
 using Verse;
@@ -28,15 +29,12 @@ namespace FogOfPawn.Patches
                 defName    = "FogOfPawn_UnknownTraitRuntime",   // runtime only
                 label      = "FogOfPawn.UnknownTrait".Translate(),
                 description= "FogOfPawn.UnknownTrait.Tooltip".Translate(),
-                degreeDatas= new List<TraitDegreeData>
+                degreeDatas = Enumerable.Range(0,5).Select(i => new TraitDegreeData
                 {
-                    new TraitDegreeData
-                    {
-                        degree      = 0,
-                        label       = "FogOfPawn.UnknownTrait".Translate(),
-                        description = "FogOfPawn.UnknownTrait.Tooltip".Translate()
-                    }
-                }
+                    degree = i - 2, // -2 to +2
+                    label = "FogOfPawn.UnknownTrait".Translate(),
+                    description = "FogOfPawn.UnknownTrait.Tooltip".Translate()
+                }).ToList()
             };
 
             var harmony = new Harmony("FogOfPawn.TraitUI.Swap");
@@ -65,9 +63,9 @@ namespace FogOfPawn.Patches
         /// Swap unrevealed traits to the placeholder just for the duration of the row draw.
         /// We accept generic parameter order; Harmony will match by type.
         /// </summary>
-        private static void Prefix(Rect rect, Pawn pawn, Trait trait, out TraitDef __state)
+        private static void Prefix(Rect rect, Pawn pawn, Trait trait, out (TraitDef def, int degree) __state)
         {
-            __state = null;
+            __state = default;
 
             if (trait == null || pawn == null) return;
             if (!FogSettingsCache.Current.fogTraits) return;
@@ -77,8 +75,9 @@ namespace FogOfPawn.Patches
             if (comp.revealedTraits.Contains(trait.def)) return; // already revealed
 
             // Store original and swap.
-            __state = trait.def;
-            trait.def = UnknownTraitDef;
+            __state = (trait.def, trait.Degree);
+            trait.def    = UnknownTraitDef;
+            Traverse.Create(trait).Field("tipCachedInt").SetValue(null);
 
             if (Prefs.DevMode && _loggedPawns.Add(pawn.thingIDNumber))
             {
@@ -89,11 +88,12 @@ namespace FogOfPawn.Patches
         /// <summary>
         /// Restore original TraitDef/degree after vanilla row rendering.
         /// </summary>
-        private static void Postfix(Trait trait, TraitDef __state)
+        private static void Postfix(Trait trait, (TraitDef def, int degree) __state)
         {
-            if (__state == null) return;
+            if (__state.def == null) return;
 
-            trait.def = __state;
+            trait.def    = __state.def;
+            Traverse.Create(trait).Field("tipCachedInt").SetValue(null);
         }
     }
 } 
