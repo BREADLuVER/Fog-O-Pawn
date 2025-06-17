@@ -13,7 +13,6 @@ These pawn attributes are **fogged at spawn** and gradually revealed:
 - **Skills**: Instead of exact values, we show "Reported: 6–10" or "Unknown". Real skill is revealed after 300 XP.
 - **Passions**: May be fake or exaggerated. Real passion revealed when the associated skill is revealed.
 - **Traits**: Problematic traits (e.g. Pyromaniac) are hidden. Reveal triggers include mental breaks or relevant actions.
-- **Addictions**: Fully hidden unless the pawn consumes drugs or enters withdrawal.
 - **Backstory Text**: Only title shown (e.g., "Drifter"). Full description is unlocked via social interaction or time (e.g. 7 days).
 
 These details are **always visible**:
@@ -40,7 +39,6 @@ Each pawn is assigned a `truthfulness` value (0–1) on spawn. This controls dec
   - Neutral: 60% shown
   - Problematic (e.g. Pyro): 20% shown
 
-- **Addictions**: 50% hidden unless discovered via behavior.
 
 ---
 
@@ -58,7 +56,6 @@ RevealSkill(Pawn, SkillDef)
 
 RevealTrait(Pawn, TraitDef)
 
-RevealAddiction(Pawn)
 
 
 🔔 Example Behavior
@@ -114,16 +111,7 @@ Reveal triggers: mental breaks, violent acts, fire-starting, time passed.
 
 ✅ DELIVERABLE: Traits hidden with "???" and gradually unlocked – approach resilient to UI mods.
 
-M4 – Integrate with genes
 
-Ensure that Trait concealment considers genes that edits skills and passion
-
-
-M5 – Addictions & Health
-
-Mask addictions in Health tab until triggered
-
-Optional: full health fog toggle
 
 ✅ DELIVERABLE: Drug users shock player after first dose
 
@@ -137,7 +125,7 @@ Exposed values:
 
 XP to reveal
 
-Toggles: fog skills / traits / addictions
+Toggles: fog skills / traits
 
 Dev reveal button
 
@@ -183,7 +171,6 @@ Progress résumé (Status: late-M3)
 • Narrative hooks:  
    – `OnScammerRemoved` (+mood thought).  
    – `OnSleeperFullyRevealed` (blue letter).
-• Addictions & Genes fog design.
 
 🔜  Immediate next tasks
 1. Trait Concealment (finish M3)  
@@ -194,6 +181,5 @@ Progress résumé (Status: late-M3)
 3. Settings polish – max altered skills slider localisation text, optional notification style.
 
 🛣️  Upcoming milestones
-• M5 – Addictions & Health fog.  
 • M6 – advanced settings fold-out, localisation pass.  
 • M7 – polish & Steam Workshop release.

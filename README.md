@@ -10,11 +10,11 @@ Fog-of-Pawn obscures some details of newly-joined pawns so the player doesn't ha
 | Skills fog + swap-during-draw patch | ✅ stable |
 | Settings UI (sliders, toggles) | ✅ stable |
 | Dev gizmos (print profile, tier setters, XP boost) | ✅ stable |
-| Tiered deception system (Truthful / Slight / Scammer / Sleeper) | ✅ **NEW** |
+| Tiered deception system (Truthful / Slight / Scammer / Sleeper) | ✅ |
 | Social-interaction & passive time reveal | ✅ |
 | Grammar-based reveal messages | ✅ |
-| Trait, addiction, gene fog | 🚧 not started |
-| Narrative hooks (mood buffs, special letters) | 🚧 stubs |
+| Trait concealment | ✅ new |
+| Narrative hooks (mood buffs, special letters, fun events) | 🚧 stubs |
 
 ---
 ## Deception Tiers (v2)
@@ -48,16 +48,9 @@ Launch RimWorld with Dev mode on, spawn pawns, and use the gizmos or settings sl
 
 ---
 ## Roadmap (Next Milestones)
-1. **Trait Concealment (M3)**  
-   • Swap-during-draw pattern on `TraitUI.DrawTraitRow` or fallback in `ITab_Pawn_Character`.  
-   • Reveal triggers: mental break, fire starting, time passage.  
-   • "Unknown Trait" icon and tooltip.
 2. **Narrative Hooks**  
    • `OnScammerRemoved` – +10 colony mood thought when scammer dies/exiled.  
    • `OnSleeperFullyRevealed` – blue letter announcing secret past.  
-3. **Addictions & Genes Fog (M5)**  
-   • Conceal addictions until first drug use / withdrawal.  
-   • Ensure gene-based skill mods respect fog.
 4. **Polish & Release (M7)**  
    • Localization stubs for new strings.  
    • Compatibility passes (RIMHUD, Character Editor).  
@@ -66,3 +59,6 @@ Launch RimWorld with Dev mode on, spawn pawns, and use the gizmos or settings sl
 ---
 ### Contributing
 Pull requests welcome – please follow the logging guideline in `code-guideline.txt` and keep reflection look-ups gated behind `[REFLECT]` traces. 
+
+Trait concealment patch – implemented (swap-during-draw + tooltip mask).
+Narrative hooks:  

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FogOfPawn")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e6f689c98f24c4506df375bb525c021d1dbbb4ad")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+62d902e5c9eed2fee56430d1c341dbc238ebab42")]
 [assembly: System.Reflection.AssemblyProductAttribute("FogOfPawn")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FogOfPawn")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
