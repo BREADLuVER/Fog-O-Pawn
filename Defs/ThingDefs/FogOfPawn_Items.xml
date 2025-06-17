@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ThingDef>
+    <defName>FogOfPawn_DisguiseKit</defName>
+    <label>disguise kit</label>
+    <thingClass>Apparel</thingClass>
+    <description>A bundle of cheap props, wigs and makeup used to disguise one's appearance. When worn it conveniently hides a pawn's true nature at least until the jig is up.</description>
+    <graphicData>
+      <texPath>Things/Item/disguise-kit</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <statBases>
+      <MarketValue>1</MarketValue>
+      <Mass>0.1</Mass>
+    </statBases>
+    <apparel>
+      <bodyPartGroups>
+        <li>Torso</li>
+      </bodyPartGroups>
+      <layers>
+        <li>Belt</li>
+      </layers>
+    </apparel>
+    <comps>
+      <li Class="CompProperties_Forbiddable" />
+    </comps>
+  </ThingDef>
+</Defs> 

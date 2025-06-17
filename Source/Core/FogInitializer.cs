@@ -155,12 +155,19 @@ namespace FogOfPawn
 
         private static void ApplySleeper(Pawn pawn, CompPawnFog comp)
         {
+            // Sleeper: any competent skill (≥6) is lied about – shown as poor (2-4).
+            // All other low skills are revealed truthfully so the UI never shows "???".
+
             foreach (var skill in pawn.skills.skills)
             {
-                if (skill.Level >= 12)
+                if (skill.Level >= 6)
                 {
-                    comp.reportedSkills[skill.def] = Rand.RangeInclusive(3, 6);
+                    comp.reportedSkills[skill.def] = Rand.RangeInclusive(2, 4);
                     comp.reportedPassions[skill.def] = Passion.None;
+                }
+                else
+                {
+                    comp.revealedSkills.Add(skill.def);
                 }
             }
         }

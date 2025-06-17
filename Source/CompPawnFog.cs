@@ -21,6 +21,7 @@ namespace FogOfPawn
         public bool compInitialized;
         public int ticksSinceJoin;
         public float truthfulness; // legacy, no longer used
+        private bool disguiseKitSpawned;
 
         // Skills
         public Dictionary<SkillDef, float?> reportedSkills = new Dictionary<SkillDef, float?>();
@@ -156,6 +157,8 @@ namespace FogOfPawn
             Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.NeutralEvent, pawn);
 
             FogLog.Verbose($"Revealed skill {skillDef.defName} for {parent.LabelShort}.");
+
+            MaybeDropDisguiseKit();
         }
 
         public void RevealTrait(Trait trait)
@@ -171,6 +174,8 @@ namespace FogOfPawn
             Find.LetterStack.ReceiveLetter(labelT, textT, LetterDefOf.NeutralEvent, pawn2);
 
             FogLog.Verbose($"Revealed trait {trait.def.defName} for {parent.LabelShort}.");
+
+            MaybeDropDisguiseKit();
         }
 
         public void RevealAll()
@@ -251,6 +256,32 @@ namespace FogOfPawn
 
             Scribe_Values.Look(ref healthRevealed, "healthRevealed", false);
             Scribe_Values.Look(ref genesRevealed, "genesRevealed", false);
+            Scribe_Values.Look(ref disguiseKitSpawned, "disguiseKitSpawned", false);
+        }
+
+        private void MaybeDropDisguiseKit()
+        {
+            if (disguiseKitSpawned) return;
+            if (tier != DeceptionTier.DeceiverScammer) return;
+            if (parent is not Pawn pawn) return;
+
+            // Only trigger once the disguise penalty hediff is present (meaning pawn still in disguise).
+            var penaltyHediff = pawn.health?.hediffSet?.GetFirstHediffOfDef(DefDatabase<HediffDef>.GetNamedSilentFail("Fog_DisguisePenalty"));
+            if (penaltyHediff == null) return; // not yet or already removed
+
+            // Remove the penalty and spawn the physical kit.
+            pawn.health.RemoveHediff(penaltyHediff);
+
+            var kitDef = DefDatabase<ThingDef>.GetNamedSilentFail("FogOfPawn_DisguiseKit");
+            if (kitDef != null)
+            {
+                Thing kit = ThingMaker.MakeThing(kitDef);
+                GenPlace.TryPlaceThing(kit, pawn.PositionHeld, pawn.MapHeld, ThingPlaceMode.Near, out var placed);
+                placed?.SetForbidden(false);
+            }
+
+            disguiseKitSpawned = true;
+            FogLog.Verbose($"Scammer {pawn.LabelShort} revealed – disguise kit materialised.");
         }
     }
 }

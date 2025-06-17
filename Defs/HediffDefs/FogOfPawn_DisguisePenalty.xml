@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <HediffDef>
+    <defName>Fog_DisguisePenalty</defName>
+    <label>disguise field</label>
+    <description>Fools colony records into undervaluing this pawn.</description>
+    <hediffClass>Hediff</hediffClass>
+    <isBad>false</isBad>
+    <stages>
+      <li>
+        <statOffsets>
+          <MarketValue>-2000</MarketValue>
+        </statOffsets>
+      </li>
+    </stages>
+  </HediffDef>
+</Defs> 
