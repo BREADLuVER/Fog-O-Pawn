@@ -4,20 +4,39 @@
     <defName>FogOfPawn_RevealSkill</defName>
     <rulePack>
       <rulesStrings>
-        <li>root-> [PAWN_nameDef] casually admits their [SKILL_label] skill is actually [REAL].</li>
-        <li>root-> In conversation, you learn [PAWN_nameDef] undersold their [SKILL_label]; it's [REAL].</li>
-        <li>root-> [PAWN_nameDef] boasts: "I'm a solid [REAL] at [SKILL_label]!"</li>
+        <!-- Underselling -->
+        <li>root-> [PAWN_nameDef] quietly admits they're not bad at [SKILL_label] — actually a [REAL].</li>
+        <li>root-> You always thought [PAWN_nameDef] was modest. Turns out they’re a [REAL] at [SKILL_label].</li>
+        <li>root-> "[REAL] at [SKILL_label] isn’t that high," [PAWN_nameDef] shrugs. It is.</li>
+        <li>root-> Overheard [PAWN_nameDef] talking shop. They’ve got solid [SKILL_label] skills — [REAL], in fact.</li>
+        <li>root-> Turns out [PAWN_nameDef] was holding back. They’re a [REAL] at [SKILL_label].</li>
+
+        <!-- Overselling -->
+        <li>root-> [PAWN_nameDef] claims they’re a [REAL] at [SKILL_label]. Confidence level: high. Evidence: limited.</li>
+        <li>root-> "I basically taught myself," [PAWN_nameDef] says, referring to their [REAL]-level [SKILL_label].</li>
+        <li>root-> You’re not sure if [PAWN_nameDef] is bragging, but they say they’re a [REAL] at [SKILL_label].</li>
+        <li>root-> [PAWN_nameDef] boasts about their [SKILL_label] skill. Actual level: [REAL].</li>
+        <li>root-> "[SKILL_label]? I'm basically a master," says [PAWN_nameDef]. They’re a [REAL].</li>
       </rulesStrings>
     </rulePack>
   </RulePackDef>
-
   <RulePackDef>
     <defName>FogOfPawn_RevealTrait</defName>
     <rulePack>
       <rulesStrings>
-        <li>root-> [PAWN_nameDef] reveals their true nature: [TRAIT_label].</li>
-        <li>root-> You notice tell-tale signs — [PAWN_nameDef] is [TRAIT_label].</li>
-        <li>root-> Rumour confirmed: [PAWN_nameDef] is actually [TRAIT_label].</li>
+        <!-- Underselling -->
+        <li>root-> [PAWN_nameDef] slips up and hints at being [TRAIT_label].</li>
+        <li>root-> You piece it together — [PAWN_nameDef] is [TRAIT_label], though they never said so.</li>
+        <li>root-> [PAWN_nameDef] reveals their true nature: [TRAIT_label]. They didn’t mean to.</li>
+        <li>root-> You catch a moment of honesty. [PAWN_nameDef] is [TRAIT_label].</li>
+        <li>root-> A pattern emerges: [PAWN_nameDef] is clearly [TRAIT_label].</li>
+
+        <!-- Overselling -->
+        <li>root-> "[TRAIT_label] is just how I am," [PAWN_nameDef] says, unprompted.</li>
+        <li>root-> [PAWN_nameDef] proudly declares: "I’ve always been [TRAIT_label]."</li>
+        <li>root-> No one asked, but [PAWN_nameDef] insists they’re [TRAIT_label].</li>
+        <li>root-> You hear from others: [PAWN_nameDef] won’t shut up about being [TRAIT_label].</li>
+        <li>root-> [PAWN_nameDef] wears their [TRAIT_label] like a badge.</li>
       </rulesStrings>
     </rulePack>
   </RulePackDef>

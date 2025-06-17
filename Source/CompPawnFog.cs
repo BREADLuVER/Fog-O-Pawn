@@ -150,17 +150,10 @@ namespace FogOfPawn
             var pawn = parent as Pawn;
             int real = pawn?.skills.GetSkill(skillDef).Level ?? 0;
 
-            var rules = new List<Rule>(GrammarUtility.RulesForPawn("PAWN", pawn));
-            rules.Add(new Rule_String("SKILL_label", skillDef.label));
-            rules.Add(new Rule_String("REAL", real.ToString()));
+            string label = "FogOfPawn.SkillRevealed.Label".Translate(pawn.LabelShort, skillDef.label);
+            string text = "FogOfPawn.SkillRevealed.Text".Translate(pawn.LabelShort, skillDef.label, real.ToString());
 
-            GrammarRequest req = new GrammarRequest();
-            req.Includes.Add(DefDatabase<RulePackDef>.GetNamed("FogOfPawn_RevealSkill"));
-            req.Rules.AddRange(rules);
-
-            string text = GrammarResolver.Resolve("root", req, null, false);
-
-            Messages.Message(text, pawn, MessageTypeDefOf.PositiveEvent);
+            Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.NeutralEvent, pawn);
 
             FogLog.Verbose($"Revealed skill {skillDef.defName} for {parent.LabelShort}.");
         }
@@ -172,17 +165,10 @@ namespace FogOfPawn
             revealedTraits.Add(trait.def);
 
             var pawn2 = parent as Pawn;
-            var rulesT = new List<Rule>(GrammarUtility.RulesForPawn("PAWN", pawn2));
-            rulesT.Add(new Rule_String("TRAIT_label", trait.Label));
-            rulesT.Add(new Rule_String("TRAIT_desc", trait.def.description));
+            string labelT = "FogOfPawn.TraitRevealed.Label".Translate(pawn2.LabelShort, trait.Label);
+            string textT = "FogOfPawn.TraitRevealed.Text".Translate(pawn2.LabelShort, trait.Label, trait.def.description);
 
-            GrammarRequest reqT = new GrammarRequest();
-            reqT.Includes.Add(DefDatabase<RulePackDef>.GetNamed("FogOfPawn_RevealTrait"));
-            reqT.Rules.AddRange(rulesT);
-
-            string textT = GrammarResolver.Resolve("root", reqT, null, false);
-
-            Messages.Message(textT, pawn2, trait.Degree > 0 ? MessageTypeDefOf.NeutralEvent : MessageTypeDefOf.PositiveEvent);
+            Find.LetterStack.ReceiveLetter(labelT, textT, LetterDefOf.NeutralEvent, pawn2);
 
             FogLog.Verbose($"Revealed trait {trait.def.defName} for {parent.LabelShort}.");
         }
