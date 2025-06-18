@@ -13,6 +13,10 @@ Fog-of-Pawn obscures some details of newly-joined pawns so the player doesn't ha
 | Tiered deception system (Truthful / Slight / Scammer / Sleeper) | ✅ |
 | Social-interaction & passive time reveal | ✅ |
 | Grammar-based reveal messages | ✅ |
+| Trait concealment | ✅ |
+| Sleeper / Scammer reveal triggers (XP, health, job, social) | ✅ new |
+| Disguise-kit & wealth penalty | ✅ |
+| Reputation damage on reveal | ⚙️ prototype |
 | Trait concealment | ✅ new |
 | Sleeper / Scammer reveal triggers | ⚙️ first-pass |
 | Disguise-kit & wealth penalty | ⚙️ prototype |
