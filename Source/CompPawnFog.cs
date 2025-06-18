@@ -263,12 +263,21 @@ namespace FogOfPawn
                 }
 
                 // 1% base daily chance for sleepers/scammers if nothing else triggered
-                if ((tier == DeceptionTier.DeceiverSleeper || tier == DeceptionTier.DeceiverScammer) && ticksSinceJoin % 60000 == 0 && !tierManuallySet)
+                if ((tier == DeceptionTier.DeceiverScammer) && ticksSinceJoin % 60000 == 0 && !tierManuallySet)
                 {
                     if (Rand.Chance(FogSettingsCache.Current.passiveDailyRevealPct / 100f))
                     {
-                        string reason = tier == DeceptionTier.DeceiverSleeper ? "SleeperPassive" : "ScammerPassive";
+                        string reason = tier == DeceptionTier.DeceiverScammer ? "ScammerPassive" : "ScammerPassive";
                         FogUtility.TriggerFullReveal((Pawn)parent, reason);
+                    }
+                }
+
+                // Health-based Sleeper reveal: if grievously wounded but still standing.
+                if (tier == DeceptionTier.DeceiverSleeper && !fullyRevealed && parent is Pawn hpawn)
+                {
+                    if (!hpawn.Downed && hpawn.health?.summaryHealth?.SummaryHealthPercent < 0.20f)
+                    {
+                        FogUtility.TriggerFullReveal(hpawn, "SleeperWounded");
                     }
                 }
             }

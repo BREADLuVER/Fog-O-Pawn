@@ -16,20 +16,11 @@ namespace FogOfPawn.Patches
             var comp = pawn.GetComp<CompPawnFog>();
             if (comp == null || comp.tier == DeceptionTier.Truthful) return;
 
+            // Sleeper story arc overrides immediate combat-XP reveal. Skip any XP trigger for sleepers.
             if (comp.tier == DeceptionTier.DeceiverSleeper)
-            {
-                if (__instance.def == SkillDefOf.Shooting || __instance.def == SkillDefOf.Melee)
-                {
-                    if (!comp.tempData.TryGetValue("combatXp", out float current)) current = 0f;
-                    current += xp;
-                    comp.tempData["combatXp"] = current;
-                    if (current >= FogSettingsCache.Current.sleeperCombatXp)
-                    {
-                        FogUtility.TriggerFullReveal(pawn, "SleeperCombat");
-                    }
-                }
-            }
-            else if (comp.tier == DeceptionTier.DeceiverScammer)
+                return;
+
+            if (comp.tier == DeceptionTier.DeceiverScammer)
             {
                 if (__instance.Level < 4)
                 {
