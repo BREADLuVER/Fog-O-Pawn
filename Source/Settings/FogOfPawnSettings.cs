@@ -23,7 +23,7 @@ namespace FogOfPawn
 
         public int maxAlteredSkills = 3;
         public bool allowUnderstate = true;
-        public bool deceiverJoinersOnly = true;
+        public bool deceiverJoinersOnly = false;
         // Renamed – keep old field for backward compatibility
         public bool limitDeceiversToColonists
         {
@@ -42,6 +42,11 @@ namespace FogOfPawn
         // Scammer balancing sliders
         public int scammerHighSkills = 3; // # of high claimed skills 8-14
         public int scammerMidSkills = 3; // # of mid claimed skills 4-8
+
+        // Add fields after deceptionIntensity
+        public int pctTruthful = 90;
+        public int pctSlight = 9;
+        public int pctDeceiver = 1;
 
         private const int MinXp = 1000;
         private const int MaxXp = 5000;
@@ -66,7 +71,7 @@ namespace FogOfPawn
 
             Scribe_Values.Look(ref maxAlteredSkills, "maxAlteredSkills", 3);
             Scribe_Values.Look(ref allowUnderstate, "allowUnderstate", true);
-            Scribe_Values.Look(ref deceiverJoinersOnly, "deceiverJoinersOnly", true);
+            Scribe_Values.Look(ref deceiverJoinersOnly, "deceiverJoinersOnly", false);
 
             Scribe_Values.Look(ref traitHideChance, "traitHideChance", 0.3f);
 
@@ -77,6 +82,10 @@ namespace FogOfPawn
 
             Scribe_Values.Look(ref scammerHighSkills, "scammerHighSkills", 3);
             Scribe_Values.Look(ref scammerMidSkills, "scammerMidSkills", 3);
+
+            Scribe_Values.Look(ref pctTruthful, "pctTruthful", 90);
+            Scribe_Values.Look(ref pctSlight, "pctSlight", 9);
+            Scribe_Values.Look(ref pctDeceiver, "pctDeceiver", 1);
         }
 
         public void DoWindowContents(Rect inRect)
@@ -89,9 +98,30 @@ namespace FogOfPawn
             var list = new Listing_Standard();
             list.Begin(viewRect);
 
-            // Deception intensity slider
-            list.Label("FogOfPawn.Settings.DeceptionIntensity".Translate() + $": {(int)(deceptionIntensity * 100)}%", -1f, "FogOfPawn.Settings.DeceptionIntensityTooltip".Translate());
-            deceptionIntensity = list.Slider(deceptionIntensity, 0f, 1f);
+            // Spawn distribution sliders (must total >0; they will be normalised internally)
+            list.Label("Spawn composition weights (will be normalised):");
+            list.Label("Truthful: " + pctTruthful + "%");
+            pctTruthful = (int)list.Slider(pctTruthful, 0, 100);
+            list.Label("Slightly-Deceived: " + pctSlight + "%");
+            pctSlight = (int)list.Slider(pctSlight, 0, 100);
+            list.Label("Scammer/Sleeper: " + pctDeceiver + "%");
+            pctDeceiver = (int)list.Slider(pctDeceiver, 0, 100);
+
+            list.GapLine();
+            
+            // NEW: Deceiver storyline toggle right after composition
+            list.CheckboxLabeled("FogOfPawn.Settings.DeceiverJoinerOnly".Translate(), ref deceiverJoinersOnly, "FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip".Translate());
+
+            // Display normalised result
+            {
+                float sum = pctTruthful + pctSlight + pctDeceiver;
+                if (sum < 0.01f) sum = 1f;
+                float t = pctTruthful / sum;
+                float s = pctSlight / sum;
+                float d = pctDeceiver / sum;
+                list.Label($"Current composition → Truthful {(int)(t*100)}%  | Slight {(int)(s*100)}%  | Deceiver {(int)(d*100)}%");
+            }
+
             list.GapLine();
 
             // XP to reveal
@@ -123,7 +153,6 @@ namespace FogOfPawn
             list.Label("FogOfPawn.Settings.MaxAlteredSkills".Translate() + $": {maxAlteredSkills}");
             maxAlteredSkills = (int)list.Slider(maxAlteredSkills, 1, 5);
             list.CheckboxLabeled("FogOfPawn.Settings.AllowUnderstate".Translate(), ref allowUnderstate);
-            list.CheckboxLabeled("FogOfPawn.Settings.DeceiverJoinerOnly".Translate(), ref deceiverJoinersOnly);
 
             list.GapLine();
             list.Label("FogOfPawn.Settings.TraitHideChance".Translate() + $": {(int)(traitHideChance*100)} %", -1f, "FogOfPawn.Settings.TraitHideChanceTooltip".Translate());

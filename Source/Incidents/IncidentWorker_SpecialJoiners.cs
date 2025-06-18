@@ -14,9 +14,12 @@ namespace FogOfPawn
 
         protected override bool CanFireNowSub(IncidentParms parms)
         {
-            // Require a player home map like vanilla wanderer join.
             Map map = (Map)parms.target;
-            return map?.IsPlayerHome == true && base.CanFireNowSub(parms);
+            if (map?.IsPlayerHome != true) return false;
+            if (!base.CanFireNowSub(parms)) return false;
+
+            var tracker = GameComponent_FogTracker.Get;
+            return tracker?.CanFireFoggedJoiner(WantedTier) == true;
         }
 
         protected override bool TryExecuteWorker(IncidentParms parms)
@@ -41,48 +44,12 @@ namespace FogOfPawn
                         sk.Level = Rand.RangeInclusive(10, 14);
                 }
 
-                // 2. Ensure a fitting trait load-out.  We try to add up to three helpful/aggressive traits that
-                //    are not already present and do not conflict.
-                if (pawn.story?.traits != null)
-                {
-                    List<TraitDef> poolCombat = new()
-                    {
-                        DefDatabase<TraitDef>.GetNamedSilentFail("Tough"),
-                        DefDatabase<TraitDef>.GetNamedSilentFail("Jogger"),
-                        DefDatabase<TraitDef>.GetNamedSilentFail("TriggerHappy")
-                    };
-                    List<TraitDef> poolMood = new()
-                    {
-                        DefDatabase<TraitDef>.GetNamedSilentFail("Optimist"),
-                        DefDatabase<TraitDef>.GetNamedSilentFail("IronWilled"),
-                        DefDatabase<TraitDef>.GetNamedSilentFail("Sanguine")
-                    };
-                    List<TraitDef> poolAggro = new()
-                    {
-                        DefDatabase<TraitDef>.GetNamedSilentFail("Bloodlust"),
-                        DefDatabase<TraitDef>.GetNamedSilentFail("Nimble")
-                    };
-
-                    addedTraits = new List<TraitDef>();
-
-                    void TryAdd(TraitDef def)
-                    {
-                        if (def != null && !pawn.story.traits.HasTrait(def))
-                        {
-                            pawn.story.traits.GainTrait(new Trait(def));
-                            addedTraits.Add(def);
-                        }
-                    }
-
-                    TryAdd(poolCombat.RandomElement());
-                    TryAdd(poolMood.RandomElement());
-                    TryAdd(poolAggro.RandomElement());
-
-                    // 'addedTraits' will later be used to force these traits to start hidden.
-                }
+                // Sleeper will gain a powerful trait later when they "wake up" (stage 3 reveal)
             }
             else if (WantedTier == DeceptionTier.DeceiverScammer)
             {
+                // Comment out trait granting loop
+                /*
                 // Give bad traits that are initially hidden.
                 List<TraitDef> badPool = new()
                 {
@@ -109,10 +76,11 @@ namespace FogOfPawn
 
                 // Remember these traits so we can hide them later
                 addedTraits = addedBad;
+                */
             }
 
             // Make them spawn at edge like wanderer join.
-            IntVec3 spawnCell = CellFinder.RandomClosewalkCellNear(map.Center, map, 12);
+            IntVec3 spawnCell = CellFinder.RandomClosewalkCellNear(map.Center, map, 12, (IntVec3 c) => c.Standable(map) && !c.Fogged(map));
             GenSpawn.Spawn(pawn, spawnCell, map);
 
             pawn.SetFactionDirect(Faction.OfPlayer);
@@ -147,6 +115,11 @@ namespace FogOfPawn
             string label = "FogOfPawn.SpecialJoiner.Label".Translate(pawn.Named("PAWN"));
             string text  = "FogOfPawn.SpecialJoiner.Text".Translate(pawn.Named("PAWN"));
             Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.PositiveEvent, pawn);
+
+            // After successfully spawning pawn (before return true) register joiner
+            var tracker2 = GameComponent_FogTracker.Get;
+            tracker2?.RegisterFoggedJoiner(WantedTier);
+
             return true;
         }
     }

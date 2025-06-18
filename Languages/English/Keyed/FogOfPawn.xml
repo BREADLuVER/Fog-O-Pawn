@@ -13,4 +13,36 @@
   <FogOfPawn.Settings.TraitHideChance>Chance for a trait to start hidden</FogOfPawn.Settings.TraitHideChance>
   <FogOfPawn.Settings.TraitHideChanceTooltip>Percentage of traits that will be concealed when a pawn joins. 0% = all visible, 100% = all hidden.</FogOfPawn.Settings.TraitHideChanceTooltip>
 
+  <Fog.FullReveal.SleeperStory.Label>Sleeper Revealed!</Fog.FullReveal.SleeperStory.Label>
+  <Fog.FullReveal.SleeperStory.Text>{PAWN} drops the facade. Their true skills and motives are now clear.</Fog.FullReveal.SleeperStory.Text>
+
+  <Fog.FullReveal.SleeperCascade.Label>Sleeper Exposed</Fog.FullReveal.SleeperCascade.Label>
+  <Fog.FullReveal.SleeperCascade.Text>Your probing has shattered {PAWN}'s cover story. They reveal everything.</Fog.FullReveal.SleeperCascade.Text>
+
+  <Fog.FullReveal.SleeperWounded.Label>Sleeper Bleeds Truth</Fog.FullReveal.SleeperWounded.Label>
+  <Fog.FullReveal.SleeperWounded.Text>Grievous wounds force {PAWN} to show their real training.</Fog.FullReveal.SleeperWounded.Text>
+
+  <Fog.FullReveal.ScammerCaughtLearning.Label>Scammer Caught!</Fog.FullReveal.ScammerCaughtLearning.Label>
+  <Fog.FullReveal.ScammerCaughtLearning.Text>{PAWN}'s fumbling attempt to learn a basic skill exposes their fraud.</Fog.FullReveal.ScammerCaughtLearning.Text>
+
+  <Fog.FullReveal.ScammerCalledOut.Label>Scammer Called Out</Fog.FullReveal.ScammerCalledOut.Label>
+  <Fog.FullReveal.ScammerCalledOut.Text>After a sharp accusation, {PAWN} admits the deception.</Fog.FullReveal.ScammerCalledOut.Text>
+
+  <Fog.FullReveal.ScammerMoodBreak.Label>Scammer Breaks Down</Fog.FullReveal.ScammerMoodBreak.Label>
+  <Fog.FullReveal.ScammerMoodBreak.Text>A mental snap tears away {PAWN}'s disguise. The truth is ugly.</Fog.FullReveal.ScammerMoodBreak.Text>
+
+  <Fog.FullReveal.ScammerPassive.Label>Scammer Unmasked</Fog.FullReveal.ScammerPassive.Label>
+  <Fog.FullReveal.ScammerPassive.Text>Rumours swirl until the truth about {PAWN} surfaces.</Fog.FullReveal.ScammerPassive.Text>
+
+  <Fog.FullReveal.ScammerCascade.Label>Scammer Revealed</Fog.FullReveal.ScammerCascade.Label>
+  <Fog.FullReveal.ScammerCascade.Text>One secret leads to another—{PAWN}'s entire résumé falls apart.</Fog.FullReveal.ScammerCascade.Text>
+
+  <Fog_SleeperReveal_Suspicion.Text>Something about {PAWN} feels… off. Their eyes track patrol drills like second nature.</Fog_SleeperReveal_Suspicion.Text>
+  <Fog_SleeperReveal_Anomaly.Text>During the commotion, {PAWN} moved with trained precision. Colonists exchange uneasy glances.</Fog_SleeperReveal_Anomaly.Text>
+  <Fog_SleeperReveal_Revealed.Text>{PAWN} straightens their posture and speaks in a clipped voice. The sleeper is fully awake.</Fog_SleeperReveal_Revealed.Text>
+
+  <!-- Settings -->
+  <FogOfPawn.Settings.DeceiverJoinerOnly>Enable guaranteed Sleeper/Scammer storylines</FogOfPawn.Settings.DeceiverJoinerOnly>
+  <FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>If enabled, the mod guarantees one Sleeper and one Scammer will join your colony mid-game. Disable for pure RNG (about 1% of joiners).</FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>
+
 </LanguageData> 

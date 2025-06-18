@@ -111,6 +111,20 @@ namespace FogOfPawn
                 }
             };
 
+            if (tier == DeceptionTier.DeceiverSleeper && !fullyRevealed)
+            {
+                yield return new Command_Action
+                {
+                    defaultLabel = "Dev: Next Sleeper Beat",
+                    defaultDesc = "Immediately advance this Sleeper's storyline to the next phase.",
+                    action = () =>
+                    {
+                        if (parent is Pawn p)
+                            GameComponent_FogTracker.Get?.DevAdvanceSleeperStory(p);
+                    }
+                };
+            }
+
             foreach (var kv in new System.Collections.Generic.Dictionary<string, DeceptionTier>
             {
                 {"Truthful", DeceptionTier.Truthful},
@@ -272,7 +286,8 @@ namespace FogOfPawn
                     }
                 }
 
-                // Health-based Sleeper reveal: if grievously wounded but still standing.
+                // Health-based Sleeper reveal removed – story-driven only
+                /*
                 if (tier == DeceptionTier.DeceiverSleeper && !fullyRevealed && parent is Pawn hpawn)
                 {
                     if (!hpawn.Downed && hpawn.health?.summaryHealth?.SummaryHealthPercent < 0.20f)
@@ -280,6 +295,7 @@ namespace FogOfPawn
                         FogUtility.TriggerFullReveal(hpawn, "SleeperWounded");
                     }
                 }
+                */
             }
         }
 

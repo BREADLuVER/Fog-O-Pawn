@@ -66,7 +66,7 @@ Pull requests welcome – please follow the logging guideline in `code-guideline
 Trait concealment patch – implemented (swap-during-draw + tooltip mask).
 
 Full-Reveal System (WIP)
-* **Sleeper – Combat activation**: accumulates *Sleeper combat XP* (slider, default 5000). On reaching the threshold or a lucky daily roll, the pawn is revealed.
+* **Sleeper – StoryLine.
 * **Scammer – Caught learning**: when any skill below level 4 gains *Scammer low-skill XP* (slider, default 4000) the fraud is exposed.
 * **Passive daily chance**: independent 0-20 % slider (default 1 %) for both archetypes.
 * **Aftermath**

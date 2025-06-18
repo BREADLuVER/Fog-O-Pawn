@@ -13,6 +13,9 @@ namespace FogOfPawn
             var comp = pawn.GetComp<CompPawnFog>();
             if (comp == null || !comp.compInitialized) return false;
 
+            if (comp.tier == DeceptionTier.DeceiverSleeper)
+                return false; // Sleepers only reveal via story beats
+
             var settings = FogSettingsCache.Current;
             List<System.Action> candidates = new();
 
@@ -62,6 +65,11 @@ namespace FogOfPawn
 
             if (comp.fullyRevealed) return;
 
+            if (comp.tier == DeceptionTier.DeceiverScammer)
+            {
+                TryAddScammerTrait(pawn);
+            }
+
             comp.RevealAll();
             comp.fullyRevealed = true;
 
@@ -90,6 +98,28 @@ namespace FogOfPawn
             }
 
             FogLog.Verbose($"[FULL REVEAL] {pawn.LabelShort} ({comp.tier}) via {reasonKey}");
+        }
+
+        private static void TryAddScammerTrait(Pawn pawn)
+        {
+            if (pawn?.story?.traits == null) return;
+            List<TraitDef> badPool = new()
+            {
+                DefDatabase<TraitDef>.GetNamedSilentFail("Volatile"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("Nervous"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("ChemicalInterest"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("ChemicalFascination"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("Pyromaniac"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("Gourmand")
+            };
+            foreach (var td in badPool.InRandomOrder())
+            {
+                if (td != null && !pawn.story.traits.HasTrait(td))
+                {
+                    pawn.story.traits.GainTrait(new Trait(td));
+                    break;
+                }
+            }
         }
     }
 } 

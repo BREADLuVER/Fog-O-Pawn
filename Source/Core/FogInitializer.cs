@@ -46,24 +46,22 @@ namespace FogOfPawn
 
         private static DeceptionTier ChooseTier(Pawn pawn, PawnGenerationRequest? request, FogOfPawnSettings settings)
         {
-            // Base weights
-            float wTruth = 0.90f;
-            float wSlight = 0.10f;
-            float wDeceiver = 0.03f;
+            float wTruth = Mathf.Max(0.01f, settings.pctTruthful);
+            float wSlight = Mathf.Max(0f, settings.pctSlight);
+            float wDeceiver = Mathf.Max(0f, settings.pctDeceiver);
 
-            // target weights when slider=1 (truth lower)
-            float wTruthTarget = 0.80f;
-            float wSlightTarget = 0.17f;
-            float wDeceiverTarget = 0.03f;
-
-            float f = settings.deceptionIntensity; // 0-1
-            wTruth = Mathf.Lerp(wTruth, wTruthTarget, f);
-            wSlight = Mathf.Lerp(wSlight, wSlightTarget, f);
-            wDeceiver = Mathf.Lerp(wDeceiver, wDeceiverTarget, f);
-
-            // Normalise
+            // After weight assignment add normalization
             float total = wTruth + wSlight + wDeceiver;
-            wTruth /= total; wSlight /= total; wDeceiver /= total;
+            if (total <= 0f)
+            {
+                wTruth = 1f; wSlight = wDeceiver = 0f;
+            }
+            else
+            {
+                wTruth /= total;
+                wSlight /= total;
+                wDeceiver /= total;
+            }
 
             float roll = Rand.Value;
             if (roll < wTruth) return DeceptionTier.Truthful;
@@ -182,7 +180,8 @@ namespace FogOfPawn
                 if (skill.Level >= 6)
                 {
                     comp.reportedSkills[skill.def] = Rand.RangeInclusive(2, 4);
-                    comp.reportedPassions[skill.def] = Passion.None;
+                    // Keep the original passion visible so the low reported level isn't a giveaway.
+                    comp.reportedPassions[skill.def] = skill.passion;
                 }
                 else
                 {
