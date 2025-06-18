@@ -70,7 +70,7 @@ namespace FogOfPawn
             if (roll < wTruth + wSlight) return DeceptionTier.SlightlyDeceived;
 
             // Deceiver – further constraints
-            if (settings.deceiverJoinersOnly && request.HasValue && request.Value.Context != PawnGenerationContext.NonPlayer)
+            if (settings.limitDeceiversToColonists && request.HasValue && request.Value.Context != PawnGenerationContext.NonPlayer)
             {
                 // compute pawn value
                 float pv = GetPawnValue(pawn);
@@ -142,14 +142,32 @@ namespace FogOfPawn
 
         private static void ApplyScammer(Pawn pawn, CompPawnFog comp)
         {
-            foreach (var skill in pawn.skills.skills)
+            var skillsShuffled = pawn.skills.skills.InRandomOrder().ToList();
+
+            // 1. High claimed skills (8-14) with passions (2-3 of them)
+            int highCount = Mathf.Clamp(FogSettingsCache.Current.scammerHighSkills, 0, 6);
+            for (int i = 0; i < highCount && i < skillsShuffled.Count; i++)
             {
-                if (skill.Level <= 6)
-                {
-                    comp.reportedSkills[skill.def] = Rand.RangeInclusive(8, 12);
-                    if (Rand.Chance(0.5f))
-                        comp.reportedPassions[skill.def] = Passion.Minor;
-                }
+                var sk = skillsShuffled[i];
+                comp.reportedSkills[sk.def] = Rand.RangeInclusive(8, 14);
+                // 50% minor, 50% major passion for first few
+                comp.reportedPassions[sk.def] = Rand.Chance(0.5f) ? Passion.Major : Passion.Minor;
+            }
+
+            // 2. Mid-level claimed skills (4-8) (another 2-4)
+            int midCount = Mathf.Clamp(FogSettingsCache.Current.scammerMidSkills, 0, 6);
+            for (int i = highCount; i < highCount + midCount && i < skillsShuffled.Count; i++)
+            {
+                var sk = skillsShuffled[i];
+                comp.reportedSkills[sk.def] = Rand.RangeInclusive(4, 8);
+                if (Rand.Chance(0.3f))
+                    comp.reportedPassions[sk.def] = Passion.Minor;
+            }
+
+            // 3. Low or truthful skills – reveal the rest so UI isn't Unknown
+            for (int i = highCount + midCount; i < skillsShuffled.Count; i++)
+            {
+                comp.revealedSkills.Add(skillsShuffled[i].def);
             }
         }
 
@@ -179,6 +197,18 @@ namespace FogOfPawn
         /// </summary>
         private static void ApplyTraitMasks(Pawn pawn, CompPawnFog comp, FogOfPawnSettings settings)
         {
+            // Truthful pawns (and those where trait fogging is disabled) should start with every trait visible.
+            if (comp.tier == DeceptionTier.Truthful)
+            {
+                foreach (var t in pawn.story?.traits?.allTraits ?? Enumerable.Empty<Trait>())
+                {
+                    comp.revealedTraits.Add(t.def);
+                }
+                return;
+            }
+
+            bool forceHideBad = comp.tier == DeceptionTier.DeceiverScammer;
+
             if (!settings.fogTraits || pawn.story?.traits == null)
             {
                 // Reveal all traits when trait fogging is disabled or pawn has none.
@@ -192,7 +222,8 @@ namespace FogOfPawn
             List<Trait> hiddenList = null;
             foreach (var trait in pawn.story.traits.allTraits)
             {
-                bool hide = Rand.Value < settings.traitHideChance;
+                bool isBad = IsNegativeTrait(trait.def);
+                bool hide = forceHideBad && isBad ? true : Rand.Value < settings.traitHideChance;
                 if (!hide)
                 {
                     comp.revealedTraits.Add(trait.def);
@@ -212,8 +243,17 @@ namespace FogOfPawn
             }
         }
 
-        private static bool IsPositiveTrait(TraitDef def) => false; // TODO better metric
-        private static bool IsNegativeTrait(TraitDef def) => false;
+        private static readonly HashSet<string> _knownBadTraitDefNames = new()
+        {
+            "Pyromaniac", "Gourmand", "ChemicalInterest", "ChemicalFascination", "Jealous", "Greedy",
+            "Volatile", "Nervous", "Slothful", "Lazy", "Sickly"
+        };
+
+        private static bool IsPositiveTrait(TraitDef def) => false; // placeholder
+        private static bool IsNegativeTrait(TraitDef def)
+        {
+            return _knownBadTraitDefNames.Contains(def.defName);
+        }
 
         public static float GetPawnValue(Pawn p)
         {

@@ -38,6 +38,12 @@ namespace FogOfPawn
         public DeceptionTier tier = DeceptionTier.Truthful;
         public bool tierManuallySet;
 
+        public bool fullyRevealed;
+
+        // transient counters used by reveal logic (not saved)
+        [System.NonSerialized]
+        public System.Collections.Generic.Dictionary<string, float> tempData = new System.Collections.Generic.Dictionary<string, float>();
+
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
             if (!Prefs.DevMode) yield break;
@@ -144,6 +150,16 @@ namespace FogOfPawn
 
         public void RevealSkill(SkillDef skillDef)
         {
+            // If this pawn is a Sleeper or Scammer and not yet fully revealed,
+            // any attempt to expose a single skill should instead trigger a dramatic
+            // full reveal for narrative impact.
+            if (!fullyRevealed && (tier == DeceptionTier.DeceiverSleeper || tier == DeceptionTier.DeceiverScammer))
+            {
+                string reason = tier == DeceptionTier.DeceiverSleeper ? "SleeperCascade" : "ScammerCascade";
+                FogUtility.TriggerFullReveal((Pawn)parent, reason);
+                return;
+            }
+
             if (revealedSkills.Contains(skillDef)) return;
 
             revealedSkills.Add(skillDef);
@@ -163,6 +179,13 @@ namespace FogOfPawn
 
         public void RevealTrait(Trait trait)
         {
+            if (!fullyRevealed && (tier == DeceptionTier.DeceiverSleeper || tier == DeceptionTier.DeceiverScammer))
+            {
+                string reason = tier == DeceptionTier.DeceiverSleeper ? "SleeperCascade" : "ScammerCascade";
+                FogUtility.TriggerFullReveal((Pawn)parent, reason);
+                return;
+            }
+
             if (revealedTraits.Contains(trait.def)) return;
 
             revealedTraits.Add(trait.def);
@@ -238,6 +261,16 @@ namespace FogOfPawn
                         }
                     }
                 }
+
+                // 1% base daily chance for sleepers/scammers if nothing else triggered
+                if ((tier == DeceptionTier.DeceiverSleeper || tier == DeceptionTier.DeceiverScammer) && ticksSinceJoin % 60000 == 0 && !tierManuallySet)
+                {
+                    if (Rand.Chance(FogSettingsCache.Current.passiveDailyRevealPct / 100f))
+                    {
+                        string reason = tier == DeceptionTier.DeceiverSleeper ? "SleeperPassive" : "ScammerPassive";
+                        FogUtility.TriggerFullReveal((Pawn)parent, reason);
+                    }
+                }
             }
         }
 
@@ -248,6 +281,7 @@ namespace FogOfPawn
             Scribe_Values.Look(ref truthfulness, "truthfulness", 0f);
             Scribe_Values.Look(ref tier, "deceptionTier", DeceptionTier.Truthful);
             Scribe_Values.Look(ref tierManuallySet, "tierManual", false);
+            Scribe_Values.Look(ref fullyRevealed, "fullyRevealed", false);
             
             Scribe_Collections.Look(ref reportedSkills, "reportedSkills", LookMode.Def, LookMode.Value);
             Scribe_Collections.Look(ref reportedPassions, "reportedPassions", LookMode.Def, LookMode.Value);
@@ -261,27 +295,72 @@ namespace FogOfPawn
 
         private void MaybeDropDisguiseKit()
         {
-            if (disguiseKitSpawned) return;
-            if (tier != DeceptionTier.DeceiverScammer) return;
-            if (parent is not Pawn pawn) return;
+            if (disguiseKitSpawned)
+            {
+                FogLog.Verbose("[KIT] Already spawned – skipping.");
+                return;
+            }
+            if (!fullyRevealed)
+            {
+                FogLog.Verbose("[KIT] Pawn not fully revealed yet.");
+                return;
+            }
+            if (tier != DeceptionTier.DeceiverScammer)
+            {
+                FogLog.Verbose("[KIT] Pawn is not a scammer tier.");
+                return;
+            }
+            if (parent is not Pawn pawn)
+            {
+                FogLog.Verbose("[KIT] Parent is not a pawn.");
+                return;
+            }
 
-            // Only trigger once the disguise penalty hediff is present (meaning pawn still in disguise).
-            var penaltyHediff = pawn.health?.hediffSet?.GetFirstHediffOfDef(DefDatabase<HediffDef>.GetNamedSilentFail("Fog_DisguisePenalty"));
-            if (penaltyHediff == null) return; // not yet or already removed
+            FogLog.Verbose($"[KIT] Attempting to spawn disguise kit for {pawn.LabelShort}.");
 
-            // Remove the penalty and spawn the physical kit.
-            pawn.health.RemoveHediff(penaltyHediff);
+            // Remove the wealth-penalty hediff if it still exists.
+            var penaltyDef = DefDatabase<HediffDef>.GetNamedSilentFail("Fog_DisguisePenalty");
+            if (penaltyDef != null)
+            {
+                var penalty = pawn.health?.hediffSet?.GetFirstHediffOfDef(penaltyDef);
+                if (penalty != null)
+                {
+                    pawn.health.RemoveHediff(penalty);
+                    FogLog.Verbose("[KIT] Removed disguise penalty hediff.");
+                }
+            }
 
             var kitDef = DefDatabase<ThingDef>.GetNamedSilentFail("FogOfPawn_DisguiseKit");
-            if (kitDef != null)
+            if (kitDef == null)
             {
-                Thing kit = ThingMaker.MakeThing(kitDef);
-                GenPlace.TryPlaceThing(kit, pawn.PositionHeld, pawn.MapHeld, ThingPlaceMode.Near, out var placed);
-                placed?.SetForbidden(false);
+                FogLog.Verbose("[KIT] ThingDef FogOfPawn_DisguiseKit not found.");
+                return;
+            }
+
+            Thing kit = ThingMaker.MakeThing(kitDef);
+            bool placedOk = GenPlace.TryPlaceThing(kit, pawn.PositionHeld, pawn.MapHeld, ThingPlaceMode.Near, out var placed);
+
+            if (!placedOk || placed == null)
+            {
+                // Fallback: put it in inventory
+                if (pawn.inventory != null)
+                {
+                    pawn.inventory.TryAddItemNotForSale(kit);
+                    FogLog.Verbose("[KIT] Placed in pawn inventory as fallback.");
+                }
+                else
+                {
+                    kit.Destroy();
+                    FogLog.Verbose("[KIT] Failed to spawn kit – destroyed (no inventory).");
+                }
+            }
+            else
+            {
+                placed.SetForbidden(false);
+                FogLog.Verbose("[KIT] Spawned at pawn position.");
             }
 
             disguiseKitSpawned = true;
-            FogLog.Verbose($"Scammer {pawn.LabelShort} revealed – disguise kit materialised.");
         }
     }
 }

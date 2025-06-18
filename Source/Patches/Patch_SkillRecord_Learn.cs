@@ -11,7 +11,7 @@ namespace FogOfPawn.Patches
         public static void Postfix(SkillRecord __instance, Pawn ___pawn)
         {
             var comp = ___pawn.GetComp<CompPawnFog>();
-            if (comp == null || comp.revealedSkills.Contains(__instance.def))
+            if (comp == null || !comp.compInitialized || comp.revealedSkills.Contains(__instance.def))
             {
                 return;
             }

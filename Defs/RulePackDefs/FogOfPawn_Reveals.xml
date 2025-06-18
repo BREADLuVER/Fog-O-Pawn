@@ -40,4 +40,26 @@
       </rulesStrings>
     </rulePack>
   </RulePackDef>
+
+  <RulePackDef>
+    <defName>Fog_SleeperReveal</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_text→{pawn_nameDef} suddenly moves with expert precision. No doubt remains: they were trained.</li>
+        <li>r_text→In the chaos, {pawn_nameFull} reveals abilities far beyond a normal colonist.</li>
+        <li>r_text→A sleeper awakens: {pawn_nameDef} was never just a farmer.</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>Fog_ScammerReveal</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_text→{pawn_nameDef}'s incompetence finally gives them away. They were faking it all along.</li>
+        <li>r_text→The truth hits hard — {pawn_nameFull} was no expert, just a fraud with a forged past.</li>
+        <li>r_text→After a string of failures, {pawn_nameDef} is exposed as a scammer.</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
 </Defs> 

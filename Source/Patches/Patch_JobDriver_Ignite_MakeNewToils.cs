@@ -11,7 +11,7 @@ namespace FogOfPawn.Patches
         {
             var pawn = __instance.pawn;
             var comp = pawn.GetComp<CompPawnFog>();
-            if (comp == null) return;
+            if (comp == null || !comp.compInitialized) return;
             
             // A pawn igniting something is a dead giveaway for a pyromaniac
             var pyroTrait = pawn.story.traits.GetTrait(TraitDefOf.Pyromaniac);

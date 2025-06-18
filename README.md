@@ -14,7 +14,10 @@ Fog-of-Pawn obscures some details of newly-joined pawns so the player doesn't ha
 | Social-interaction & passive time reveal | ✅ |
 | Grammar-based reveal messages | ✅ |
 | Trait concealment | ✅ new |
-| Narrative hooks (mood buffs, special letters, fun events) | 🚧 stubs |
+| Sleeper / Scammer reveal triggers | ⚙️ first-pass |
+| Disguise-kit & wealth penalty | ⚙️ prototype |
+| Reputation damage on reveal | ⚙️ prototype |
+| Narrative hooks (scheduled RulePacks, mood events) | 🚧 pending |
 
 ---
 ## Deception Tiers (v2)
@@ -48,9 +51,9 @@ Launch RimWorld with Dev mode on, spawn pawns, and use the gizmos or settings sl
 
 ---
 ## Roadmap (Next Milestones)
-2. **Narrative Hooks**  
-   • `OnScammerRemoved` – +10 colony mood thought when scammer dies/exiled.  
-   • `OnSleeperFullyRevealed` – blue letter announcing secret past.  
+2. **Finish Sleeper / Scammer storyline**  
+   • Multi-phase RulePack events (“Suspicion → Anomaly → Reveal”).  
+   • Finalize exile / death mood impacts.  
 4. **Polish & Release (M7)**  
    • Localization stubs for new strings.  
    • Compatibility passes (RIMHUD, Character Editor).  
@@ -61,4 +64,14 @@ Launch RimWorld with Dev mode on, spawn pawns, and use the gizmos or settings sl
 Pull requests welcome – please follow the logging guideline in `code-guideline.txt` and keep reflection look-ups gated behind `[REFLECT]` traces. 
 
 Trait concealment patch – implemented (swap-during-draw + tooltip mask).
-Narrative hooks:  
+
+Full-Reveal System (WIP)
+* **Sleeper – Combat activation**: accumulates *Sleeper combat XP* (slider, default 3000). On reaching the threshold or a lucky daily roll, the pawn is revealed.
+* **Scammer – Caught learning**: when any skill below level 4 gains *Scammer low-skill XP* (slider, default 3000) the fraud is exposed.
+* **Passive daily chance**: independent 0-20 % slider (default 1 %) for both archetypes.
+* **Aftermath**
+  • Scammer drops a *Disguise kit* (utility belt) – worn kits reduce displayed Market Value by the *Wealth reduction* slider (default 2000).  
+  • Colonists gain a temporary –15 social opinion (“Betrayed by a fraud”).  
+  • Colony mood bonus +5 for 5 days when a revealed Scammer dies or is exiled (to-do).
+
+Narrative hooks:  Building

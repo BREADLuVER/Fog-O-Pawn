@@ -3,6 +3,7 @@ using HarmonyLib;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using FogOfPawn;
 
 namespace FogOfPawn.Patches
 {
@@ -26,7 +27,7 @@ namespace FogOfPawn.Patches
             if (wearingKit)
             {
                 float before = __result;
-                __result = Mathf.Max(0f, __result - 2000f);
+                __result = Mathf.Max(0f, __result - FogSettingsCache.Current.disguiseKitWealth);
                 if (Prefs.DevMode)
                     Log.Message($"[FogOfPawn] Disguise kit reduces wealth of {pawn.LabelShort}: {before:F0} → {__result:F0}");
             }

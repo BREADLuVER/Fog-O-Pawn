@@ -31,6 +31,23 @@ namespace FogOfPawn.Patches
                 isSlave)
             {
                 Log.Message($"[FogOfPawn] Skipping fog for {__result.NameShortColored} (Context: {request.Context}, IsSlave: {isSlave}, Animal: {__result.RaceProps?.Animal}, Mech: {__result.RaceProps?.IsMechanoid})");
+                // Ensure starter/skip pawns never trigger reveal pop-ups later.
+                var comp = __result.GetComp<CompPawnFog>();
+                if (comp != null)
+                {
+                    comp.compInitialized = true;
+                    comp.fullyRevealed  = true;
+                    if (__result.skills != null)
+                    {
+                        foreach (var sk in __result.skills.skills)
+                            comp.revealedSkills.Add(sk.def);
+                    }
+                    if (__result.story?.traits != null)
+                    {
+                        foreach (var tr in __result.story.traits.allTraits)
+                            comp.revealedTraits.Add(tr.def);
+                    }
+                }
                 return;
             }
 

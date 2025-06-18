@@ -107,10 +107,8 @@ namespace FogOfPawn
                     }
                 }
 
-                // Give disguise kit in utility slot / inventory.
-                var penaltyDef = DefDatabase<HediffDef>.GetNamedSilentFail("Fog_DisguisePenalty");
-                if (penaltyDef != null)
-                    pawn.health?.AddHediff(penaltyDef);
+                // Remember these traits so we can hide them later
+                addedTraits = addedBad;
             }
 
             // Make them spawn at edge like wanderer join.
@@ -133,6 +131,12 @@ namespace FogOfPawn
 
                 // Hide any special Sleeper traits we just added.
                 if (WantedTier == DeceptionTier.DeceiverSleeper && comp != null && addedTraits?.Count > 0)
+                {
+                    foreach (var td in addedTraits)
+                        comp.revealedTraits.Remove(td);
+                }
+
+                if (WantedTier == DeceptionTier.DeceiverScammer && comp != null && addedTraits?.Count > 0)
                 {
                     foreach (var td in addedTraits)
                         comp.revealedTraits.Remove(td);
