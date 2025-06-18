@@ -6,7 +6,7 @@ Keep production logs clean for players; only emit diagnostic output in Dev mode.
 Never spam: every distinct signature/path is logged once per session.
 When to log
 Dynamic-reflection look-ups
-Example: locating SkillUI.DrawSkillsOf, TraitUI.DrawTraitRow, gene render helpers.
+Example: locating SkillUI.DrawSkillsOf, TraitUI.DrawTraitRow
 Log the full type + method name and parameter types only if we don’t have a compile–time constant.
 Fallback / unexpected branches
 If a primary patch target is missing and we fall back to a secondary, record it once.

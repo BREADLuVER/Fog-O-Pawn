@@ -23,7 +23,13 @@ namespace FogOfPawn
 
         public int maxAlteredSkills = 3;
         public bool allowUnderstate = true;
-        public bool limitDeceiversToColonists = true;
+        public bool deceiverJoinersOnly = true;
+        // Renamed – keep old field for backward compatibility
+        public bool limitDeceiversToColonists
+        {
+            get => deceiverJoinersOnly;
+            set => deceiverJoinersOnly = value;
+        }
 
         public float traitHideChance = 0.3f; // 0 none, 1 all hidden
 
@@ -33,15 +39,12 @@ namespace FogOfPawn
         public float passiveDailyRevealPct = 1f; // 1%
         public int disguiseKitWealth = 2000;
 
-        // Scammer skill distribution
-        public int scammerHighSkills = 3; // number of skills shown 8-14
-        public int scammerMidSkills  = 3; // number of skills shown 4-8
+        // Scammer balancing sliders
+        public int scammerHighSkills = 3; // # of high claimed skills 8-14
+        public int scammerMidSkills = 3; // # of mid claimed skills 4-8
 
         private const int MinXp = 1000;
         private const int MaxXp = 5000;
-
-        private Vector2 _scrollPos = Vector2.zero;
-        private float _viewHeight;
 
         public override void ExposeData()
         {
@@ -63,7 +66,7 @@ namespace FogOfPawn
 
             Scribe_Values.Look(ref maxAlteredSkills, "maxAlteredSkills", 3);
             Scribe_Values.Look(ref allowUnderstate, "allowUnderstate", true);
-            Scribe_Values.Look(ref limitDeceiversToColonists, "limitDeceiversToColonists", true);
+            Scribe_Values.Look(ref deceiverJoinersOnly, "deceiverJoinersOnly", true);
 
             Scribe_Values.Look(ref traitHideChance, "traitHideChance", 0.3f);
 
@@ -73,16 +76,18 @@ namespace FogOfPawn
             Scribe_Values.Look(ref disguiseKitWealth, "disguiseKitWealth", 2000);
 
             Scribe_Values.Look(ref scammerHighSkills, "scammerHighSkills", 3);
-            Scribe_Values.Look(ref scammerMidSkills,  "scammerMidSkills", 3);
+            Scribe_Values.Look(ref scammerMidSkills, "scammerMidSkills", 3);
         }
 
         public void DoWindowContents(Rect inRect)
         {
-            Rect scrollRect = new Rect(inRect.x, inRect.y, inRect.width - 16f, inRect.height);
-            Widgets.BeginScrollView(inRect, ref _scrollPos, scrollRect);
+            // Simple scroll view because we now have a lot of settings.
+            float viewHeight = 1000f;
+            Rect viewRect = new Rect(0, 0, inRect.width - 16f, viewHeight);
+            Widgets.BeginScrollView(inRect, ref _scrollPos, viewRect);
 
             var list = new Listing_Standard();
-            list.Begin(scrollRect);
+            list.Begin(viewRect);
 
             // Deception intensity slider
             list.Label("FogOfPawn.Settings.DeceptionIntensity".Translate() + $": {(int)(deceptionIntensity * 100)}%", -1f, "FogOfPawn.Settings.DeceptionIntensityTooltip".Translate());
@@ -118,7 +123,7 @@ namespace FogOfPawn
             list.Label("FogOfPawn.Settings.MaxAlteredSkills".Translate() + $": {maxAlteredSkills}");
             maxAlteredSkills = (int)list.Slider(maxAlteredSkills, 1, 5);
             list.CheckboxLabeled("FogOfPawn.Settings.AllowUnderstate".Translate(), ref allowUnderstate);
-            list.CheckboxLabeled("FogOfPawn.Settings.DeceiverJoinerOnly".Translate(), ref limitDeceiversToColonists);
+            list.CheckboxLabeled("FogOfPawn.Settings.DeceiverJoinerOnly".Translate(), ref deceiverJoinersOnly);
 
             list.GapLine();
             list.Label("FogOfPawn.Settings.TraitHideChance".Translate() + $": {(int)(traitHideChance*100)} %", -1f, "FogOfPawn.Settings.TraitHideChanceTooltip".Translate());
@@ -127,33 +132,32 @@ namespace FogOfPawn
 
             list.Label("FogOfPawn.Settings.FullRevealHeader".Translate());
             list.Label("Sleeper combat XP: " + sleeperCombatXp);
-            sleeperCombatXp = (int)list.Slider(sleeperCombatXp, 0, 20000);
+            sleeperCombatXp = (int)list.Slider(sleeperCombatXp, 500, 10000);
 
             list.Label("Scammer low-skill XP: " + scammerSkillXp);
-            scammerSkillXp = (int)list.Slider(scammerSkillXp, 0, 20000);
+            scammerSkillXp = (int)list.Slider(scammerSkillXp, 500, 10000);
 
             list.Label("Passive daily reveal chance: " + passiveDailyRevealPct.ToString("F1") + "%");
-            passiveDailyRevealPct = list.Slider(passiveDailyRevealPct, 0f, 50f);
+            passiveDailyRevealPct = list.Slider(passiveDailyRevealPct, 0f, 20f);
 
             list.Label("Disguise kit wealth reduction: " + disguiseKitWealth);
             disguiseKitWealth = (int)list.Slider(disguiseKitWealth, 0, 10000);
-
             list.GapLine();
-            list.Label("Scammer claimed high-skill count: " + scammerHighSkills);
-            scammerHighSkills = (int)list.Slider(scammerHighSkills, 0, 6);
 
-            list.Label("Scammer claimed mid-skill count: " + scammerMidSkills);
+            list.Label("Scammer high claimed skills: " + scammerHighSkills);
+            scammerHighSkills = (int)list.Slider(scammerHighSkills, 1, 6);
+
+            list.Label("Scammer mid claimed skills: " + scammerMidSkills);
             scammerMidSkills = (int)list.Slider(scammerMidSkills, 0, 6);
 
             list.End();
-
-            _viewHeight = list.CurHeight;
-
             Widgets.EndScrollView();
 
             // Apply instantly so any in-game logic reads the new values without waiting
             // for the player to close the settings window or restart the game.
             Write();
         }
+
+        private Vector2 _scrollPos = Vector2.zero;
     }
 } 

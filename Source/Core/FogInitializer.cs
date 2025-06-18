@@ -142,10 +142,11 @@ namespace FogOfPawn
 
         private static void ApplyScammer(Pawn pawn, CompPawnFog comp)
         {
+            var settings = FogSettingsCache.Current;
             var skillsShuffled = pawn.skills.skills.InRandomOrder().ToList();
 
             // 1. High claimed skills (8-14) with passions (2-3 of them)
-            int highCount = Mathf.Clamp(FogSettingsCache.Current.scammerHighSkills, 0, 6);
+            int highCount = Mathf.Clamp(settings.scammerHighSkills, 1, 6);
             for (int i = 0; i < highCount && i < skillsShuffled.Count; i++)
             {
                 var sk = skillsShuffled[i];
@@ -154,8 +155,8 @@ namespace FogOfPawn
                 comp.reportedPassions[sk.def] = Rand.Chance(0.5f) ? Passion.Major : Passion.Minor;
             }
 
-            // 2. Mid-level claimed skills (4-8) (another 2-4)
-            int midCount = Mathf.Clamp(FogSettingsCache.Current.scammerMidSkills, 0, 6);
+            // 2. Mid-level claimed skills (4-8)
+            int midCount = Mathf.Clamp(settings.scammerMidSkills, 0, 6);
             for (int i = highCount; i < highCount + midCount && i < skillsShuffled.Count; i++)
             {
                 var sk = skillsShuffled[i];
