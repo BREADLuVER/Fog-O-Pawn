@@ -34,8 +34,8 @@ namespace FogOfPawn
         public float traitHideChance = 0.3f; // 0 none, 1 all hidden
 
         // Full reveal mechanics
-        public int sleeperCombatXp = 3000;
-        public int scammerSkillXp = 3000;
+        public int sleeperCombatXp = 5000;
+        public int scammerSkillXp = 4000;
         public float passiveDailyRevealPct = 1f; // 1%
         public int disguiseKitWealth = 2000;
 
@@ -70,8 +70,8 @@ namespace FogOfPawn
 
             Scribe_Values.Look(ref traitHideChance, "traitHideChance", 0.3f);
 
-            Scribe_Values.Look(ref sleeperCombatXp, "sleeperCombatXp", 3000);
-            Scribe_Values.Look(ref scammerSkillXp, "scammerSkillXp", 3000);
+            Scribe_Values.Look(ref sleeperCombatXp, "sleeperCombatXp", 5000);
+            Scribe_Values.Look(ref scammerSkillXp, "scammerSkillXp", 4000);
             Scribe_Values.Look(ref passiveDailyRevealPct, "passiveDailyRevealPct", 1f);
             Scribe_Values.Look(ref disguiseKitWealth, "disguiseKitWealth", 2000);
 
