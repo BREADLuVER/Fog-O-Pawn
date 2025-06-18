@@ -23,6 +23,11 @@ namespace FogOfPawn
         private const int TicksPerSeason = 900000; // 15 days
         private static int NextBeatIntervalTicks => Rand.Range(TicksPerSeason + TicksPerSeason / 2, TicksPerSeason * 2); // 1.5–2 seasons
 
+        // Year-2 joiner scheduling
+        private const int TicksPerYear = TicksPerSeason * 4;
+        private int _joinerDueTick = -1;
+        private bool _joinerFired;
+
         #region Scribing helpers
         private class SleeperStoryScribe : IExposable
         {
@@ -50,6 +55,11 @@ namespace FogOfPawn
         public override void GameComponentTick()
         {
             if (Find.TickManager.TicksGame % CheckInterval != 0) return;
+
+            if (_stories.Count == 0 && !_joinerFired && Find.TickManager.TicksGame >= _joinerDueTick)
+            {
+                TryFireScheduledJoiner();
+            }
 
             if (_stories.Count == 0) return;
 
@@ -112,10 +122,14 @@ namespace FogOfPawn
 
         public override void ExposeData()
         {
+            base.ExposeData();
+
             if (Scribe.mode == LoadSaveMode.Saving)
             {
                 var list = _stories.Select(s => new SleeperStoryScribe(s)).ToList();
                 Scribe_Collections.Look(ref list, "sleeperStories", LookMode.Deep);
+                Scribe_Values.Look(ref _joinerDueTick, "joinerDue", -1);
+                Scribe_Values.Look(ref _joinerFired, "joinerFired", false);
             }
             else if (Scribe.mode == LoadSaveMode.LoadingVars)
             {
@@ -123,12 +137,47 @@ namespace FogOfPawn
                 Scribe_Collections.Look(ref list, "sleeperStories", LookMode.Deep);
                 if (list != null)
                     _stories = list.Select(l => new SleeperStory { pawnId = l.pawnId, stage = l.stage, dueTick = l.dueTick }).ToList();
+                Scribe_Values.Look(ref _joinerDueTick, "joinerDue", -1);
+                Scribe_Values.Look(ref _joinerFired, "joinerFired", false);
             }
         }
 
         public bool IsSleeperStoryActive(Pawn pawn)
         {
             return _stories.Any(s => s.pawnId == pawn.thingIDNumber);
+        }
+
+        public override void FinalizeInit()
+        {
+            base.FinalizeInit();
+
+            if (_joinerDueTick < 0)
+            {
+                _joinerDueTick = Find.TickManager.TicksGame + TicksPerYear; // start of second year
+            }
+        }
+
+        private void TryFireScheduledJoiner()
+        {
+            // Choose map
+            Map map = Find.AnyPlayerHomeMap;
+            if (map == null) return;
+
+            // Decide Sleeper or Scammer (60/40)
+            bool sleeper = Rand.Chance(0.6f);
+            string defName = sleeper ? "Fog_SleeperJoinIncident" : "Fog_ScammerJoinIncident";
+            IncidentDef def = DefDatabase<IncidentDef>.GetNamedSilentFail(defName);
+            if (def == null)
+            {
+                Log.Warning("[FogOfPawn] Scheduled joiner incident def missing: " + defName);
+                return;
+            }
+
+            IncidentParms parms = StorytellerUtility.DefaultParmsNow(def.category, map);
+            parms.target = map;
+            bool ok = def.Worker.TryExecute(parms);
+            Log.Message("[FogOfPawn] Scheduled joiner fired: " + defName + " result=" + ok);
+            _joinerFired = true;
         }
     }
 } 

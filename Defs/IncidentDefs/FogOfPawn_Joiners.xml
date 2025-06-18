@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <IncidentDef ParentName="WandererJoinFriendly">
+    <defName>Fog_SleeperJoinIncident</defName>
+    <workerClass>FogOfPawn.IncidentWorker_SleeperJoin</workerClass>
+    <letterLabel>Wanderer joins</letterLabel>
+    <letterText>A wanderer wishes to join your colony.</letterText>
+    <baseChance>0</baseChance> <!-- never random, fired via code -->
+  </IncidentDef>
+
+  <IncidentDef ParentName="WandererJoinFriendly">
+    <defName>Fog_ScammerJoinIncident</defName>
+    <workerClass>FogOfPawn.IncidentWorker_ScammerJoin</workerClass>
+    <letterLabel>Wanderer joins</letterLabel>
+    <letterText>A wanderer wishes to join your colony.</letterText>
+    <baseChance>0</baseChance>
+  </IncidentDef>
+</Defs> 
