@@ -42,12 +42,37 @@
   </RulePackDef>
 
   <RulePackDef>
-    <defName>Fog_SleeperReveal</defName>
+    <defName>Fog_SleeperReveal_Suspicion</defName>
     <rulePack>
       <rulesStrings>
-        <li>r_text→{pawn_nameDef} suddenly moves with expert precision. No doubt remains: they were trained.</li>
-        <li>r_text→In the chaos, {pawn_nameFull} reveals abilities far beyond a normal colonist.</li>
-        <li>r_text→A sleeper awakens: {pawn_nameDef} was never just a farmer.</li>
+        <li>r_text→Something about {PAWN_nameDef} doesn’t add up. The way they hold a tool… the way they pause before answering questions.</li>
+        <li>r_text→A colonist jokes that {PAWN_nameDef} has “perfect posture for a farmer.” It gets quiet after that.</li>
+        <li>r_text→{PAWN_nameDef} knows things they shouldn't. Old war terms, forgotten places. But maybe everyone’s just on edge.</li>
+        <li>r_text→Lately, {PAWN_nameDef} has been watching drills a little too closely. Coincidence…?</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>Fog_SleeperReveal_Anomaly</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_text→During a raid, {PAWN_nameDef} shouted orders like a seasoned commander. No one remembers teaching them tactics.</li>
+        <li>r_text→While tending a wound, {PAWN_nameDef} improvised a technique none of the doctors had ever seen. “Just instinct,” they muttered.</li>
+        <li>r_text→Their voice changed. Just for a moment. Low, clipped. Trained. Then it was gone.</li>
+        <li>r_text→The power went out. {PAWN_nameDef} moved straight for the emergency lanterns. Muscle memory, not guessing.</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <RulePackDef>
+    <defName>Fog_SleeperReveal_Revealed</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_text→{PAWN_nameDef} drops the act. A combat stance, a steel stare. The colony just gained an asset—or a threat.</li>
+        <li>r_text→In the chaos, {PAWN_nameDef} moved like someone trained to end wars. No more hiding now.</li>
+        <li>r_text→The voice returned, clear and cold: “Orders?” The sleeper is awake.</li>
+        <li>r_text→They were never just a wanderer. Not a refugee. Not lost. {PAWN_nameDef} was planted. Now they remember why.</li>
       </rulesStrings>
     </rulePack>
   </RulePackDef>

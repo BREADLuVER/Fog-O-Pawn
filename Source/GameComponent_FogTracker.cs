@@ -2,6 +2,7 @@ using Verse;
 using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
+using Verse.Grammar;
 
 namespace FogOfPawn
 {
@@ -27,6 +28,9 @@ namespace FogOfPawn
         private const int TicksPerYear = TicksPerSeason * 4;
         private int _joinerDueTick = -1;
         private bool _joinerFired;
+
+        private const int ExtraJoinerCooldown = 60000 * 3; // 3 in-game days
+        private int _lastJoinerTick = -1;
 
         #region Scribing helpers
         private class SleeperStoryScribe : IExposable
@@ -113,11 +117,17 @@ namespace FogOfPawn
             SendSleeperLetter(pawn, "Fog_SleeperReveal_Suspicion");
         }
 
-        private static void SendSleeperLetter(Pawn pawn, string key)
+        private static void SendSleeperLetter(Pawn pawn, string rulePackDefName)
         {
-            string label = (key + ".Label").Translate(pawn.Named("PAWN"));
-            string text = (key + ".Text").Translate(pawn.Named("PAWN"));
-            Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.NeutralEvent, pawn);
+            RulePackDef rp = DefDatabase<RulePackDef>.GetNamedSilentFail(rulePackDefName);
+            if (rp != null)
+            {
+                GrammarRequest req = new GrammarRequest();
+                req.Includes.Add(rp);
+                req.Rules.AddRange(GrammarUtility.RulesForPawn("PAWN", pawn));
+                string text = GrammarResolver.Resolve("r_text", req);
+                Find.LetterStack.ReceiveLetter("Suspicion", text, LetterDefOf.NeutralEvent, pawn);
+            }
         }
 
         public override void ExposeData()
@@ -130,6 +140,7 @@ namespace FogOfPawn
                 Scribe_Collections.Look(ref list, "sleeperStories", LookMode.Deep);
                 Scribe_Values.Look(ref _joinerDueTick, "joinerDue", -1);
                 Scribe_Values.Look(ref _joinerFired, "joinerFired", false);
+                Scribe_Values.Look(ref _lastJoinerTick, "lastJoin", -1);
             }
             else if (Scribe.mode == LoadSaveMode.LoadingVars)
             {
@@ -139,6 +150,7 @@ namespace FogOfPawn
                     _stories = list.Select(l => new SleeperStory { pawnId = l.pawnId, stage = l.stage, dueTick = l.dueTick }).ToList();
                 Scribe_Values.Look(ref _joinerDueTick, "joinerDue", -1);
                 Scribe_Values.Look(ref _joinerFired, "joinerFired", false);
+                Scribe_Values.Look(ref _lastJoinerTick, "lastJoin", -1);
             }
         }
 
@@ -178,6 +190,19 @@ namespace FogOfPawn
             bool ok = def.Worker.TryExecute(parms);
             Log.Message("[FogOfPawn] Scheduled joiner fired: " + defName + " result=" + ok);
             _joinerFired = true;
+            _lastJoinerTick = Find.TickManager.TicksGame;
         }
+
+        public void ForceImmediateJoiner(bool allowRepeat)
+        {
+            if (!allowRepeat && _joinerFired) return;
+            _joinerDueTick = 0;
+            _joinerFired = false;
+        }
+
+        public bool HasSpawnedJoiner() => _joinerFired;
+        public bool HasPendingJoiner() => _joinerDueTick <= Find.TickManager.TicksGame;
+
+        public bool CooldownPassed => _lastJoinerTick < 0 || Find.TickManager.TicksGame - _lastJoinerTick > ExtraJoinerCooldown;
     }
 } 
