@@ -10,6 +10,7 @@ namespace FogOfPawn
         static Startup()
         {
             var harmony = new Harmony("FogOfPawn");
+	    Harmony.DEBUG = true;
             harmony.PatchAll();
             Log.Message("[FogOfPawn] Harmony patches applied.");
         }

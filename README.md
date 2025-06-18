@@ -13,15 +13,11 @@ Fog-of-Pawn obscures some details of newly-joined pawns so the player doesn't ha
 | Tiered deception system (Truthful / Slight / Scammer / Sleeper) | ✅ |
 | Social-interaction & passive time reveal | ✅ |
 | Grammar-based reveal messages | ✅ |
-| Trait concealment | ✅ |
-| Sleeper / Scammer reveal triggers (XP, health, job, social) | ✅ new |
-| Disguise-kit & wealth penalty | ✅ |
-| Reputation damage on reveal | ⚙️ prototype |
 | Trait concealment | ✅ new |
-| Sleeper / Scammer reveal triggers | ⚙️ first-pass |
-| Disguise-kit & wealth penalty | ⚙️ prototype |
+| Sleeper / Scammer reveal triggers | ✅ baseline |
+| Disguise-kit & wealth penalty | ✅ polished |
 | Reputation damage on reveal | ⚙️ prototype |
-| Narrative hooks (scheduled RulePacks, mood events) | 🚧 pending |
+| Narrative hooks (multi-phase stories) | ⚙️ WIP |
 
 ---
 ## Deception Tiers (v2)
@@ -56,8 +52,8 @@ Launch RimWorld with Dev mode on, spawn pawns, and use the gizmos or settings sl
 ---
 ## Roadmap (Next Milestones)
 2. **Finish Sleeper / Scammer storyline**  
-   • Multi-phase RulePack events (“Suspicion → Anomaly → Reveal”).  
-   • Finalize exile / death mood impacts.  
+   • Phase-arc implemented (auto year-2 joiner, 3-beat Sleeper story).  
+   • TODO: fine-tune RulePack flavour text + exile/death mood impacts.  
 4. **Polish & Release (M7)**  
    • Localization stubs for new strings.  
    • Compatibility passes (RIMHUD, Character Editor).  

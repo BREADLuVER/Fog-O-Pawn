@@ -43,9 +43,6 @@ namespace FogOfPawn
         public int scammerHighSkills = 3; // # of high claimed skills 8-14
         public int scammerMidSkills = 3; // # of mid claimed skills 4-8
 
-        public bool ritualExtraJoiner = true;
-        public int ritualExtraJoinerPct = 5;
-
         private const int MinXp = 1000;
         private const int MaxXp = 5000;
 
@@ -80,9 +77,6 @@ namespace FogOfPawn
 
             Scribe_Values.Look(ref scammerHighSkills, "scammerHighSkills", 3);
             Scribe_Values.Look(ref scammerMidSkills, "scammerMidSkills", 3);
-
-            Scribe_Values.Look(ref ritualExtraJoiner, "ritualExtraJoiner", true);
-            Scribe_Values.Look(ref ritualExtraJoinerPct, "ritualExtraJoinerPct", 5);
         }
 
         public void DoWindowContents(Rect inRect)
@@ -155,12 +149,6 @@ namespace FogOfPawn
 
             list.Label("Scammer mid claimed skills: " + scammerMidSkills);
             scammerMidSkills = (int)list.Slider(scammerMidSkills, 0, 6);
-
-            list.GapLine();
-            list.Label("Sleeper/Scammer joiner from rituals:");
-            list.CheckboxLabeled("Enable extra ritual joiners", ref ritualExtraJoiner);
-            list.Label("Chance per successful ritual: " + ritualExtraJoinerPct + "%");
-            ritualExtraJoinerPct = (int)list.Slider(ritualExtraJoinerPct, 0, 20);
 
             list.End();
             Widgets.EndScrollView();
