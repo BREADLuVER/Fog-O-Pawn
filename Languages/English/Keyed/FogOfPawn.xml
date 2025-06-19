@@ -94,4 +94,6 @@
   <FogOfPawn.Settings.VerboseLogging>Enable verbose logging</FogOfPawn.Settings.VerboseLogging>
   <FogOfPawn.Settings.VerboseLogging_Tooltip>If enabled, Fog of Pawn will print detailed diagnostic messages to the console. Useful for debugging or reporting bugs.</FogOfPawn.Settings.VerboseLogging_Tooltip>
 
+  <FogOfPawn.Settings.AlterRange>Max skill deviation range</FogOfPawn.Settings.AlterRange>
+
 </LanguageData> 

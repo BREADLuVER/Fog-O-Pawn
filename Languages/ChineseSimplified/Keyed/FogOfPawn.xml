@@ -109,4 +109,6 @@
 
   <FogOfPawn.Settings.VerboseLogging>启用详细日志</FogOfPawn.Settings.VerboseLogging>
   <FogOfPawn.Settings.VerboseLogging_Tooltip>启用后，模组将在控制台输出详细诊断信息，便于调试或问题反馈。</FogOfPawn.Settings.VerboseLogging_Tooltip>
+
+  <FogOfPawn.Settings.AlterRange>技能偏差最大范围</FogOfPawn.Settings.AlterRange>
 </LanguageData> 

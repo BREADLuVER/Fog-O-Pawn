@@ -1,7 +1,7 @@
 <ModMetaData>
     <name>Fog of Pawn</name>
     <packageId>Fog.Of.Pawn</packageId>
-    <author>YourNameHere</author>
+    <author>Brad Yin</author>
     <supportedVersions>
         <li>1.6</li>
     </supportedVersions>
@@ -16,5 +16,5 @@
     <description>
         Adds uncertainty and deception to new colonists by hiding or faking skills, passions, traits until they are discovered through gameplay.
     </description>
-    <url>https://github.com/yourgithub/Fog-Of-Pawn</url>
+    <url>https://github.com/BREADLuVER/Fog-O-Pawn</url>
 </ModMetaData> 

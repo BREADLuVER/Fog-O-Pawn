@@ -119,7 +119,8 @@ namespace FogOfPawn
             foreach (var skill in skillsToAlter)
             {
                 bool understate = settings.allowUnderstate && Rand.Chance(0.5f);
-                int delta = Rand.RangeInclusive(2, 5);
+                int range = Mathf.Clamp(settings.alteredSkillRange, 2, 10);
+                int delta = Rand.RangeInclusive(2, range);
                 int reported = Mathf.Clamp(skill.Level + (understate ? -delta : delta), 0, 20);
                 comp.reportedSkills[skill.def] = reported;
 

@@ -13,7 +13,7 @@ namespace FogOfPawn
         public bool verboseLogging = false;
 
         // Ambient reveal tuning
-        public int socialRevealPct = 10; // % chance per successful interaction
+        public int socialRevealPct = 5; // % chance per successful interaction
         public float passiveRevealDays = 6f; // MTBDays per pawn
 
         public bool allowSocialSkillReveal = true;
@@ -53,6 +53,9 @@ namespace FogOfPawn
         // Work tab masking fallback – when true use safer but less accurate capacity override instead of transpiler.
         public bool workTabFallbackMask = false;
 
+        // Range (±) for how much skill levels can be exaggerated or understated in Slight tier
+        public int alteredSkillRange = 6;
+
         private const int MinXp = 1000;
         private const int MaxXp = 5000;
 
@@ -66,7 +69,7 @@ namespace FogOfPawn
             Scribe_Values.Look(ref fogGenes, "fogGenes", true);
             Scribe_Values.Look(ref verboseLogging, "verboseLogging", false);
 
-            Scribe_Values.Look(ref socialRevealPct, "socialRevealPct", 10);
+            Scribe_Values.Look(ref socialRevealPct, "socialRevealPct", 5);
             Scribe_Values.Look(ref passiveRevealDays, "passiveRevealDays", 6f);
 
             Scribe_Values.Look(ref allowSocialSkillReveal, "allowSocialSkillReveal", true);
@@ -93,6 +96,8 @@ namespace FogOfPawn
             Scribe_Values.Look(ref pctDeceiver, "pctDeceiver", 1);
 
             Scribe_Values.Look(ref workTabFallbackMask, "workTabFallbackMask", false);
+
+            Scribe_Values.Look(ref alteredSkillRange, "alteredSkillRange", 6);
         }
 
         public void DoWindowContents(Rect inRect)
@@ -161,6 +166,10 @@ namespace FogOfPawn
             list.CheckboxLabeled("FogOfPawn.Settings.AllowUnderstate".Translate(), ref allowUnderstate);
 
             list.GapLine();
+            list.Label("FogOfPawn.Settings.AlterRange".Translate() + $": ±{alteredSkillRange}");
+            alteredSkillRange = (int)list.Slider(alteredSkillRange, 2, 10);
+            list.GapLine();
+
             list.Label("FogOfPawn.Settings.TraitHideChance".Translate() + $": {(int)(traitHideChance*100)} %", -1f, "FogOfPawn.Settings.TraitHideChanceTooltip".Translate());
             traitHideChance = list.Slider(traitHideChance, 0f, 1f);
             list.GapLine();
