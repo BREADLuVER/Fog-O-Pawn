@@ -1,4 +1,8 @@
-/Source/bin/
-/Source/obj/
-/.pdb
-/.dll
+# Build artifacts
+Source/bin/
+Source/obj/
+*.dll
+*.pdb
+
+!1.6/Assemblies/*.dll
+!1.6/Assemblies/*.pdb
