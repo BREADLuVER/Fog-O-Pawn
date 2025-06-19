@@ -37,12 +37,35 @@
   <Fog.FullReveal.ScammerCascade.Label>Scammer Revealed</Fog.FullReveal.ScammerCascade.Label>
   <Fog.FullReveal.ScammerCascade.Text>One secret leads to another—{PAWN}'s entire résumé falls apart.</Fog.FullReveal.ScammerCascade.Text>
 
-  <Fog_SleeperReveal_Suspicion.Text>Something about {PAWN} feels… off. Their eyes track patrol drills like second nature.</Fog_SleeperReveal_Suspicion.Text>
-  <Fog_SleeperReveal_Anomaly.Text>During the commotion, {PAWN} moved with trained precision. Colonists exchange uneasy glances.</Fog_SleeperReveal_Anomaly.Text>
-  <Fog_SleeperReveal_Revealed.Text>{PAWN} straightens their posture and speaks in a clipped voice. The sleeper is fully awake.</Fog_SleeperReveal_Revealed.Text>
+  <Fog_SleeperReveal_Suspicion.Text>{PAWN_nameDef} has begun to draw quiet attention: a stance too straight for a farmer, reflexes too sharp for a wanderer.  Colonists trade rumours at mealtime, each story stranger than the last.</Fog_SleeperReveal_Suspicion.Text>
+  <Fog_SleeperReveal_Anomaly.Text>A crisis breaks routine and instincts override the mask.  {PAWN_nameDef} moves with drilled precision, barking orders that seasoned soldiers obey without thinking.  Whispers turn to alarm.</Fog_SleeperReveal_Anomaly.Text>
+  <Fog_SleeperReveal_Revealed.Text>{PAWN_nameDef} lets the cover fall away.  Eyes harden, posture shifts, and words carry quiet authority.  Whether protector or threat, their real life has finally arrived.</Fog_SleeperReveal_Revealed.Text>
+
+  <!-- Variant lines -->
+  <Fog_SleeperReveal_Suspicion.Text.1>{PAWN_nameDef} hums old military marches while hauling stone blocks.  Nobody else recognises the tune.</Fog_SleeperReveal_Suspicion.Text.1>
+  <Fog_SleeperReveal_Suspicion.Text.2>During poker night, {PAWN_nameDef} counted cards without ever looking down.</Fog_SleeperReveal_Suspicion.Text.2>
+  <Fog_SleeperReveal_Suspicion.Text.3>The way {PAWN_nameDef} sharpens a knife suggests academy training, not frontier life.</Fog_SleeperReveal_Suspicion.Text.3>
+
+  <Fog_SleeperReveal_Anomaly.Text.1>A solar flare fries comms; {PAWN_nameDef} reroutes power with expert speed, then pretends it was luck.</Fog_SleeperReveal_Anomaly.Text.1>
+  <Fog_SleeperReveal_Anomaly.Text.2>Raid sirens wail—{PAWN_nameDef} flips into formation calls none of the militia have heard before.</Fog_SleeperReveal_Anomaly.Text.2>
+  <Fog_SleeperReveal_Anomaly.Text.3>A mis-thrown grenade lands nearby; {PAWN_nameDef} dives on it, pivots, hurls it back—and apologises for 'muscle memory'.</Fog_SleeperReveal_Anomaly.Text.3>
+
+  <Fog_SleeperReveal_Revealed.Text.1>Dust settles.  {PAWN_nameDef} stands tall, voice clear: "Directive acknowledged."  Silence grips the colony.</Fog_SleeperReveal_Revealed.Text.1>
+  <Fog_SleeperReveal_Revealed.Text.2>{PAWN_nameDef} recites coordinates, call-signs, and oaths to long-dead commanders before meeting your gaze.</Fog_SleeperReveal_Revealed.Text.2>
+  <Fog_SleeperReveal_Revealed.Text.3>With a calm breath, {PAWN_nameDef} disables the safety on their sidearm—ready for orders or judgement.</Fog_SleeperReveal_Revealed.Text.3>
 
   <!-- Settings -->
   <FogOfPawn.Settings.DeceiverJoinerOnly>Enable guaranteed Sleeper/Scammer storylines</FogOfPawn.Settings.DeceiverJoinerOnly>
   <FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>If enabled, the mod guarantees one Sleeper and one Scammer will join your colony mid-game. Disable for pure RNG (about 1% of joiners).</FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>
+
+  <!-- Sleeper choice letter -->
+  <Fog_SleeperChoice.Label>{PAWN_nameFull} stands revealed</Fog_SleeperChoice.Label>
+  <Fog_SleeperChoice.Text>The facade has shattered. {PAWN_nameDef}—once just another survivor—now stands revealed as something far more dangerous… or perhaps, necessary. Their movements are sharper, their voice steadier, their eyes no longer darting with uncertainty. Training buried deep has surfaced, and they make no effort to deny it. Now, with the colony watching, {PAWN_nameDef} waits—ready for judgment, or a mission.</Fog_SleeperChoice.Text>
+  <Fog_SleeperChoice.Text.1>The facade has shattered. {PAWN_nameDef}—once just another survivor—now stands revealed as something far more dangerous… or perhaps, necessary. Their movements are sharper, their voice steadier, their eyes no longer darting with uncertainty. Training buried deep has surfaced, and they make no effort to deny it. Now, with the colony watching, {PAWN_nameDef} waits—ready for judgment, or a mission.</Fog_SleeperChoice.Text.1>
+  <Fog_SleeperChoice.Text.2>The truth can't be hidden anymore. Every gesture, every decision, now makes sense in hindsight—{PAWN_nameDef} was never just a wanderer. The calm in chaos, the instincts that shouldn't belong to a farmer… they were built for more. They step forward without shame, posture perfect, awaiting your decision with a focus only someone trained could maintain. Do you trust them now that the mask is gone?</Fog_SleeperChoice.Text.2>
+  <Fog_SleeperChoice.Text.3>They've worked beside you, bled for the colony, shared meals and storms. But now, {PAWN_nameDef} stands exposed—an agent of something else, once. Weapon… friend? The tension in the air is thicker than dust before a raid. They say nothing, but their stance is unflinching. The choice is yours: cast them out, or embrace the soldier hidden in plain sight.</Fog_SleeperChoice.Text.3>
+  <Fog_SleeperOutcome_Keep>Keep and trust</Fog_SleeperOutcome_Keep>
+  <Fog_SleeperOutcome_Capture>Capture (treat as hostile)</Fog_SleeperOutcome_Capture>
+  <Fog_SleeperOutcome_Exile>Exile immediately</Fog_SleeperOutcome_Exile>
 
 </LanguageData> 

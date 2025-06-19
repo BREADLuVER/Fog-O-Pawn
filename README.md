@@ -18,6 +18,11 @@ Fog-of-Pawn obscures some details of newly-joined pawns so the player doesn't ha
 | Disguise-kit & wealth penalty | ✅ polished |
 | Reputation damage on reveal | ⚙️ prototype |
 | Narrative hooks (multi-phase stories) | ⚙️ WIP |
+| Joiner distribution sliders & guaranteed toggle | ✅ new |
+| **Global skill masking (game logic)** | ✅ new |
+| **Work tab masked display (transpiler)** | ✅ new (toggle) |
+| **Scammer performance jitter** | ✅ new |
+| **Social Impact −30 after scammer reveal** | ✅ new |
 
 ---
 ## Deception Tiers (v2)
@@ -38,8 +43,12 @@ Deceiver tier is restricted to pawns that *join* the player (wanderers, refugees
 * Dev-mode gizmos on each pawn:  
   • Print Deception Profile  
   • Set Tier → Truthful / Slight / Scammer / Sleeper (with pawn-value validation)  
-  • +XP Shooting (forces reveal check)
+  • +XP Shooting (forces reveal check)  
+  • Next Sleeper Beat (step through 3-phase story)  
+  • Try Social / Passive reveal rolls
 * Console logs follow `[FogOfPawn REFLECT|FAIL|DEBUG|PROFILE]` tags – only in DevMode or with `VERBOSE_LOG` symbol.
+
+Updated settings now expose three sliders for Truthful / Slight / Deceiver spawn weights (defaults 90 / 9 / 1) plus a toggle to guarantee one Sleeper and one Scammer joiner by mid-game.
 
 ---
 ## Build / Test
@@ -71,7 +80,18 @@ Full-Reveal System (WIP)
 * **Passive daily chance**: independent 0-20 % slider (default 1 %) for both archetypes.
 * **Aftermath**
   • Scammer drops a *Disguise kit* (utility belt) – worn kits reduce displayed Market Value by the *Wealth reduction* slider (default 2000).  
-  • Colonists gain a temporary –15 social opinion (“Betrayed by a fraud”).  
+  • Colonists gain a temporary –30 social opinion (“Betrayed by a fraud”).  
   • Colony mood bonus +5 for 5 days when a revealed Scammer dies or is exiled (to-do).
 
 Narrative hooks:  Building
+
+### New in v?? (Skill Mask Pass)
+
+* **Universal masked skill levels** – a Harmony postfix on `SkillRecord.get_Level` funnels every read through `EffectiveSkillUtility`, so AI, stats and other mods all see the fake value until revelation.
+* **Work-tab transpiler** – replaces capacity multipliers inside `PawnColumnWorker_WorkPriority.DoCell`, letting the tab display the masked skill exactly.  If another mod also transpiles that method, enable *Work-tab compatibility mode* in the mod settings to fall back to a safer approach.
+* **Scammer “jitter”** – unrevealed scammers have a 15 % hourly chance per skill to act 3-6 levels worse, creating occasional suspicious failures.
+* **Revealed scammer penalty** – once exposed, scammers suffer −0.30 Social Impact, hurting trade deals and persuasion attempts.
+
+Settings additions
+
+* *Work-tab compatibility mode* (checkbox) – disables the transpiler in favour of a future non-IL fallback; use only if a major UI mod reports a conflict.

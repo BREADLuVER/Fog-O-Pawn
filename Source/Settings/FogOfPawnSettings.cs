@@ -48,6 +48,9 @@ namespace FogOfPawn
         public int pctSlight = 9;
         public int pctDeceiver = 1;
 
+        // Work tab masking fallback – when true use safer but less accurate capacity override instead of transpiler.
+        public bool workTabFallbackMask = false;
+
         private const int MinXp = 1000;
         private const int MaxXp = 5000;
 
@@ -86,6 +89,8 @@ namespace FogOfPawn
             Scribe_Values.Look(ref pctTruthful, "pctTruthful", 90);
             Scribe_Values.Look(ref pctSlight, "pctSlight", 9);
             Scribe_Values.Look(ref pctDeceiver, "pctDeceiver", 1);
+
+            Scribe_Values.Look(ref workTabFallbackMask, "workTabFallbackMask", false);
         }
 
         public void DoWindowContents(Rect inRect)
@@ -178,6 +183,9 @@ namespace FogOfPawn
 
             list.Label("Scammer mid claimed skills: " + scammerMidSkills);
             scammerMidSkills = (int)list.Slider(scammerMidSkills, 0, 6);
+
+            list.GapLine();
+            list.CheckboxLabeled("FogOfPawn.Settings.WorkTabFallbackMask".Translate(), ref workTabFallbackMask, "FogOfPawn.Settings.WorkTabFallbackMask_Tooltip".Translate());
 
             list.End();
             Widgets.EndScrollView();

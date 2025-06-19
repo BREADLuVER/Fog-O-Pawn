@@ -97,6 +97,12 @@ namespace FogOfPawn
                 }
             }
 
+            if (comp.tier == DeceptionTier.DeceiverSleeper)
+            {
+                // Offer player a choice on what to do with their newly awakened asset.
+                SleeperChoiceUtility.SendChoiceLetter(pawn);
+            }
+
             FogLog.Verbose($"[FULL REVEAL] {pawn.LabelShort} ({comp.tier}) via {reasonKey}");
         }
 
