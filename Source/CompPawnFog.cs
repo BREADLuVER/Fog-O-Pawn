@@ -70,7 +70,7 @@ namespace FogOfPawn
                         float factor = pawn.GetStatValue(RimWorld.StatDefOf.GlobalLearningFactor);
                         float rawXp = FogSettingsCache.Current.xpToReveal / factor + 10f;
                         sk.Learn(rawXp, direct: true);
-                        Log.Message($"[FogOfPawn] Dev: Added XP to {pawn.LabelShort}'s Shooting skill. Current XP since last level: {sk.xpSinceLastLevel}");
+                        FogLog.Verbose($"Dev: Added XP to {pawn.LabelShort}'s Shooting skill. Current XP since last level: {sk.xpSinceLastLevel}");
                     }
                 }
             };
@@ -242,7 +242,7 @@ namespace FogOfPawn
             healthRevealed = true;
             genesRevealed  = true;
 
-            Log.Message($"[FogOfPawn] Dev-revealed all attributes for {parent.LabelShort}.");
+            FogLog.Verbose($"Dev-revealed all attributes for {parent.LabelShort}.");
         }
 
         public void ResetFog()
@@ -255,7 +255,7 @@ namespace FogOfPawn
             genesRevealed  = false;
             ticksSinceJoin = 0;
 
-            Log.Message($"[FogOfPawn] Dev-reset fog for {parent.LabelShort}.");
+            FogLog.Verbose($"Dev-reset fog for {parent.LabelShort}.");
         }
 
         public override void CompTick()

@@ -91,4 +91,7 @@
   <FogOfPawn.Settings.ScammerHighSkills>Scammer high claimed skills</FogOfPawn.Settings.ScammerHighSkills>
   <FogOfPawn.Settings.ScammerMidSkills>Scammer mid claimed skills</FogOfPawn.Settings.ScammerMidSkills>
 
+  <FogOfPawn.Settings.VerboseLogging>Enable verbose logging</FogOfPawn.Settings.VerboseLogging>
+  <FogOfPawn.Settings.VerboseLogging_Tooltip>If enabled, Fog of Pawn will print detailed diagnostic messages to the console. Useful for debugging or reporting bugs.</FogOfPawn.Settings.VerboseLogging_Tooltip>
+
 </LanguageData> 

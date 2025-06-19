@@ -1,6 +1,7 @@
 using HarmonyLib;
 using RimWorld;
 using Verse;
+using FogOfPawn;
 
 namespace FogOfPawn.Patches
 {
@@ -30,7 +31,7 @@ namespace FogOfPawn.Patches
                 request.AllowDowned ||
                 isSlave)
             {
-                Log.Message($"[FogOfPawn] Skipping fog for {__result.NameShortColored} (Context: {request.Context}, IsSlave: {isSlave}, Animal: {__result.RaceProps?.Animal}, Mech: {__result.RaceProps?.IsMechanoid})");
+                FogLog.Verbose($"Skipping fog for {__result.NameShortColored} (Context: {request.Context}, IsSlave: {isSlave}, Animal: {__result.RaceProps?.Animal}, Mech: {__result.RaceProps?.IsMechanoid})");
                 // Ensure starter/skip pawns never trigger reveal pop-ups later.
                 var comp = __result.GetComp<CompPawnFog>();
                 if (comp != null)
@@ -54,7 +55,7 @@ namespace FogOfPawn.Patches
             try
             {
                 // Log that we are attempting to apply fog
-                Log.Message($"[FogOfPawn] Applying fog for newly generated pawn: {__result.NameShortColored}");
+                FogLog.Verbose($"Applying fog for newly generated pawn: {__result.NameShortColored}");
 
                 FogInitializer.InitializeFogFor(__result, request);
             }
