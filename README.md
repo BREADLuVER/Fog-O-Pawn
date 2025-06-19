@@ -16,8 +16,8 @@ Fog-of-Pawn obscures some details of newly-joined pawns so the player doesn't ha
 | Trait concealment | ✅ new |
 | Sleeper / Scammer reveal triggers | ✅ baseline |
 | Disguise-kit & wealth penalty | ✅ polished |
-| Reputation damage on reveal | ⚙️ prototype |
-| Narrative hooks (multi-phase stories) | ⚙️ WIP |
+| Reputation damage on reveal | ✅ polished |
+| Narrative hooks (multi-phase stories) | ✅ polished |
 | Joiner distribution sliders & guaranteed toggle | ✅ new |
 | **Global skill masking (game logic)** | ✅ new |
 | **Work tab masked display (transpiler)** | ✅ new (toggle) |
@@ -60,10 +60,7 @@ Launch RimWorld with Dev mode on, spawn pawns, and use the gizmos or settings sl
 
 ---
 ## Roadmap (Next Milestones)
-2. **Finish Sleeper / Scammer storyline**  
-   • Phase-arc implemented (auto year-2 joiner, 3-beat Sleeper story).  
-   • TODO: fine-tune RulePack flavour text + exile/death mood impacts.  
-4. **Polish & Release (M7)**  
+1. **Polish & Release (M7)**  
    • Localization stubs for new strings.  
    • Compatibility passes (RIMHUD, Character Editor).  
    • Steam Workshop page.
