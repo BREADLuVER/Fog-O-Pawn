@@ -67,16 +67,17 @@ namespace FogOfPawn
             if (roll < wTruth) return DeceptionTier.Truthful;
             if (roll < wTruth + wSlight) return DeceptionTier.SlightlyDeceived;
 
-            // Deceiver – further constraints
-            if (settings.limitDeceiversToColonists && request.HasValue && request.Value.Context != PawnGenerationContext.NonPlayer)
+            // Deceiver – apply restriction only if toggle enabled
+            if (settings.deceiverJoinersOnly && request.HasValue && request.Value.Context == PawnGenerationContext.NonPlayer)
             {
-                // compute pawn value
-                float pv = GetPawnValue(pawn);
-                float median = 250f; // TODO calculate map median later
-                return pv < median ? DeceptionTier.DeceiverScammer : DeceptionTier.DeceiverSleeper;
+                // Restricted: Non-player spawned pawns cannot be Deceivers
+                return DeceptionTier.Truthful;
             }
 
-            return DeceptionTier.Truthful;
+            // Determine Sleeper vs Scammer based on pawn value
+            float pv2 = GetPawnValue(pawn);
+            float median2 = 250f;
+            return pv2 < median2 ? DeceptionTier.DeceiverScammer : DeceptionTier.DeceiverSleeper;
         }
 
         private static void ApplyMasks(Pawn pawn, CompPawnFog comp, FogOfPawnSettings settings)

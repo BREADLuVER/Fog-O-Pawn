@@ -8,10 +8,16 @@
     <graphicData>
       <texPath>Things/Item/disguise-kit</texPath>
       <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1.0,1.0)</drawSize>
     </graphicData>
+    <selectable>true</selectable>
+    <thingCategories>
+      <li>ApparelBelt</li>
+    </thingCategories>
     <statBases>
       <MarketValue>1</MarketValue>
       <Mass>0.1</Mass>
+      <MaxHitPoints>120</MaxHitPoints>
     </statBases>
     <apparel>
       <bodyPartGroups>

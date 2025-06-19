@@ -62,8 +62,8 @@
   <Fog_SleeperReveal_Revealed.Text.3>{PAWN_nameDef} exhaled once, drew their sidearm, and disengaged the safety without comment. All present understood something irreversible had occurred.</Fog_SleeperReveal_Revealed.Text.3>
 
   <!-- Settings -->
-  <FogOfPawn.Settings.DeceiverJoinerOnly>Enable guaranteed Sleeper/Scammer storylines</FogOfPawn.Settings.DeceiverJoinerOnly>
-  <FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>If enabled, the mod guarantees one Sleeper and one Scammer will join your colony mid-game. Disable for pure RNG (about 1% of joiners).</FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>
+  <FogOfPawn.Settings.DeceiverJoinerOnly>Restrict Deceivers to colony joiners only</FogOfPawn.Settings.DeceiverJoinerOnly>
+  <FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>When enabled (default), only wanderers, refugees, quests or other pawns that join your colony can be Scammers or Sleepers. Disable to allow raiders and other outsiders to spawn as Deceivers.</FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>
 
   <!-- Sleeper choice letter -->
   <Fog_SleeperChoice.Label>{PAWN_nameFull} stands revealed</Fog_SleeperChoice.Label>

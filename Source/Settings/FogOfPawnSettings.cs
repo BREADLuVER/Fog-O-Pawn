@@ -10,7 +10,6 @@ namespace FogOfPawn
         public bool fogSkills = true;
         public bool fogTraits = true;
         public bool fogGenes = true;
-        public bool fogAddictions = true;
         public bool verboseLogging = false;
 
         // Ambient reveal tuning
@@ -24,8 +23,10 @@ namespace FogOfPawn
 
         public int maxAlteredSkills = 3;
         public bool allowUnderstate = true;
+        // When true Deceiver/Sleeper appear only in pawns that join the colony (wanderers, quests, refugees).
+        // Default = false so deception can also appear in raiders; players may enable to restrict.
         public bool deceiverJoinersOnly = false;
-        // Renamed – keep old field for backward compatibility
+        
         public bool limitDeceiversToColonists
         {
             get => deceiverJoinersOnly;
@@ -45,8 +46,8 @@ namespace FogOfPawn
         public int scammerMidSkills = 3; // # of mid claimed skills 4-8
 
         // Add fields after deceptionIntensity
-        public int pctTruthful = 90;
-        public int pctSlight = 9;
+        public int pctTruthful = 80;
+        public int pctSlight = 19;
         public int pctDeceiver = 1;
 
         // Work tab masking fallback – when true use safer but less accurate capacity override instead of transpiler.
@@ -63,7 +64,6 @@ namespace FogOfPawn
             Scribe_Values.Look(ref fogSkills, "fogSkills", true);
             Scribe_Values.Look(ref fogTraits, "fogTraits", true);
             Scribe_Values.Look(ref fogGenes, "fogGenes", true);
-            Scribe_Values.Look(ref fogAddictions, "fogAddictions", true);
             Scribe_Values.Look(ref verboseLogging, "verboseLogging", false);
 
             Scribe_Values.Look(ref socialRevealPct, "socialRevealPct", 10);
@@ -76,7 +76,7 @@ namespace FogOfPawn
 
             Scribe_Values.Look(ref maxAlteredSkills, "maxAlteredSkills", 3);
             Scribe_Values.Look(ref allowUnderstate, "allowUnderstate", true);
-            Scribe_Values.Look(ref deceiverJoinersOnly, "deceiverJoinersOnly", false);
+            Scribe_Values.Look(ref deceiverJoinersOnly, "deceiverJoinersOnly", true);
 
             Scribe_Values.Look(ref traitHideChance, "traitHideChance", 0.3f);
 
@@ -88,8 +88,8 @@ namespace FogOfPawn
             Scribe_Values.Look(ref scammerHighSkills, "scammerHighSkills", 3);
             Scribe_Values.Look(ref scammerMidSkills, "scammerMidSkills", 3);
 
-            Scribe_Values.Look(ref pctTruthful, "pctTruthful", 90);
-            Scribe_Values.Look(ref pctSlight, "pctSlight", 9);
+            Scribe_Values.Look(ref pctTruthful, "pctTruthful", 80);
+            Scribe_Values.Look(ref pctSlight, "pctSlight", 19);
             Scribe_Values.Look(ref pctDeceiver, "pctDeceiver", 1);
 
             Scribe_Values.Look(ref workTabFallbackMask, "workTabFallbackMask", false);
@@ -107,6 +107,8 @@ namespace FogOfPawn
 
             // Spawn distribution sliders (must total >0; they will be normalised internally)
             list.Label("FogOfPawn.Settings.SpawnWeightHeader".Translate());
+            // Toggle to guarantee at least one Sleeper & Scammer storyline
+            list.CheckboxLabeled("FogOfPawn.Settings.DeceiverJoinerOnly".Translate(), ref deceiverJoinersOnly, "FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip".Translate());
             list.Label("FogOfPawn.Settings.Truthful".Translate() + ": " + pctTruthful + "%");
             pctTruthful = (int)list.Slider(pctTruthful, 0, 100);
             list.Label("FogOfPawn.Settings.Slight".Translate() + ": " + pctSlight + "%");
@@ -116,9 +118,6 @@ namespace FogOfPawn
 
             list.GapLine();
             
-            // NEW: Deceiver storyline toggle right after composition
-            list.CheckboxLabeled("FogOfPawn.Settings.DeceiverJoinerOnly".Translate(), ref deceiverJoinersOnly, "FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip".Translate());
-
             // Display normalised result
             {
                 float sum = pctTruthful + pctSlight + pctDeceiver;
@@ -140,7 +139,6 @@ namespace FogOfPawn
             list.CheckboxLabeled("FogOfPawn.Settings.FogSkills".Translate(), ref fogSkills);
             list.CheckboxLabeled("FogOfPawn.Settings.FogTraits".Translate(), ref fogTraits);
             list.CheckboxLabeled("FogOfPawn.Settings.FogGenes".Translate(), ref fogGenes);
-            list.CheckboxLabeled("FogOfPawn.Settings.FogAddictions".Translate(), ref fogAddictions);
             list.CheckboxLabeled("FogOfPawn.Settings.VerboseLogging".Translate(), ref verboseLogging, "FogOfPawn.Settings.VerboseLogging_Tooltip".Translate());
 
             list.GapLine();

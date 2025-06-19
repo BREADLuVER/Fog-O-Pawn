@@ -52,8 +52,8 @@
   <Fog_SleeperReveal_Revealed.Text.3>{PAWN_nameDef}轻轻呼气，拔出手枪，解除保险，不发一言。所有人都明白了某种不可逆转的事实。</Fog_SleeperReveal_Revealed.Text.3>
 
   <!-- Settings -->
-  <FogOfPawn.Settings.DeceiverJoinerOnly>启用保证潜伏者/骗子剧情</FogOfPawn.Settings.DeceiverJoinerOnly>
-  <FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>如果启用，模组将在中期确保有一名潜伏者和一名骗子加入殖民地。关闭则完全随机（约1%的加入者）。</FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>
+  <FogOfPawn.Settings.DeceiverJoinerOnly>仅限加入殖民地者可为潜伏者/骗子</FogOfPawn.Settings.DeceiverJoinerOnly>
+  <FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>默认启用：只有加入者（漫游者、难民、任务人员）才可能成为潜伏者或骗子。关闭后，袭击者等外来者也可能带有欺骗。</FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>
 
   <!-- Sleeper choice letter -->
   <Fog_SleeperChoice.Label>{PAWN_nameFull}身份暴露</Fog_SleeperChoice.Label>
@@ -72,7 +72,6 @@
   <FogOfPawn.Settings.FogSkills>隐藏技能等级</FogOfPawn.Settings.FogSkills>
   <FogOfPawn.Settings.FogTraits>隐藏特性</FogOfPawn.Settings.FogTraits>
   <FogOfPawn.Settings.FogGenes>隐藏基因</FogOfPawn.Settings.FogGenes>
-  <FogOfPawn.Settings.FogAddictions>隐藏成瘾情况</FogOfPawn.Settings.FogAddictions>
 
   <FogOfPawn.Settings.SocialRevealPct>社交揭露概率</FogOfPawn.Settings.SocialRevealPct>
   <FogOfPawn.Settings.SocialRevealPctTooltip>每次成功互动后揭露的概率百分比。</FogOfPawn.Settings.SocialRevealPctTooltip>
