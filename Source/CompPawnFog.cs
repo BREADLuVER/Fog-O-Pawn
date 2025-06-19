@@ -181,10 +181,12 @@ namespace FogOfPawn
             var pawn = parent as Pawn;
             int real = pawn?.skills.GetSkill(skillDef).Level ?? 0;
 
-            string label = "FogOfPawn.SkillRevealed.Label".Translate(pawn.LabelShort, skillDef.label);
-            string text = "FogOfPawn.SkillRevealed.Text".Translate(pawn.LabelShort, skillDef.label, real.ToString());
-
-            Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.NeutralEvent, pawn);
+            if (FogUtility.ShouldNotifyPlayer(pawn))
+            {
+                string label = "FogOfPawn.SkillRevealed.Label".Translate(pawn.LabelShort, skillDef.label);
+                string text = "FogOfPawn.SkillRevealed.Text".Translate(pawn.LabelShort, skillDef.label, real.ToString());
+                Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.NeutralEvent, pawn);
+            }
 
             FogLog.Verbose($"Revealed skill {skillDef.defName} for {parent.LabelShort}.");
 
@@ -205,10 +207,12 @@ namespace FogOfPawn
             revealedTraits.Add(trait.def);
 
             var pawn2 = parent as Pawn;
-            string labelT = "FogOfPawn.TraitRevealed.Label".Translate(pawn2.LabelShort, trait.Label);
-            string textT = "FogOfPawn.TraitRevealed.Text".Translate(pawn2.LabelShort, trait.Label, trait.def.description);
-
-            Find.LetterStack.ReceiveLetter(labelT, textT, LetterDefOf.NeutralEvent, pawn2);
+            if (FogUtility.ShouldNotifyPlayer(pawn2))
+            {
+                string labelT = "FogOfPawn.TraitRevealed.Label".Translate(pawn2.LabelShort, trait.Label);
+                string textT = "FogOfPawn.TraitRevealed.Text".Translate(pawn2.LabelShort, trait.Label, trait.def.description);
+                Find.LetterStack.ReceiveLetter(labelT, textT, LetterDefOf.NeutralEvent, pawn2);
+            }
 
             FogLog.Verbose($"Revealed trait {trait.def.defName} for {parent.LabelShort}.");
 

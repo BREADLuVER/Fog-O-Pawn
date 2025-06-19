@@ -76,12 +76,14 @@ namespace FogOfPawn
             // Force disguise kit logic (Scammer only)
             comp.GetType().GetMethod("MaybeDropDisguiseKit", System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance)?.Invoke(comp, null);
 
-            // Send letter
-            string labelKey = $"Fog.FullReveal.{reasonKey}.Label";
-            string textKey  = $"Fog.FullReveal.{reasonKey}.Text";
-            string label = labelKey.Translate(pawn.Named("PAWN"));
-            string text  = textKey.Translate(pawn.Named("PAWN"));
-            Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.PositiveEvent, pawn);
+            if (ShouldNotifyPlayer(pawn))
+            {
+                string labelKey = $"Fog.FullReveal.{reasonKey}.Label";
+                string textKey  = $"Fog.FullReveal.{reasonKey}.Text";
+                string label = labelKey.Translate(pawn.Named("PAWN"));
+                string text  = textKey.Translate(pawn.Named("PAWN"));
+                Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.PositiveEvent, pawn);
+            }
 
             // Reputation damage for scammer
             if (comp.tier == DeceptionTier.DeceiverScammer)
@@ -97,9 +99,8 @@ namespace FogOfPawn
                 }
             }
 
-            if (comp.tier == DeceptionTier.DeceiverSleeper)
+            if (comp.tier == DeceptionTier.DeceiverSleeper && ShouldNotifyPlayer(pawn))
             {
-                // Offer player a choice on what to do with their newly awakened asset.
                 SleeperChoiceUtility.SendChoiceLetter(pawn);
             }
 
@@ -126,6 +127,11 @@ namespace FogOfPawn
                     break;
                 }
             }
+        }
+
+        public static bool ShouldNotifyPlayer(Pawn pawn)
+        {
+            return pawn.Faction?.IsPlayer == true || pawn.IsPrisonerOfColony || pawn.IsSlaveOfColony;
         }
     }
 } 

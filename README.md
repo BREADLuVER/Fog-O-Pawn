@@ -25,7 +25,7 @@ Fog-of-Pawn obscures some details of newly-joined pawns so the player doesn't ha
 | **Social Impact −30 after scammer reveal** | ✅ new |
 
 ---
-## Deception Tiers (v2)
+## Deception Tier
 1. **Truthful** – ~90 % of pawns (slider adjustable)  
    • All skills & passions reported accurately.
 2. **Slightly-Deceived** – up to 3 random skills are exaggerated or understated.  
@@ -36,7 +36,7 @@ Fog-of-Pawn obscures some details of newly-joined pawns so the player doesn't ha
 4. **Deceiver – Sleeper**  
    • High-value pawn (> 300 skill score) sandbags their elite skills, reporting 3–6 with no passions.
 
-Deceiver tier is restricted to pawns that *join* the player (wanderers, refugees, quests) unless the toggle is disabled.
+Deceiver tier is restricted to pawns that *join* the player (wanderers, refugees, quests) unless the toggle is disabled (disabled is default).
 
 ---
 ## Developer Utilities
