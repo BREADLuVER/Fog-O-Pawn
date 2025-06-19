@@ -5,6 +5,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 using System.Linq;
+using FogOfPawn;
 
 namespace FogOfPawn.Patches
 {
@@ -37,19 +38,19 @@ namespace FogOfPawn.Patches
                 Type skillUIType = AccessTools.TypeByName("RimWorld.SkillUI") ?? AccessTools.TypeByName("SkillUI");
                 if (skillUIType == null)
                 {
-                    Log.Warning("[FogOfPawn] Could not locate SkillUI type. Skill fog will not be applied to the pawn card.");
+                    FogLog.Fail("SkillUITypeMissing", "Could not locate SkillUI type. Skill fog will not be applied to the pawn card.");
                     return;
                 }
 
                 // DEBUG: Log what SkillUI we actually resolved.
-                Log.Message($"[FogOfPawn DEBUG] Resolved SkillUI type = {skillUIType.FullName}");
+                FogLog.Verbose($"Resolved SkillUI type = {skillUIType.FullName}");
 
                 // Dump any DrawSkills* methods on that type so we can see their signatures.
                 foreach (var dbg in skillUIType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
                 {
                     if (dbg.Name.StartsWith("DrawSkill"))
                     {
-                        Log.Message($"[FogOfPawn DEBUG] Candidate method {dbg.Name} (params: {string.Join(", ", dbg.GetParameters().Select(p => p.ParameterType.Name) )})");
+                        FogLog.Verbose($"Candidate method {dbg.Name} (params: {string.Join(", ", dbg.GetParameters().Select(p => p.ParameterType.Name) )})");
                     }
                 }
 
@@ -66,7 +67,7 @@ namespace FogOfPawn.Patches
                         targetMethod = FindMethod(type, "DrawSkillsOf") ?? FindMethod(type, "DrawSkills");
                         if (targetMethod != null)
                         {
-                            Log.Message($"[FogOfPawn] Found skill draw method on {type.FullName}.{targetMethod.Name}");
+                            FogLog.Verbose($"Found skill draw method on {type.FullName}.{targetMethod.Name}");
                             break;
                         }
                     }
@@ -74,12 +75,12 @@ namespace FogOfPawn.Patches
 
                 if (targetMethod == null)
                 {
-                    Log.Warning("[FogOfPawn] Could not locate any DrawSkills method. Skill fog will not be applied.");
+                    FogLog.Fail("DrawSkillsMethodMissing", "Could not locate any DrawSkills method. Skill fog will not be applied.");
                     return;
                 }
 
                 harmony.Patch(targetMethod, prefix: new HarmonyMethod(typeof(Patch_SkillUI_DrawSkillsOf), nameof(Prefix)));
-                Log.Message("[FogOfPawn] Patched SkillUI.DrawSkillsOf for skill fogging.");
+                FogLog.Reflect("SkillUI.DrawSkillsOfPatched", "Patched SkillUI.DrawSkillsOf for skill fogging.");
             }
             catch (Exception ex)
             {
@@ -111,7 +112,7 @@ namespace FogOfPawn.Patches
 
             Rect localRect = new Rect(offset.x, offset.y, container.width, container.height);
 
-            Log.Message($"[FogOfPawn DEBUG] DrawSkillsOf Prefix for {p.LabelShort}, localRect={localRect}, container={container}, offset={offset}");
+            FogLog.Verbose($"DrawSkillsOf Prefix for {p.LabelShort}, localRect={localRect}, container={container}, offset={offset}");
 
             DrawSkillsWithFog(localRect, p, comp);
 

@@ -13,7 +13,7 @@ namespace FogOfPawn
             var harmony = new Harmony("FogOfPawn");
 	    Harmony.DEBUG = true;
             harmony.PatchAll();
-            Log.Message("[FogOfPawn] Harmony patches applied.");
+            FogLog.Reflect("HarmonyPatched", "Harmony patches applied.");
 
             // DebugActionsUtility not available in release API; dev spawning via Sleeper gizmo remains.
         }

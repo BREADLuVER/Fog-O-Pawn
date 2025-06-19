@@ -11,6 +11,7 @@ namespace FogOfPawn
         public bool fogTraits = true;
         public bool fogGenes = true;
         public bool fogAddictions = true;
+        public bool verboseLogging = false;
 
         // Ambient reveal tuning
         public int socialRevealPct = 10; // % chance per successful interaction
@@ -63,6 +64,7 @@ namespace FogOfPawn
             Scribe_Values.Look(ref fogTraits, "fogTraits", true);
             Scribe_Values.Look(ref fogGenes, "fogGenes", true);
             Scribe_Values.Look(ref fogAddictions, "fogAddictions", true);
+            Scribe_Values.Look(ref verboseLogging, "verboseLogging", false);
 
             Scribe_Values.Look(ref socialRevealPct, "socialRevealPct", 10);
             Scribe_Values.Look(ref passiveRevealDays, "passiveRevealDays", 6f);
@@ -139,6 +141,7 @@ namespace FogOfPawn
             list.CheckboxLabeled("FogOfPawn.Settings.FogTraits".Translate(), ref fogTraits);
             list.CheckboxLabeled("FogOfPawn.Settings.FogGenes".Translate(), ref fogGenes);
             list.CheckboxLabeled("FogOfPawn.Settings.FogAddictions".Translate(), ref fogAddictions);
+            list.CheckboxLabeled("FogOfPawn.Settings.VerboseLogging".Translate(), ref verboseLogging, "FogOfPawn.Settings.VerboseLogging_Tooltip".Translate());
 
             list.GapLine();
 

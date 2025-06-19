@@ -107,4 +107,7 @@
   <FogOfPawn.Settings.DisguiseKitWealth>伪装工具减值</FogOfPawn.Settings.DisguiseKitWealth>
   <FogOfPawn.Settings.ScammerHighSkills>骗子高技能伪称数量</FogOfPawn.Settings.ScammerHighSkills>
   <FogOfPawn.Settings.ScammerMidSkills>骗子中等技能伪称数量</FogOfPawn.Settings.ScammerMidSkills>
+
+  <FogOfPawn.Settings.VerboseLogging>启用详细日志</FogOfPawn.Settings.VerboseLogging>
+  <FogOfPawn.Settings.VerboseLogging_Tooltip>启用后，模组将在控制台输出详细诊断信息，便于调试或问题反馈。</FogOfPawn.Settings.VerboseLogging_Tooltip>
 </LanguageData> 
