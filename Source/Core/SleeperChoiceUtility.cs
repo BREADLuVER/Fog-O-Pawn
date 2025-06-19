@@ -15,18 +15,27 @@ namespace FogOfPawn
             TaggedString title = "Fog_SleeperChoice.Label".Translate(pawn.Named("PAWN"));
 
             string baseKey = "Fog_SleeperChoice.Text";
-            TaggedString text  = baseKey.Translate(pawn.Named("PAWN"));
+            TaggedString textTS = baseKey.Translate(pawn.Named("PAWN"));
+
+            TaggedString text = textTS;
 
             var variants = new System.Collections.Generic.List<TaggedString>();
             for (int i = 1; i <= 5; i++)
             {
                 string vKey = baseKey + "." + i;
-                var raw = vKey.Translate(pawn.Named("PAWN"));
-                if (!raw.RawText.NullOrEmpty() && raw.RawText != vKey)
-                    variants.Add(raw);
+                if (Verse.Translator.CanTranslate(vKey))
+                {
+                    variants.Add(vKey.Translate(pawn.Named("PAWN")));
+                }
             }
             if (variants.Count > 0)
+            {
                 text = variants.RandomElement();
+            }
+            else if (textTS.RawText.Contains(".Text"))
+            {
+                text = ""; // avoid showing raw key
+            }
 
             DiaNode node = new DiaNode(text);
 
@@ -56,12 +65,17 @@ namespace FogOfPawn
             };
             capOpt.action = () =>
             {
-                // Attempt arrest by nearest warden
-                var warden = pawn.MapHeld?.mapPawns?.FreeColonistsSpawned?.FirstOrDefault(p => !p.Dead && !p.Downed && p != pawn);
-                if (warden != null)
+                // Turn pawn hostile to player
+                var pirateFaction = Find.FactionManager.FirstFactionOfDef(FactionDefOf.Pirate); // may be null if pirates disabled
+                if (pirateFaction == null)
                 {
-                    Job job = JobMaker.MakeJob(JobDefOf.Arrest, pawn);
-                    warden.jobs?.TryTakeOrderedJob(job, JobTag.Misc);
+                    pirateFaction = FactionUtility.DefaultFactionFrom(FactionDefOf.AncientsHostile);
+                }
+                if (pirateFaction != null)
+                {
+                    pawn.SetFaction(pirateFaction);
+                    // Optional: start immediate aggressive mental state
+                    pawn.mindState.mentalStateHandler.TryStartMentalState(MentalStateDefOf.Berserk, null, forceWake: true);
                 }
             };
             node.options.Add(capOpt);

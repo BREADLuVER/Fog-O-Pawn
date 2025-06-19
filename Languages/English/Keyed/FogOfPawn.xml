@@ -37,22 +37,29 @@
   <Fog.FullReveal.ScammerCascade.Label>Scammer Revealed</Fog.FullReveal.ScammerCascade.Label>
   <Fog.FullReveal.ScammerCascade.Text>One secret leads to another—{PAWN}'s entire résumé falls apart.</Fog.FullReveal.ScammerCascade.Text>
 
-  <Fog_SleeperReveal_Suspicion.Text>{PAWN_nameDef} has begun to draw quiet attention: a stance too straight for a farmer, reflexes too sharp for a wanderer.  Colonists trade rumours at mealtime, each story stranger than the last.</Fog_SleeperReveal_Suspicion.Text>
-  <Fog_SleeperReveal_Anomaly.Text>A crisis breaks routine and instincts override the mask.  {PAWN_nameDef} moves with drilled precision, barking orders that seasoned soldiers obey without thinking.  Whispers turn to alarm.</Fog_SleeperReveal_Anomaly.Text>
-  <Fog_SleeperReveal_Revealed.Text>{PAWN_nameDef} lets the cover fall away.  Eyes harden, posture shifts, and words carry quiet authority.  Whether protector or threat, their real life has finally arrived.</Fog_SleeperReveal_Revealed.Text>
+  <Fog_SleeperReveal_Suspicion.Text>On this day, colonists began noting subtle inconsistencies in {PAWN_nameDef}'s behavior—an upright stance, unusually sharp reflexes. Informal mealtime chatter has turned toward quiet speculation.</Fog_SleeperReveal_Suspicion.Text>
 
-  <!-- Variant lines -->
-  <Fog_SleeperReveal_Suspicion.Text.1>{PAWN_nameDef} hums old military marches while hauling stone blocks.  Nobody else recognises the tune.</Fog_SleeperReveal_Suspicion.Text.1>
-  <Fog_SleeperReveal_Suspicion.Text.2>During poker night, {PAWN_nameDef} counted cards without ever looking down.</Fog_SleeperReveal_Suspicion.Text.2>
-  <Fog_SleeperReveal_Suspicion.Text.3>The way {PAWN_nameDef} sharpens a knife suggests academy training, not frontier life.</Fog_SleeperReveal_Suspicion.Text.3>
+  <Fog_SleeperReveal_Suspicion.Text.1>{PAWN_nameDef} was heard humming a military march while hauling stone. No one else could place the melody.</Fog_SleeperReveal_Suspicion.Text.1>
 
-  <Fog_SleeperReveal_Anomaly.Text.1>A solar flare fries comms; {PAWN_nameDef} reroutes power with expert speed, then pretends it was luck.</Fog_SleeperReveal_Anomaly.Text.1>
-  <Fog_SleeperReveal_Anomaly.Text.2>Raid sirens wail—{PAWN_nameDef} flips into formation calls none of the militia have heard before.</Fog_SleeperReveal_Anomaly.Text.2>
-  <Fog_SleeperReveal_Anomaly.Text.3>A mis-thrown grenade lands nearby; {PAWN_nameDef} dives on it, pivots, hurls it back—and apologises for 'muscle memory'.</Fog_SleeperReveal_Anomaly.Text.3>
+  <Fog_SleeperReveal_Suspicion.Text.2>One colonist recorded that during a card game, {PAWN_nameDef} seemed to track hands without ever looking directly at the cards.</Fog_SleeperReveal_Suspicion.Text.2>
 
-  <Fog_SleeperReveal_Revealed.Text.1>Dust settles.  {PAWN_nameDef} stands tall, voice clear: "Directive acknowledged."  Silence grips the colony.</Fog_SleeperReveal_Revealed.Text.1>
-  <Fog_SleeperReveal_Revealed.Text.2>{PAWN_nameDef} recites coordinates, call-signs, and oaths to long-dead commanders before meeting your gaze.</Fog_SleeperReveal_Revealed.Text.2>
-  <Fog_SleeperReveal_Revealed.Text.3>With a calm breath, {PAWN_nameDef} disables the safety on their sidearm—ready for orders or judgement.</Fog_SleeperReveal_Revealed.Text.3>
+  <Fog_SleeperReveal_Suspicion.Text.3>It was observed that {PAWN_nameDef} sharpens knives with a technique more fitting of academy training than frontier life.</Fog_SleeperReveal_Suspicion.Text.3>
+
+  <Fog_SleeperReveal_Anomaly.Text>An unexpected crisis disrupted routine. Witnesses report that {PAWN_nameDef} responded with unnatural speed and tactical clarity, issuing orders that even veteran militia instinctively obeyed.</Fog_SleeperReveal_Anomaly.Text>
+
+  <Fog_SleeperReveal_Anomaly.Text.1>During a solar flare, {PAWN_nameDef} bypassed power relays with unfamiliar efficiency, then dismissed the action as mere coincidence.</Fog_SleeperReveal_Anomaly.Text.1>
+
+  <Fog_SleeperReveal_Anomaly.Text.2>Following a raid alarm, {PAWN_nameDef} was seen snapping into formation protocols not recognized by local defense staff.</Fog_SleeperReveal_Anomaly.Text.2>
+
+  <Fog_SleeperReveal_Anomaly.Text.3>After a mis-thrown grenade landed nearby, {PAWN_nameDef} reacted instinctively—intercepting, returning it mid-roll—then cited ‘muscle memory’ as explanation.</Fog_SleeperReveal_Anomaly.Text.3>
+
+  <Fog_SleeperReveal_Revealed.Text>With no further reason to maintain the illusion, {PAWN_nameDef} assumed a hardened posture and authoritative tone. Observers noted the shift immediately. Their former identity now reads like a discarded mask.</Fog_SleeperReveal_Revealed.Text>
+
+  <Fog_SleeperReveal_Revealed.Text.1>After the incident, {PAWN_nameDef} stood motionless before stating, “Directive acknowledged.” The room reportedly fell silent.</Fog_SleeperReveal_Revealed.Text.1>
+
+  <Fog_SleeperReveal_Revealed.Text.2>Eyewitnesses recall {PAWN_nameDef} calmly reciting long strings of coordinates and oath phrases—none matching any known RimWorld factions.</Fog_SleeperReveal_Revealed.Text.2>
+
+  <Fog_SleeperReveal_Revealed.Text.3>{PAWN_nameDef} exhaled once, drew their sidearm, and disengaged the safety without comment. All present understood something irreversible had occurred.</Fog_SleeperReveal_Revealed.Text.3>
 
   <!-- Settings -->
   <FogOfPawn.Settings.DeceiverJoinerOnly>Enable guaranteed Sleeper/Scammer storylines</FogOfPawn.Settings.DeceiverJoinerOnly>

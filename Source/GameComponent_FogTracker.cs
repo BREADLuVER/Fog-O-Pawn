@@ -173,27 +173,30 @@ namespace FogOfPawn
 
         private static void SendSleeperLetter(Pawn pawn, string ruleDefName)
         {
-            string label = "Sleeper Story";
+            string label = "Strange Incident";
 
             string baseKey = ruleDefName + ".Text";
-            string text = baseKey.Translate(pawn.Named("PAWN"));
+            TaggedString textTS = baseKey.Translate(pawn.Named("PAWN"));
+            string text = textTS;
 
             // Check for numbered variants ( .Text.1 .. .Text.5 ) and randomly pick one if they exist.
             var variants = new List<string>();
             for (int i = 1; i <= 5; i++)
             {
                 string vKey = baseKey + "." + i;
-                var raw = vKey.Translate(pawn.Named("PAWN"));
-                if (!raw.RawText.NullOrEmpty() && raw.RawText != vKey)
+                if (Verse.Translator.CanTranslate(vKey))
                 {
-                    variants.Add(raw);
+                    variants.Add(vKey.Translate(pawn.Named("PAWN")));
                 }
             }
             if (variants.Count > 0)
             {
                 text = variants.RandomElement();
             }
-            if (text.NullOrEmpty()) text = baseKey;
+            else if (textTS.RawText.Contains(".Text"))
+            {
+                text = ruleDefName; // fallback label
+            }
 
             Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.NeutralEvent, pawn);
             FogLog.Verbose($"[SleeperLetter] Sent {ruleDefName} for {pawn.LabelShort}");
