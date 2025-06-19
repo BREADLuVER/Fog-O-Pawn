@@ -28,8 +28,7 @@ namespace FogOfPawn.Patches
             {
                 float before = __result;
                 __result = Mathf.Max(0f, __result - FogSettingsCache.Current.disguiseKitWealth);
-                if (Prefs.DevMode)
-                    Log.Message($"[FogOfPawn] Disguise kit reduces wealth of {pawn.LabelShort}: {before:F0} → {__result:F0}");
+                FogLog.Verbose($"Disguise kit reduces wealth of {pawn.LabelShort}: {before:F0} → {__result:F0}");
             }
         }
     }
