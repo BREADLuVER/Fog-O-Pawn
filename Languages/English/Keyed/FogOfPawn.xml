@@ -51,11 +51,11 @@
 
   <Fog_SleeperReveal_Anomaly.Text.2>Following a raid alarm, {PAWN_nameDef} was seen snapping into formation protocols not recognized by local defense staff.</Fog_SleeperReveal_Anomaly.Text.2>
 
-  <Fog_SleeperReveal_Anomaly.Text.3>After a mis-thrown grenade landed nearby, {PAWN_nameDef} reacted instinctively—intercepting, returning it mid-roll—then cited ‘muscle memory’ as explanation.</Fog_SleeperReveal_Anomaly.Text.3>
+  <Fog_SleeperReveal_Anomaly.Text.3>After a mis-thrown grenade landed nearby, {PAWN_nameDef} reacted instinctively—intercepting, returning it mid-roll—then cited 'muscle memory' as explanation.</Fog_SleeperReveal_Anomaly.Text.3>
 
   <Fog_SleeperReveal_Revealed.Text>With no further reason to maintain the illusion, {PAWN_nameDef} assumed a hardened posture and authoritative tone. Observers noted the shift immediately. Their former identity now reads like a discarded mask.</Fog_SleeperReveal_Revealed.Text>
 
-  <Fog_SleeperReveal_Revealed.Text.1>After the incident, {PAWN_nameDef} stood motionless before stating, “Directive acknowledged.” The room reportedly fell silent.</Fog_SleeperReveal_Revealed.Text.1>
+  <Fog_SleeperReveal_Revealed.Text.1>After the incident, {PAWN_nameDef} stood motionless before stating, "Directive acknowledged." The room reportedly fell silent.</Fog_SleeperReveal_Revealed.Text.1>
 
   <Fog_SleeperReveal_Revealed.Text.2>Eyewitnesses recall {PAWN_nameDef} calmly reciting long strings of coordinates and oath phrases—none matching any known RimWorld factions.</Fog_SleeperReveal_Revealed.Text.2>
 
@@ -74,5 +74,21 @@
   <Fog_SleeperOutcome_Keep>Keep and trust</Fog_SleeperOutcome_Keep>
   <Fog_SleeperOutcome_Capture>Capture (treat as hostile)</Fog_SleeperOutcome_Capture>
   <Fog_SleeperOutcome_Exile>Exile immediately</Fog_SleeperOutcome_Exile>
+
+  <!-- Additional Settings UI labels -->
+  <FogOfPawn.ModTitle>Fog of Pawn</FogOfPawn.ModTitle>
+
+  <FogOfPawn.Settings.SpawnWeightHeader>Spawn composition weights (will be normalised):</FogOfPawn.Settings.SpawnWeightHeader>
+  <FogOfPawn.Settings.Truthful>Truthful</FogOfPawn.Settings.Truthful>
+  <FogOfPawn.Settings.Slight>Slightly-Deceived</FogOfPawn.Settings.Slight>
+  <FogOfPawn.Settings.Deceiver>Scammer/Sleeper</FogOfPawn.Settings.Deceiver>
+  <FogOfPawn.Settings.CurrentComposition>Current composition → Truthful {0}% | Slight {1}% | Deceiver {2}%</FogOfPawn.Settings.CurrentComposition>
+
+  <FogOfPawn.Settings.SleeperCombatXP>Sleeper combat XP</FogOfPawn.Settings.SleeperCombatXP>
+  <FogOfPawn.Settings.ScammerSkillXP>Scammer low-skill XP</FogOfPawn.Settings.ScammerSkillXP>
+  <FogOfPawn.Settings.PassiveDailyRevealPct>Passive daily reveal chance</FogOfPawn.Settings.PassiveDailyRevealPct>
+  <FogOfPawn.Settings.DisguiseKitWealth>Disguise kit wealth reduction</FogOfPawn.Settings.DisguiseKitWealth>
+  <FogOfPawn.Settings.ScammerHighSkills>Scammer high claimed skills</FogOfPawn.Settings.ScammerHighSkills>
+  <FogOfPawn.Settings.ScammerMidSkills>Scammer mid claimed skills</FogOfPawn.Settings.ScammerMidSkills>
 
 </LanguageData> 

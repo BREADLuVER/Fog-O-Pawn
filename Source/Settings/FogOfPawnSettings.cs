@@ -104,12 +104,12 @@ namespace FogOfPawn
             list.Begin(viewRect);
 
             // Spawn distribution sliders (must total >0; they will be normalised internally)
-            list.Label("Spawn composition weights (will be normalised):");
-            list.Label("Truthful: " + pctTruthful + "%");
+            list.Label("FogOfPawn.Settings.SpawnWeightHeader".Translate());
+            list.Label("FogOfPawn.Settings.Truthful".Translate() + ": " + pctTruthful + "%");
             pctTruthful = (int)list.Slider(pctTruthful, 0, 100);
-            list.Label("Slightly-Deceived: " + pctSlight + "%");
+            list.Label("FogOfPawn.Settings.Slight".Translate() + ": " + pctSlight + "%");
             pctSlight = (int)list.Slider(pctSlight, 0, 100);
-            list.Label("Scammer/Sleeper: " + pctDeceiver + "%");
+            list.Label("FogOfPawn.Settings.Deceiver".Translate() + ": " + pctDeceiver + "%");
             pctDeceiver = (int)list.Slider(pctDeceiver, 0, 100);
 
             list.GapLine();
@@ -124,7 +124,7 @@ namespace FogOfPawn
                 float t = pctTruthful / sum;
                 float s = pctSlight / sum;
                 float d = pctDeceiver / sum;
-                list.Label($"Current composition → Truthful {(int)(t*100)}%  | Slight {(int)(s*100)}%  | Deceiver {(int)(d*100)}%");
+                list.Label("FogOfPawn.Settings.CurrentComposition".Translate((int)(t*100), (int)(s*100), (int)(d*100)));
             }
 
             list.GapLine();
@@ -165,23 +165,23 @@ namespace FogOfPawn
             list.GapLine();
 
             list.Label("FogOfPawn.Settings.FullRevealHeader".Translate());
-            list.Label("Sleeper combat XP: " + sleeperCombatXp);
+            list.Label("FogOfPawn.Settings.SleeperCombatXP".Translate() + ": " + sleeperCombatXp);
             sleeperCombatXp = (int)list.Slider(sleeperCombatXp, 500, 10000);
 
-            list.Label("Scammer low-skill XP: " + scammerSkillXp);
+            list.Label("FogOfPawn.Settings.ScammerSkillXP".Translate() + ": " + scammerSkillXp);
             scammerSkillXp = (int)list.Slider(scammerSkillXp, 500, 10000);
 
-            list.Label("Passive daily reveal chance: " + passiveDailyRevealPct.ToString("F1") + "%");
+            list.Label("FogOfPawn.Settings.PassiveDailyRevealPct".Translate() + ": " + passiveDailyRevealPct.ToString("F1") + "%");
             passiveDailyRevealPct = list.Slider(passiveDailyRevealPct, 0f, 20f);
 
-            list.Label("Disguise kit wealth reduction: " + disguiseKitWealth);
+            list.Label("FogOfPawn.Settings.DisguiseKitWealth".Translate() + ": " + disguiseKitWealth);
             disguiseKitWealth = (int)list.Slider(disguiseKitWealth, 0, 10000);
             list.GapLine();
 
-            list.Label("Scammer high claimed skills: " + scammerHighSkills);
+            list.Label("FogOfPawn.Settings.ScammerHighSkills".Translate() + ": " + scammerHighSkills);
             scammerHighSkills = (int)list.Slider(scammerHighSkills, 1, 6);
 
-            list.Label("Scammer mid claimed skills: " + scammerMidSkills);
+            list.Label("FogOfPawn.Settings.ScammerMidSkills".Translate() + ": " + scammerMidSkills);
             scammerMidSkills = (int)list.Slider(scammerMidSkills, 0, 6);
 
             list.GapLine();

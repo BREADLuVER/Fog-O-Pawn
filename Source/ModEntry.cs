@@ -32,7 +32,7 @@ namespace FogOfPawn
             Settings = GetSettings<FogOfPawnSettings>();
         }
 
-        public override string SettingsCategory() => "Fog of Pawn";
+        public override string SettingsCategory() => "FogOfPawn.ModTitle".Translate();
 
         public override void DoSettingsWindowContents(UnityEngine.Rect inRect)
         {

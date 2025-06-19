@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <FogOfPawn.SkillRevealed.Label>{0}真实的{1}技能被揭示</FogOfPawn.SkillRevealed.Label>
+  <FogOfPawn.SkillRevealed.Text>你发现{0}在{1}技能上的真实等级是{2}。之前看到的任何报告值都是不准确的。</FogOfPawn.SkillRevealed.Text>
+
+  <FogOfPawn.UnknownTrait>未知特性</FogOfPawn.UnknownTrait>
+  <FogOfPawn.UnknownTrait.Tooltip>该特性目前未知。通过殖民者的行动或随时间推移将被揭示。</FogOfPawn.UnknownTrait.Tooltip>
+
+  <FogOfPawn.TraitRevealed.Label>{0}揭示特性：{1}</FogOfPawn.TraitRevealed.Label>
+  <FogOfPawn.TraitRevealed.Text>通过他们的行为，你发现了{0}隐藏的特性：{1}。\n\n{2}</FogOfPawn.TraitRevealed.Text>
+
+  <FogOfPawn.Settings.TraitHideChance>特性初始隐藏概率</FogOfPawn.Settings.TraitHideChance>
+  <FogOfPawn.Settings.TraitHideChanceTooltip>殖民者加入时会被隐藏的特性百分比。0% = 全部可见，100% = 全部隐藏。</FogOfPawn.Settings.TraitHideChanceTooltip>
+
+  <Fog.FullReveal.SleeperStory.Label>潜伏者暴露！</Fog.FullReveal.SleeperStory.Label>
+  <Fog.FullReveal.SleeperStory.Text>{PAWN}丢掉伪装。他们真正的技能和动机现在一目了然。</Fog.FullReveal.SleeperStory.Text>
+
+  <Fog.FullReveal.SleeperCascade.Label>潜伏者曝光</Fog.FullReveal.SleeperCascade.Label>
+  <Fog.FullReveal.SleeperCascade.Text>你的追问粉碎了{PAWN}的伪装。他们暴露了一切。</Fog.FullReveal.SleeperCascade.Text>
+
+  <Fog.FullReveal.SleeperWounded.Label>潜伏者因伤露馅</Fog.FullReveal.SleeperWounded.Label>
+  <Fog.FullReveal.SleeperWounded.Text>重伤迫使{PAWN}展示了他们真正的训练。</Fog.FullReveal.SleeperWounded.Text>
+
+  <Fog.FullReveal.ScammerCaughtLearning.Label>骗子被逮个正着！</Fog.FullReveal.ScammerCaughtLearning.Label>
+  <Fog.FullReveal.ScammerCaughtLearning.Text>{PAWN}在学习基础技能时的笨拙暴露了他们的骗局。</Fog.FullReveal.ScammerCaughtLearning.Text>
+
+  <Fog.FullReveal.ScammerCalledOut.Label>骗子被指认</Fog.FullReveal.ScammerCalledOut.Label>
+  <Fog.FullReveal.ScammerCalledOut.Text>在尖锐的指责后，{PAWN}承认了欺骗。</Fog.FullReveal.ScammerCalledOut.Text>
+
+  <Fog.FullReveal.ScammerMoodBreak.Label>骗子崩溃</Fog.FullReveal.ScammerMoodBreak.Label>
+  <Fog.FullReveal.ScammerMoodBreak.Text>一次精神崩溃撕下了{PAWN}的伪装。真相很丑陋。</Fog.FullReveal.ScammerMoodBreak.Text>
+
+  <Fog.FullReveal.ScammerPassive.Label>骗子现形</Fog.FullReveal.ScammerPassive.Label>
+  <Fog.FullReveal.ScammerPassive.Text>谣言四起，直到关于{PAWN}的真相浮出水面。</Fog.FullReveal.ScammerPassive.Text>
+
+  <Fog.FullReveal.ScammerCascade.Label>骗子被揭露</Fog.FullReveal.ScammerCascade.Label>
+  <Fog.FullReveal.ScammerCascade.Text>一个秘密牵出另一个——{PAWN}的整份简历瞬间崩塌。</Fog.FullReveal.ScammerCascade.Text>
+
+  <Fog_SleeperReveal_Suspicion.Text>这一天，殖民者开始注意到{PAWN_nameDef}行为中的细微不一致——挺拔的站姿，异常敏锐的反射。饭后闲聊已转为低声的猜测。</Fog_SleeperReveal_Suspicion.Text>
+  <Fog_SleeperReveal_Suspicion.Text.1>有人听到{PAWN_nameDef}在搬运石块时哼唱某首军乐曲调，无人能够说出来源。</Fog_SleeperReveal_Suspicion.Text.1>
+  <Fog_SleeperReveal_Suspicion.Text.2>一名殖民者记录，在一次纸牌游戏中，{PAWN_nameDef}似乎无需直视就能跟踪手牌。</Fog_SleeperReveal_Suspicion.Text.2>
+  <Fog_SleeperReveal_Suspicion.Text.3>有记录指出，{PAWN_nameDef}磨刀的手法更像是学院训练，而非边疆生存。</Fog_SleeperReveal_Suspicion.Text.3>
+
+  <Fog_SleeperReveal_Anomaly.Text>一场突如其来的危机打破常规。目击者称{PAWN_nameDef}以非同寻常的速度和战术清晰度做出反应，下达指令，甚至老兵也本能地服从。</Fog_SleeperReveal_Anomaly.Text>
+  <Fog_SleeperReveal_Anomaly.Text.1>在太阳耀斑期间，{PAWN_nameDef}高效地绕过了电力继电器，然后以巧合为由搪塞。</Fog_SleeperReveal_Anomaly.Text.1>
+  <Fog_SleeperReveal_Anomaly.Text.2>在一次袭击警报后，{PAWN_nameDef}被看到以不明编制的队形迅速摆阵。</Fog_SleeperReveal_Anomaly.Text.2>
+  <Fog_SleeperReveal_Anomaly.Text.3>一颗误投的手雷滚落旁边时，{PAWN_nameDef}本能地拦截并反抛，随后称是"肌肉记忆"。</Fog_SleeperReveal_Anomaly.Text.3>
+
+  <Fog_SleeperReveal_Revealed.Text>不再需要维持假象，{PAWN_nameDef}的姿态和语气都显得坚决。旁观者立即注意到变化。他们曾经的身份如今如同被丢弃的面具。</Fog_SleeperReveal_Revealed.Text>
+  <Fog_SleeperReveal_Revealed.Text.1>事件过后，{PAWN_nameDef}静立不动，随后说道："指令已确认。"据说房间顿时陷入沉默。</Fog_SleeperReveal_Revealed.Text.1>
+  <Fog_SleeperReveal_Revealed.Text.2>目击者回忆{PAWN_nameDef}冷静地背诵长串坐标和誓言短语——没有任何匹配已知派系。</Fog_SleeperReveal_Revealed.Text.2>
+  <Fog_SleeperReveal_Revealed.Text.3>{PAWN_nameDef}轻轻呼气，拔出手枪，解除保险，不发一言。所有人都明白了某种不可逆转的事实。</Fog_SleeperReveal_Revealed.Text.3>
+
+  <!-- Settings -->
+  <FogOfPawn.Settings.DeceiverJoinerOnly>启用保证潜伏者/骗子剧情</FogOfPawn.Settings.DeceiverJoinerOnly>
+  <FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>如果启用，模组将在中期确保有一名潜伏者和一名骗子加入殖民地。关闭则完全随机（约1%的加入者）。</FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>
+
+  <!-- Sleeper choice letter -->
+  <Fog_SleeperChoice.Label>{PAWN_nameFull}身份暴露</Fog_SleeperChoice.Label>
+  <Fog_SleeperChoice.Text>伪装已碎。{PAWN_nameDef}——曾经只是另一名幸存者——如今显露为更危险……或许，更必要之人。他们的动作更敏捷，声音更沉稳，眼神不再飘忽。深埋的训练浮现，如今他们丝毫不加掩饰。殖民地众目睽睽之下，{PAWN_nameDef}静候——接受裁决，或者执行任务。</Fog_SleeperChoice.Text>
+  <Fog_SleeperChoice.Text.1>伪装已碎。{PAWN_nameDef}——曾经只是另一名幸存者——如今显露为更危险……或许，更必要之人。他们的动作更敏捷，声音更沉稳，眼神不再飘忽。深埋的训练浮现，如今他们丝毫不加掩饰。殖民地众目睽睽之下，{PAWN_nameDef}静候——接受裁决，或者执行任务。</Fog_SleeperChoice.Text.1>
+  <Fog_SleeperChoice.Text.2>真相再也无法隐藏。每一个姿势、每一次决定，现在看来都合情合理——{PAWN_nameDef}从来不是一名农夫。混乱中的冷静、本不该属于农夫的本能……他们生来为此。当面具落下，他们面无愧色，站得笔直，以只有受训者才能保持的专注，等待你的决定。你是否信任他们？</Fog_SleeperChoice.Text.2>
+  <Fog_SleeperChoice.Text.3>他们与你并肩工作，为殖民地流血，同桌进餐、共同度过风暴。但现在，{PAWN_nameDef}暴露——曾经的特工？朋友？空气中的紧张比袭击前的沙尘还要凝重。他们沉默，但站姿坚定。选择权在你：驱逐他们，或接受隐藏在平凡中的战士。</Fog_SleeperChoice.Text.3>
+  <Fog_SleeperOutcome_Keep>收留并信任</Fog_SleeperOutcome_Keep>
+  <Fog_SleeperOutcome_Capture>逮捕（视为敌对）</Fog_SleeperOutcome_Capture>
+  <Fog_SleeperOutcome_Exile>立即放逐</Fog_SleeperOutcome_Exile>
+
+  <!-- Additional Mod Settings -->
+  <FogOfPawn.Settings.XPToReveal>揭露所需经验值</FogOfPawn.Settings.XPToReveal>
+  <FogOfPawn.Settings.XPToRevealTooltip>在暴露之前，技能累计获得的经验值阈值。达到后揭示真实等级。</FogOfPawn.Settings.XPToRevealTooltip>
+
+  <FogOfPawn.Settings.FogSkills>隐藏技能等级</FogOfPawn.Settings.FogSkills>
+  <FogOfPawn.Settings.FogTraits>隐藏特性</FogOfPawn.Settings.FogTraits>
+  <FogOfPawn.Settings.FogGenes>隐藏基因</FogOfPawn.Settings.FogGenes>
+  <FogOfPawn.Settings.FogAddictions>隐藏成瘾情况</FogOfPawn.Settings.FogAddictions>
+
+  <FogOfPawn.Settings.SocialRevealPct>社交揭露概率</FogOfPawn.Settings.SocialRevealPct>
+  <FogOfPawn.Settings.SocialRevealPctTooltip>每次成功互动后揭露的概率百分比。</FogOfPawn.Settings.SocialRevealPctTooltip>
+
+  <FogOfPawn.Settings.PassiveRevealDays>被动揭露间隔（天）</FogOfPawn.Settings.PassiveRevealDays>
+  <FogOfPawn.Settings.PassiveRevealDaysTooltip>每名殖民者的平均被动揭露天数。</FogOfPawn.Settings.PassiveRevealDaysTooltip>
+
+  <FogOfPawn.Settings.AllowSocialSkillReveal>允许社交揭露技能</FogOfPawn.Settings.AllowSocialSkillReveal>
+  <FogOfPawn.Settings.AllowSocialTraitReveal>允许社交揭露特性</FogOfPawn.Settings.AllowSocialTraitReveal>
+  <FogOfPawn.Settings.AllowPassiveSkillReveal>允许被动揭露技能</FogOfPawn.Settings.AllowPassiveSkillReveal>
+  <FogOfPawn.Settings.AllowPassiveTraitReveal>允许被动揭露特性</FogOfPawn.Settings.AllowPassiveTraitReveal>
+
+  <FogOfPawn.Settings.MaxAlteredSkills>最大被篡改技能数</FogOfPawn.Settings.MaxAlteredSkills>
+  <FogOfPawn.Settings.AllowUnderstate>允许谎报过低技能</FogOfPawn.Settings.AllowUnderstate>
+
+  <FogOfPawn.Settings.FullRevealHeader>完全揭露机制</FogOfPawn.Settings.FullRevealHeader>
+
+  <FogOfPawn.Settings.WorkTabFallbackMask>工作表备用遮蔽</FogOfPawn.Settings.WorkTabFallbackMask>
+  <FogOfPawn.Settings.WorkTabFallbackMask_Tooltip>若启用，将使用更安全但精度较低的工作表遮蔽方式，以解决可能的兼容性问题。</FogOfPawn.Settings.WorkTabFallbackMask_Tooltip>
+
+  <FogOfPawn.ModTitle>Fog-O-Pawn 迷雾志</FogOfPawn.ModTitle>
+
+  <FogOfPawn.Settings.SpawnWeightHeader>生成构成权重（将自动归一化）：</FogOfPawn.Settings.SpawnWeightHeader>
+  <FogOfPawn.Settings.Truthful>诚实者</FogOfPawn.Settings.Truthful>
+  <FogOfPawn.Settings.Slight>轻度伪装者</FogOfPawn.Settings.Slight>
+  <FogOfPawn.Settings.Deceiver>骗子/潜伏者</FogOfPawn.Settings.Deceiver>
+  <FogOfPawn.Settings.CurrentComposition>当前构成 → 诚实 {0}% | 轻度 {1}% | 欺骗 {2}%</FogOfPawn.Settings.CurrentComposition>
+
+  <FogOfPawn.Settings.SleeperCombatXP>潜伏者战斗经验阈值</FogOfPawn.Settings.SleeperCombatXP>
+  <FogOfPawn.Settings.ScammerSkillXP>骗子低技能经验阈值</FogOfPawn.Settings.ScammerSkillXP>
+  <FogOfPawn.Settings.PassiveDailyRevealPct>每日被动揭露概率</FogOfPawn.Settings.PassiveDailyRevealPct>
+  <FogOfPawn.Settings.DisguiseKitWealth>伪装工具减值</FogOfPawn.Settings.DisguiseKitWealth>
+  <FogOfPawn.Settings.ScammerHighSkills>骗子高技能伪称数量</FogOfPawn.Settings.ScammerHighSkills>
+  <FogOfPawn.Settings.ScammerMidSkills>骗子中等技能伪称数量</FogOfPawn.Settings.ScammerMidSkills>
+</LanguageData> 
