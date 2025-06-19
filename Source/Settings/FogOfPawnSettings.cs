@@ -46,9 +46,9 @@ namespace FogOfPawn
         public int scammerMidSkills = 3; // # of mid claimed skills 4-8
 
         // Add fields after deceptionIntensity
-        public int pctTruthful = 80;
-        public int pctSlight = 19;
-        public int pctDeceiver = 1;
+        public int pctTruthful = 65;
+        public int pctSlight = 30;
+        public int pctDeceiver = 5;
 
         // Work tab masking fallback – when true use safer but less accurate capacity override instead of transpiler.
         public bool workTabFallbackMask = false;
@@ -91,9 +91,9 @@ namespace FogOfPawn
             Scribe_Values.Look(ref scammerHighSkills, "scammerHighSkills", 3);
             Scribe_Values.Look(ref scammerMidSkills, "scammerMidSkills", 3);
 
-            Scribe_Values.Look(ref pctTruthful, "pctTruthful", 80);
-            Scribe_Values.Look(ref pctSlight, "pctSlight", 19);
-            Scribe_Values.Look(ref pctDeceiver, "pctDeceiver", 1);
+            Scribe_Values.Look(ref pctTruthful, "pctTruthful", 65);
+            Scribe_Values.Look(ref pctSlight, "pctSlight", 30);
+            Scribe_Values.Look(ref pctDeceiver, "pctDeceiver", 5);
 
             Scribe_Values.Look(ref workTabFallbackMask, "workTabFallbackMask", false);
 
@@ -103,35 +103,36 @@ namespace FogOfPawn
         public void DoWindowContents(Rect inRect)
         {
             // Simple scroll view because we now have a lot of settings.
-            float viewHeight = 1000f;
+            float viewHeight = 1600f;
             Rect viewRect = new Rect(0, 0, inRect.width - 16f, viewHeight);
             Widgets.BeginScrollView(inRect, ref _scrollPos, viewRect);
 
             var list = new Listing_Standard();
             list.Begin(viewRect);
 
-            // Spawn distribution sliders (must total >0; they will be normalised internally)
+            // Spawn composition sliders – Truthful then Slight; Deceiver computed as remainder.
             list.Label("FogOfPawn.Settings.SpawnWeightHeader".Translate());
-            // Toggle to guarantee at least one Sleeper & Scammer storyline
+            // Toggle restriction visibility
             list.CheckboxLabeled("FogOfPawn.Settings.DeceiverJoinerOnly".Translate(), ref deceiverJoinersOnly, "FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip".Translate());
+
+            // Truthful percentage
             list.Label("FogOfPawn.Settings.Truthful".Translate() + ": " + pctTruthful + "%");
-            pctTruthful = (int)list.Slider(pctTruthful, 0, 100);
+            pctTruthful = Mathf.Clamp((int)list.Slider(pctTruthful, 0, 100), 0, 100);
+
+            // Slight percentage – cap so total ≤100
+            int remaining = 100 - pctTruthful;
+            if (pctSlight > remaining) pctSlight = remaining;
             list.Label("FogOfPawn.Settings.Slight".Translate() + ": " + pctSlight + "%");
-            pctSlight = (int)list.Slider(pctSlight, 0, 100);
+            pctSlight = Mathf.Clamp((int)list.Slider(pctSlight, 0, remaining), 0, remaining);
+
+            pctDeceiver = 100 - pctTruthful - pctSlight;
             list.Label("FogOfPawn.Settings.Deceiver".Translate() + ": " + pctDeceiver + "%");
-            pctDeceiver = (int)list.Slider(pctDeceiver, 0, 100);
+            pctDeceiver = Mathf.Clamp(pctDeceiver, 0, 100);
 
             list.GapLine();
             
-            // Display normalised result
-            {
-                float sum = pctTruthful + pctSlight + pctDeceiver;
-                if (sum < 0.01f) sum = 1f;
-                float t = pctTruthful / sum;
-                float s = pctSlight / sum;
-                float d = pctDeceiver / sum;
-                list.Label("FogOfPawn.Settings.CurrentComposition".Translate((int)(t*100), (int)(s*100), (int)(d*100)));
-            }
+            // Display final composition (already sums to 100)
+            list.Label("FogOfPawn.Settings.CurrentComposition".Translate(pctTruthful, pctSlight, pctDeceiver));
 
             list.GapLine();
 
@@ -197,6 +198,16 @@ namespace FogOfPawn
             list.GapLine();
             list.CheckboxLabeled("FogOfPawn.Settings.WorkTabFallbackMask".Translate(), ref workTabFallbackMask, "FogOfPawn.Settings.WorkTabFallbackMask_Tooltip".Translate());
 
+            // Reset button
+            list.GapLine();
+            Color prev = GUI.color;
+            GUI.color = Color.red;
+            if (list.ButtonText("FogOfPawn.Settings.ResetDefaults".Translate()))
+            {
+                ResetDefaults();
+            }
+            GUI.color = prev;
+
             list.End();
             Widgets.EndScrollView();
 
@@ -206,5 +217,21 @@ namespace FogOfPawn
         }
 
         private Vector2 _scrollPos = Vector2.zero;
+
+        public void ResetDefaults()
+        {
+            pctTruthful = 65;
+            pctSlight = 30;
+            pctDeceiver = 5;
+            socialRevealPct = 5;
+            maxAlteredSkills = 3;
+            alteredSkillRange = 6;
+            allowUnderstate = true;
+            fogSkills = true;
+            fogTraits = true;
+            fogGenes = true;
+            verboseLogging = false;
+            // add more defaults as needed
+        }
     }
 } 

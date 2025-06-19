@@ -111,4 +111,6 @@
   <FogOfPawn.Settings.VerboseLogging_Tooltip>启用后，模组将在控制台输出详细诊断信息，便于调试或问题反馈。</FogOfPawn.Settings.VerboseLogging_Tooltip>
 
   <FogOfPawn.Settings.AlterRange>技能偏差最大范围</FogOfPawn.Settings.AlterRange>
+
+  <FogOfPawn.Settings.ResetDefaults>恢复默认设置</FogOfPawn.Settings.ResetDefaults>
 </LanguageData> 

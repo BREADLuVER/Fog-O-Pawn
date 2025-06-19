@@ -96,4 +96,6 @@
 
   <FogOfPawn.Settings.AlterRange>Max skill deviation range</FogOfPawn.Settings.AlterRange>
 
+  <FogOfPawn.Settings.ResetDefaults>Reset to Defaults</FogOfPawn.Settings.ResetDefaults>
+
 </LanguageData> 

@@ -26,7 +26,7 @@ Fog-of-Pawn obscures some details of newly-joined pawns so the player doesn't ha
 
 ---
 ## Deception Tier
-1. **Truthful** – ~80 % of pawns (slider adjustable)  
+1. **Truthful** – ~65 % of pawns (slider adjustable)  
    • All skills & passions reported accurately.
 2. **Slightly-Deceived** – up to 3 random skills are exaggerated or understated.  
    • Passions can be faked for those skills.  
