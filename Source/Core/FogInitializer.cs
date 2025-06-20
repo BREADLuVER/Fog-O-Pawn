@@ -50,6 +50,14 @@ namespace FogOfPawn
             float wSlight = Mathf.Max(0f, settings.pctSlight);
             float wDeceiver = Mathf.Max(0f, settings.pctDeceiver);
 
+            // Optional score-based scaling: more competent pawns are more likely deceivers.
+            if (settings.scoreBasedLiarChance)
+            {
+                float pvScore = Mathf.Clamp01(GetPawnValue(pawn) / 500f); // 0 = worthless, 1 = highly skilled
+                float factor = 1f + (1f - pvScore); // 2× weight for worst, 1× for best
+                wDeceiver *= factor;
+            }
+
             // After weight assignment add normalization
             float total = wTruth + wSlight + wDeceiver;
             if (total <= 0f)
@@ -227,6 +235,8 @@ namespace FogOfPawn
 
             bool forceHideBad = comp.tier == DeceptionTier.DeceiverScammer;
 
+            bool biasBad = settings.biasBadTraitHiding;
+
             if (!settings.fogTraits || pawn.story?.traits == null)
             {
                 // Reveal all traits when trait fogging is disabled or pawn has none.
@@ -241,7 +251,13 @@ namespace FogOfPawn
             foreach (var trait in pawn.story.traits.allTraits)
             {
                 bool isBad = IsNegativeTrait(trait.def);
-                bool hide = forceHideBad && isBad ? true : Rand.Value < settings.traitHideChance;
+                float effChance = settings.traitHideChance;
+                if (biasBad && isBad)
+                {
+                    effChance = Mathf.Clamp01(effChance + GetDeceptionTendencyScore(trait.def));
+                }
+
+                bool hide = forceHideBad && isBad ? true : Rand.Value < effChance;
                 if (!hide)
                 {
                     comp.revealedTraits.Add(trait.def);
@@ -279,6 +295,22 @@ namespace FogOfPawn
         private static bool IsNegativeTrait(TraitDef def)
         {
             return _knownBadTraitDefNames.Contains(def.defName);
+        }
+
+        // Deception tendency scores for individual traits (0–1). Higher values increase hide likelihood when bias toggle enabled.
+        private static readonly Dictionary<string, float> _traitDeceptionScores = new()
+        {
+            {"Pyromaniac", 0.4f},
+            {"Wimp", 0.25f},
+            {"Nervous", 0.2f},
+            {"Neurotic", 0.2f},
+            {"Volatile", 0.25f},
+            {"Gourmand", 0.15f}
+        };
+
+        private static float GetDeceptionTendencyScore(TraitDef def)
+        {
+            return _traitDeceptionScores.TryGetValue(def.defName, out var v) ? v : 0f;
         }
 
         public static float GetPawnValue(Pawn p)

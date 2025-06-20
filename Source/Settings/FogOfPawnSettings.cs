@@ -59,6 +59,13 @@ namespace FogOfPawn
         // XP threshold for Slightly-Deceived skill reveal
         public int slightSkillXp = 1000;
 
+        // New feature toggles
+        // When true, certain negative traits have an increased chance of starting hidden.
+        public bool biasBadTraitHiding = false; // default off
+
+        // When true, chance to spawn as a Deceiver scales with pawn skill/trait score.
+        public bool scoreBasedLiarChance = false; // default off
+
         private const int MinXp = 1000;
         private const int MaxXp = 5000;
 
@@ -103,6 +110,10 @@ namespace FogOfPawn
             Scribe_Values.Look(ref alteredSkillRange, "alteredSkillRange", 6);
 
             Scribe_Values.Look(ref slightSkillXp, "slightSkillXp", 2000);
+
+            // New toggles
+            Scribe_Values.Look(ref biasBadTraitHiding, "biasBadTraitHiding", false);
+            Scribe_Values.Look(ref scoreBasedLiarChance, "scoreBasedLiarChance", false);
         }
 
         public void DoWindowContents(Rect inRect)
@@ -180,6 +191,13 @@ namespace FogOfPawn
             alteredSkillRange = (int)list.Slider(alteredSkillRange, 2, 10);
             list.GapLine();
 
+            // --- New feature toggles ---
+            list.CheckboxLabeled("FogOfPawn.Settings.BiasBadTraitHiding".Translate(), ref biasBadTraitHiding, "FogOfPawn.Settings.BiasBadTraitHiding_Tooltip".Translate());
+
+            list.CheckboxLabeled("FogOfPawn.Settings.ScoreBasedLiarChance".Translate(), ref scoreBasedLiarChance, "FogOfPawn.Settings.ScoreBasedLiarChance_Tooltip".Translate());
+
+            list.GapLine();
+
             list.Label("FogOfPawn.Settings.TraitHideChance".Translate() + $": {(int)(traitHideChance*100)} %", -1f, "FogOfPawn.Settings.TraitHideChanceTooltip".Translate());
             traitHideChance = list.Slider(traitHideChance, 0f, 1f);
             list.GapLine();
@@ -240,6 +258,8 @@ namespace FogOfPawn
             fogTraits = true;
             fogGenes = true;
             verboseLogging = false;
+            biasBadTraitHiding = false;
+            scoreBasedLiarChance = false;
             // add more defaults as needed
         }
     }

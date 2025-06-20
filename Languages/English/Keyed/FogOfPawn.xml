@@ -129,4 +129,11 @@
   <FogOfPawn.Settings.WorkTabFallbackMask>Work tab fallback masking</FogOfPawn.Settings.WorkTabFallbackMask>
   <FogOfPawn.Settings.WorkTabFallbackMask_Tooltip>Uses a safer but less accurate method to hide skills in the Work tab for compatibility.</FogOfPawn.Settings.WorkTabFallbackMask_Tooltip>
 
+  <!-- New toggles -->
+  <FogOfPawn.Settings.BiasBadTraitHiding>Bias trait hiding toward negative traits</FogOfPawn.Settings.BiasBadTraitHiding>
+  <FogOfPawn.Settings.BiasBadTraitHiding_Tooltip>If enabled, certain negative traits (Pyromaniac, Wimp, etc.) are more likely to start hidden.</FogOfPawn.Settings.BiasBadTraitHiding_Tooltip>
+
+  <FogOfPawn.Settings.ScoreBasedLiarChance>Scale deceiver chance by pawn value</FogOfPawn.Settings.ScoreBasedLiarChance>
+  <FogOfPawn.Settings.ScoreBasedLiarChance_Tooltip>When enabled, more capable pawns have a higher probability of spawning as liars (Scammers or Sleepers).</FogOfPawn.Settings.ScoreBasedLiarChance_Tooltip>
+
 </LanguageData> 
