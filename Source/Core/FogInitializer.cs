@@ -77,7 +77,14 @@ namespace FogOfPawn
             // Determine Sleeper vs Scammer based on pawn value
             float pv2 = GetPawnValue(pawn);
             float median2 = 250f;
-            return pv2 < median2 ? DeceptionTier.DeceiverScammer : DeceptionTier.DeceiverSleeper;
+            if (pv2 < median2)
+            {
+                return DeceptionTier.DeceiverScammer;
+            }
+
+            // Candidate for Sleeper – ensure it has no negative traits.
+            bool hasBadTrait = pawn.story?.traits?.allTraits.Any(t => IsNegativeTrait(t.def)) ?? false;
+            return hasBadTrait ? DeceptionTier.DeceiverScammer : DeceptionTier.DeceiverSleeper;
         }
 
         private static void ApplyMasks(Pawn pawn, CompPawnFog comp, FogOfPawnSettings settings)
@@ -244,6 +251,14 @@ namespace FogOfPawn
                     hiddenList ??= new List<Trait>();
                     hiddenList.Add(trait);
                 }
+            }
+
+            // Ensure at least one trait is visible so the player always has some information.
+            if (comp.revealedTraits.Count == 0 && hiddenList != null && hiddenList.Count > 0)
+            {
+                var traitToReveal = hiddenList.RandomElement();
+                comp.revealedTraits.Add(traitToReveal.def);
+                hiddenList.Remove(traitToReveal);
             }
 
             // Dev logging – list hidden traits once per pawn per session
