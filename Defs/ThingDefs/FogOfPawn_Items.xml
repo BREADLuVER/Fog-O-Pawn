@@ -12,7 +12,7 @@
     </graphicData>
     <selectable>true</selectable>
     <thingCategories>
-      <li>ApparelBelt</li>
+      <li>ApparelUtility</li>
     </thingCategories>
     <statBases>
       <MarketValue>1</MarketValue>
