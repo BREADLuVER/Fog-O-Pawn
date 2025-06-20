@@ -74,7 +74,6 @@
 
   <FogOfPawn.Settings.FogSkills>隐藏技能等级</FogOfPawn.Settings.FogSkills>
   <FogOfPawn.Settings.FogTraits>隐藏特性</FogOfPawn.Settings.FogTraits>
-  <FogOfPawn.Settings.FogGenes>隐藏基因</FogOfPawn.Settings.FogGenes>
 
   <FogOfPawn.Settings.SocialRevealPct>社交揭露概率</FogOfPawn.Settings.SocialRevealPct>
   <FogOfPawn.Settings.SocialRevealPctTooltip>每次成功互动后揭露的概率百分比。</FogOfPawn.Settings.SocialRevealPctTooltip>

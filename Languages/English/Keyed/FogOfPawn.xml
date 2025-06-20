@@ -103,4 +103,30 @@
 
   <FogOfPawn.Settings.SlightSkillXP>XP to reveal Slightly-Deceived skill</FogOfPawn.Settings.SlightSkillXP>
 
+  <!-- Added missing Settings translations to avoid pseudolocalization -->
+  <FogOfPawn.Settings.XPToReveal>XP to reveal true skill</FogOfPawn.Settings.XPToReveal>
+  <FogOfPawn.Settings.XPToRevealTooltip>Experience threshold accumulated on a skill before its real level is shown.</FogOfPawn.Settings.XPToRevealTooltip>
+
+  <FogOfPawn.Settings.FogSkills>Mask skill levels</FogOfPawn.Settings.FogSkills>
+  <FogOfPawn.Settings.FogTraits>Mask traits</FogOfPawn.Settings.FogTraits>
+
+  <FogOfPawn.Settings.SocialRevealPct>Social reveal chance</FogOfPawn.Settings.SocialRevealPct>
+  <FogOfPawn.Settings.SocialRevealPctTooltip>Percentage chance to reveal after each successful social interaction.</FogOfPawn.Settings.SocialRevealPctTooltip>
+
+  <FogOfPawn.Settings.PassiveRevealDays>Passive reveal interval (days)</FogOfPawn.Settings.PassiveRevealDays>
+  <FogOfPawn.Settings.PassiveRevealDaysTooltip>Average in-game days between passive reveal checks per pawn.</FogOfPawn.Settings.PassiveRevealDaysTooltip>
+
+  <FogOfPawn.Settings.AllowSocialSkillReveal>Allow social skill reveal</FogOfPawn.Settings.AllowSocialSkillReveal>
+  <FogOfPawn.Settings.AllowSocialTraitReveal>Allow social trait reveal</FogOfPawn.Settings.AllowSocialTraitReveal>
+  <FogOfPawn.Settings.AllowPassiveSkillReveal>Allow passive skill reveal</FogOfPawn.Settings.AllowPassiveSkillReveal>
+  <FogOfPawn.Settings.AllowPassiveTraitReveal>Allow passive trait reveal</FogOfPawn.Settings.AllowPassiveTraitReveal>
+
+  <FogOfPawn.Settings.MaxAlteredSkills>Maximum altered skills</FogOfPawn.Settings.MaxAlteredSkills>
+  <FogOfPawn.Settings.AllowUnderstate>Allow understating skills</FogOfPawn.Settings.AllowUnderstate>
+
+  <FogOfPawn.Settings.FullRevealHeader>Full-reveal mechanics</FogOfPawn.Settings.FullRevealHeader>
+
+  <FogOfPawn.Settings.WorkTabFallbackMask>Work tab fallback masking</FogOfPawn.Settings.WorkTabFallbackMask>
+  <FogOfPawn.Settings.WorkTabFallbackMask_Tooltip>Uses a safer but less accurate method to hide skills in the Work tab for compatibility.</FogOfPawn.Settings.WorkTabFallbackMask_Tooltip>
+
 </LanguageData> 

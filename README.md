@@ -90,6 +90,5 @@ Narrative hooks:  Building
 * **Scammer “jitter”** – unrevealed scammers have a 15 % hourly chance per skill to act 3-6 levels worse, creating occasional suspicious failures.
 * **Revealed scammer penalty** – once exposed, scammers suffer −0.30 Social Impact, hurting trade deals and persuasion attempts.
 
-Settings additions
 
 * *Work-tab compatibility mode* (checkbox) – disables the transpiler in favour of a future non-IL fallback; use only if a major UI mod reports a conflict.
