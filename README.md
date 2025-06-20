@@ -1,5 +1,5 @@
 # Fog of Pawn – RimWorld 1.6
-![Mix](https://github.com/user-attachments/assets/6fd2398f-a7e3-4817-829c-166285da80db)
+![MixCollage-19-Jun-2025-09-52-PM-9430](https://github.com/user-attachments/assets/aa75c507-20b9-4010-b0d9-217567e7c19c)
 
 Fog-of-Pawn obscures some details of newly-joined pawns so the player doesn't have perfect knowledge on day-one.  As the colony interacts with the pawn, the fog gradually lifts – creating emergent stories like *"I hired a doctor... turns out he can't even suture a scratch!"*  
 
