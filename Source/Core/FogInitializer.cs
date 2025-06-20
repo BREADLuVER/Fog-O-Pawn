@@ -121,7 +121,7 @@ namespace FogOfPawn
                 bool understate = settings.allowUnderstate && Rand.Chance(0.5f);
                 int range = Mathf.Clamp(settings.alteredSkillRange, 2, 10);
                 int delta = Rand.RangeInclusive(2, range);
-                int reported = Mathf.Clamp(skill.Level + (understate ? -delta : delta), 0, 20);
+                int reported = Mathf.Clamp(skill.levelInt + (understate ? -delta : delta), 0, 20);
                 comp.reportedSkills[skill.def] = reported;
 
                 if (Rand.Chance(0.4f))
@@ -179,9 +179,10 @@ namespace FogOfPawn
 
             foreach (var skill in pawn.skills.skills)
             {
-                if (skill.Level >= 6)
+                if (skill.levelInt >= 6)
                 {
-                    comp.reportedSkills[skill.def] = Rand.RangeInclusive(2, 4);
+                    // Present as mediocre (3–5) rather than abysmal; looks believable but still underwhelming.
+                    comp.reportedSkills[skill.def] = Rand.RangeInclusive(3, 5);
                     // Keep the original passion visible so the low reported level isn't a giveaway.
                     comp.reportedPassions[skill.def] = skill.passion;
                 }
@@ -190,6 +191,14 @@ namespace FogOfPawn
                     comp.revealedSkills.Add(skill.def);
                 }
             }
+
+#if DEBUG
+            if (Prefs.DevMode)
+            {
+                int repCount = comp.reportedSkills.Count;
+                FogLog.Verbose($"[PROFILE] {pawn.LabelShort}: Sleeper masks set for {repCount} skills (tier={comp.tier}).");
+            }
+#endif
         }
 
         /// <summary>

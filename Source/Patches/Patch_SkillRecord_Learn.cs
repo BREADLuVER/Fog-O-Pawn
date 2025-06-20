@@ -21,6 +21,12 @@ namespace FogOfPawn.Patches
                 return;
             }
 
+            // Sleepers are meant to stay hidden until a story-driven reveal; ignore XP thresholds.
+            if (comp.tier == DeceptionTier.DeceiverSleeper)
+            {
+                return;
+            }
+
             int thresholdSetting = FogSettingsCache.Current.xpToReveal;
             float learnFactor = ___pawn.GetStatValue(StatDefOf.GlobalLearningFactor);
             int adjustedThreshold = (int)(thresholdSetting * learnFactor);

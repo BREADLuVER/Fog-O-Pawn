@@ -79,9 +79,17 @@ namespace FogOfPawn
                 */
             }
 
-            // Make them spawn at edge like wanderer join.
-            IntVec3 spawnCell = CellFinder.RandomClosewalkCellNear(map.Center, map, 12, (IntVec3 c) => c.Standable(map) && !c.Fogged(map));
-            GenSpawn.Spawn(pawn, spawnCell, map);
+            // Find a valid entry point at the edge of the map.
+            if (!RCellFinder.TryFindRandomPawnEntryCell(out IntVec3 spawnCell, map, CellFinder.EdgeRoadChance_Neutral, false, null))
+            {
+                // Failed to find a spawn point; abort the incident and discard the pawn.
+                if (pawn != null && !pawn.Destroyed)
+                {
+                    pawn.Destroy(DestroyMode.Vanish);
+                }
+                return false;
+            }
+            GenSpawn.Spawn(pawn, spawnCell, map, WipeMode.Vanish);
 
             pawn.SetFactionDirect(Faction.OfPlayer);
 

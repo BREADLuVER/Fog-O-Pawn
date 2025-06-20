@@ -339,6 +339,11 @@ namespace FogOfPawn
                 FogLog.Verbose("[KIT] Pawn is not a scammer tier.");
                 return;
             }
+            if (!FogUtility.ShouldNotifyPlayer(parent as Pawn))
+            {
+                FogLog.Verbose("[KIT] Pawn does not belong to player – skipping kit drop.");
+                return;
+            }
             if (parent is not Pawn pawn)
             {
                 FogLog.Verbose("[KIT] Parent is not a pawn.");

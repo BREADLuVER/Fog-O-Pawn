@@ -50,6 +50,19 @@ namespace FogOfPawn.Patches
                     Rand.PopState();
                 }
 
+                // Mild performance wobble for Slightly-Deceived – rare and small.
+                else if (comp != null && !comp.fullyRevealed && comp.tier == DeceptionTier.SlightlyDeceived)
+                {
+                    int seed = pawn.thingIDNumber ^ __instance.def.shortHash ^ (Find.TickManager.TicksGame / 2500) ^ 0x5A5A;
+                    Rand.PushState(seed);
+                    if (Rand.Chance(0.05f))
+                    {
+                        // 1–3 level penalty – just enough to raise suspicion.
+                        baseVal = Mathf.Max(0, baseVal - Rand.RangeInclusive(1, 3));
+                    }
+                    Rand.PopState();
+                }
+
                 __result = baseVal;
             }
             catch (System.Exception ex)

@@ -4,6 +4,8 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 using FogOfPawn; // FogLog
+using System.Linq;
+using System.Reflection;
 
 namespace FogOfPawn.Patches
 {
@@ -27,12 +29,17 @@ namespace FogOfPawn.Patches
                 return;
             }
 
-            var method = AccessTools.Method(skillUIType, "DrawSkillsOf");
+            // Resolve any DrawSkills* method (static or instance) that has a Pawn parameter.
+            var method = skillUIType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance)
+                                     .FirstOrDefault(m => (m.Name == "DrawSkillsOf" || m.Name == "DrawSkills") &&
+                                                          m.GetParameters().Any(p => p.ParameterType == typeof(Pawn)));
             if (method == null)
             {
-                FogLog.Fail("SkillUI.DrawSkillsOf", "Could not locate SkillUI.DrawSkillsOf – skill fogging disabled.");
+                FogLog.Fail("SkillUI.DrawSkills", "Could not locate SkillUI.DrawSkillsOf/DrawSkills – skill fogging disabled.");
                 return;
             }
+
+            FogLog.Verbose($"[SkillUI] Patching {method.DeclaringType.FullName}.{method.Name} with {method.GetParameters().Length} parameters.");
 
             harmony.Patch(method,
                 prefix: new HarmonyMethod(typeof(Patch_SkillUI_DrawSkillsOf_Swap), nameof(Prefix)),
@@ -41,7 +48,7 @@ namespace FogOfPawn.Patches
         }
 
         // Cache original data per-call so we can restore in Postfix.
-        private static void Prefix(Pawn p, Vector2 offset, object mode, Rect container,
+        private static void Prefix(object[] __args,
                                    out Dictionary<SkillRecord, (int level, Passion passion)> __state)
         {
             __state = null;
@@ -50,6 +57,19 @@ namespace FogOfPawn.Patches
             {
                 return;
             }
+
+            // Find the pawn argument (first Pawn found).
+            Pawn p = null;
+            foreach (var arg in __args)
+            {
+                if (arg is Pawn pawn)
+                {
+                    p = pawn;
+                    break;
+                }
+            }
+
+            if (p == null) return;
 
             var comp = p.GetComp<CompPawnFog>();
             if (comp == null || !comp.compInitialized) return;
