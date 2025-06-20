@@ -18,13 +18,19 @@ namespace FogOfPawn.Patches
 
             if (comp.tier == DeceptionTier.DeceiverScammer)
             {
-                FogUtility.TriggerFullReveal(pawn, "ScammerMoodBreak");
+                if (ShouldRevealOnMoodBreak(comp))
+                {
+                    FogUtility.TriggerFullReveal(pawn, "ScammerMoodBreak");
+                }
                 return;
             }
 
             if (comp.tier == DeceptionTier.SlightlyDeceived)
             {
-                FogUtility.TriggerFullReveal(pawn, "SlightMoodBreak");
+                if (ShouldRevealOnMoodBreak(comp))
+                {
+                    FogUtility.TriggerFullReveal(pawn, "SlightMoodBreak");
+                }
                 return;
             }
 
@@ -41,6 +47,14 @@ namespace FogOfPawn.Patches
             {
                 FogUtility.TriggerFullReveal(pawn, "ScammerMoodBreak");
             }
+        }
+
+        private static bool ShouldRevealOnMoodBreak(CompPawnFog comp)
+        {
+            // Base 50% chance, increasing linearly with time in colony (days) up to 100% after ~25 days.
+            float daysSinceJoin = comp.ticksSinceJoin / 60000f; // 60k ticks per day
+            float chance = 0.5f + Mathf.Clamp01(daysSinceJoin * 0.02f); // +2% per day
+            return Rand.Chance(chance);
         }
     }
 } 
