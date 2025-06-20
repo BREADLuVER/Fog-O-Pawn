@@ -46,7 +46,7 @@ namespace FogOfPawn
 
                 // Sleeper will gain a powerful trait later when they "wake up" (stage 3 reveal)
             }
-            else if (WantedTier == DeceptionTier.DeceiverScammer)
+            else if (WantedTier == DeceptionTier.DeceiverImposter)
             {
                 // Comment out trait granting loop
                 /*
@@ -112,7 +112,7 @@ namespace FogOfPawn
                         comp.revealedTraits.Remove(td);
                 }
 
-                if (WantedTier == DeceptionTier.DeceiverScammer && comp != null && addedTraits?.Count > 0)
+                if (WantedTier == DeceptionTier.DeceiverImposter && comp != null && addedTraits?.Count > 0)
                 {
                     foreach (var td in addedTraits)
                         comp.revealedTraits.Remove(td);
@@ -137,8 +137,8 @@ namespace FogOfPawn
         protected override DeceptionTier WantedTier => DeceptionTier.DeceiverSleeper;
     }
 
-    public class IncidentWorker_ScammerJoin : IncidentWorker_SpecialJoinerBase
+    public class IncidentWorker_ImposterJoin : IncidentWorker_SpecialJoinerBase
     {
-        protected override DeceptionTier WantedTier => DeceptionTier.DeceiverScammer;
+        protected override DeceptionTier WantedTier => DeceptionTier.DeceiverImposter;
     }
 } 

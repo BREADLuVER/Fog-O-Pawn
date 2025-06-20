@@ -4,7 +4,7 @@ namespace FogOfPawn
     {
         Truthful,
         SlightlyDeceived,
-        DeceiverScammer,
+        DeceiverImposter,
         DeceiverSleeper
     }
 } 

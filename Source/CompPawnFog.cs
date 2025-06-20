@@ -129,7 +129,7 @@ namespace FogOfPawn
             {
                 {"Truthful", DeceptionTier.Truthful},
                 {"Slight", DeceptionTier.SlightlyDeceived},
-                {"Scammer", DeceptionTier.DeceiverScammer},
+                {"Imposter", DeceptionTier.DeceiverImposter},
                 {"Sleeper", DeceptionTier.DeceiverSleeper}
             })
             {
@@ -140,11 +140,11 @@ namespace FogOfPawn
                     {
                         if (parent is not Pawn pawn) return;
 
-                        // Validate suitability for Scammer/Sleeper based on pawn value.
+                        // Validate suitability for Imposter/Sleeper based on pawn value.
                         float pv = FogInitializer.GetPawnValue(pawn);
-                        if (kv.Value == DeceptionTier.DeceiverScammer && pv > 300f)
+                        if (kv.Value == DeceptionTier.DeceiverImposter && pv > 300f)
                         {
-                            Messages.Message($"{pawn.LabelShort} is too competent to be a Scammer (value {pv:F0}).", MessageTypeDefOf.RejectInput, false);
+                            Messages.Message($"{pawn.LabelShort} is too competent to be a Imposter (value {pv:F0}).", MessageTypeDefOf.RejectInput, false);
                             return;
                         }
                         if (kv.Value == DeceptionTier.DeceiverSleeper && pv < 200f)
@@ -164,12 +164,12 @@ namespace FogOfPawn
 
         public void RevealSkill(SkillDef skillDef)
         {
-            // If this pawn is a Sleeper or Scammer and not yet fully revealed,
+            // If this pawn is a Sleeper or Imposter and not yet fully revealed,
             // any attempt to expose a single skill should instead trigger a dramatic
             // full reveal for narrative impact.
-            if (!fullyRevealed && (tier == DeceptionTier.DeceiverSleeper || tier == DeceptionTier.DeceiverScammer))
+            if (!fullyRevealed && (tier == DeceptionTier.DeceiverSleeper || tier == DeceptionTier.DeceiverImposter))
             {
-                string reason = tier == DeceptionTier.DeceiverSleeper ? "SleeperCascade" : "ScammerCascade";
+                string reason = tier == DeceptionTier.DeceiverSleeper ? "SleeperCascade" : "ImposterCascade";
                 FogUtility.TriggerFullReveal((Pawn)parent, reason);
                 return;
             }
@@ -195,9 +195,9 @@ namespace FogOfPawn
 
         public void RevealTrait(Trait trait)
         {
-            if (!fullyRevealed && (tier == DeceptionTier.DeceiverSleeper || tier == DeceptionTier.DeceiverScammer))
+            if (!fullyRevealed && (tier == DeceptionTier.DeceiverSleeper || tier == DeceptionTier.DeceiverImposter))
             {
-                string reason = tier == DeceptionTier.DeceiverSleeper ? "SleeperCascade" : "ScammerCascade";
+                string reason = tier == DeceptionTier.DeceiverSleeper ? "SleeperCascade" : "ImposterCascade";
                 FogUtility.TriggerFullReveal((Pawn)parent, reason);
                 return;
             }
@@ -293,12 +293,12 @@ namespace FogOfPawn
                     }
                 }
 
-                // 1% base daily chance for sleepers/scammers if nothing else triggered
-                if ((tier == DeceptionTier.DeceiverScammer) && ticksSinceJoin % 60000 == 0 && !tierManuallySet)
+                // 1% base daily chance for sleepers/imposters if nothing else triggered
+                if ((tier == DeceptionTier.DeceiverImposter) && ticksSinceJoin % 60000 == 0 && !tierManuallySet)
                 {
                     if (Rand.Chance(FogSettingsCache.Current.passiveDailyRevealPct / 100f))
                     {
-                        string reason = tier == DeceptionTier.DeceiverScammer ? "ScammerPassive" : "ScammerPassive";
+                        string reason = tier == DeceptionTier.DeceiverImposter ? "ImposterPassive" : "ImposterPassive";
                         FogUtility.TriggerFullReveal((Pawn)parent, reason);
                     }
                 }
@@ -347,9 +347,9 @@ namespace FogOfPawn
                 FogLog.Verbose("[KIT] Pawn not fully revealed yet.");
                 return;
             }
-            if (tier != DeceptionTier.DeceiverScammer)
+            if (tier != DeceptionTier.DeceiverImposter)
             {
-                FogLog.Verbose("[KIT] Pawn is not a scammer tier.");
+                FogLog.Verbose("[KIT] Pawn is not a imposter tier.");
                 return;
             }
             if (!FogUtility.ShouldNotifyPlayer(parent as Pawn))

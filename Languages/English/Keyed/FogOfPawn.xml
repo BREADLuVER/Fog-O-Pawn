@@ -22,20 +22,20 @@
   <Fog.FullReveal.SleeperWounded.Label>Sleeper Bleeds Truth</Fog.FullReveal.SleeperWounded.Label>
   <Fog.FullReveal.SleeperWounded.Text>Grievous wounds force {PAWN} to show their real training.</Fog.FullReveal.SleeperWounded.Text>
 
-  <Fog.FullReveal.ScammerCaughtLearning.Label>Scammer Caught!</Fog.FullReveal.ScammerCaughtLearning.Label>
-  <Fog.FullReveal.ScammerCaughtLearning.Text>{PAWN}'s fumbling attempt to learn a basic skill exposes their fraud.</Fog.FullReveal.ScammerCaughtLearning.Text>
+  <Fog.FullReveal.ImposterCaughtLearning.Label>Imposter Caught!</Fog.FullReveal.ImposterCaughtLearning.Label>
+  <Fog.FullReveal.ImposterCaughtLearning.Text>{PAWN}'s fumbling attempt to learn a basic skill exposes their fraud.</Fog.FullReveal.ImposterCaughtLearning.Text>
 
-  <Fog.FullReveal.ScammerCalledOut.Label>Scammer Called Out</Fog.FullReveal.ScammerCalledOut.Label>
-  <Fog.FullReveal.ScammerCalledOut.Text>After a sharp accusation, {PAWN} admits the deception.</Fog.FullReveal.ScammerCalledOut.Text>
+  <Fog.FullReveal.ImposterCalledOut.Label>Imposter Called Out</Fog.FullReveal.ImposterCalledOut.Label>
+  <Fog.FullReveal.ImposterCalledOut.Text>After a sharp accusation, {PAWN} admits the deception.</Fog.FullReveal.ImposterCalledOut.Text>
 
-  <Fog.FullReveal.ScammerMoodBreak.Label>Scammer Breaks Down</Fog.FullReveal.ScammerMoodBreak.Label>
-  <Fog.FullReveal.ScammerMoodBreak.Text>A mental snap tears away {PAWN}'s disguise. The truth is ugly.</Fog.FullReveal.ScammerMoodBreak.Text>
+  <Fog.FullReveal.ImposterMoodBreak.Label>Imposter Breaks Down</Fog.FullReveal.ImposterMoodBreak.Label>
+  <Fog.FullReveal.ImposterMoodBreak.Text>A mental snap tears away {PAWN}'s disguise. The truth is ugly.</Fog.FullReveal.ImposterMoodBreak.Text>
 
-  <Fog.FullReveal.ScammerPassive.Label>Scammer Unmasked</Fog.FullReveal.ScammerPassive.Label>
-  <Fog.FullReveal.ScammerPassive.Text>Rumours swirl until the truth about {PAWN} surfaces.</Fog.FullReveal.ScammerPassive.Text>
+  <Fog.FullReveal.ImposterPassive.Label>Imposter Unmasked</Fog.FullReveal.ImposterPassive.Label>
+  <Fog.FullReveal.ImposterPassive.Text>Rumours swirl until the truth about {PAWN} surfaces.</Fog.FullReveal.ImposterPassive.Text>
 
-  <Fog.FullReveal.ScammerCascade.Label>Scammer Revealed</Fog.FullReveal.ScammerCascade.Label>
-  <Fog.FullReveal.ScammerCascade.Text>One secret leads to another—{PAWN}'s entire résumé falls apart.</Fog.FullReveal.ScammerCascade.Text>
+  <Fog.FullReveal.ImposterCascade.Label>Imposter Revealed</Fog.FullReveal.ImposterCascade.Label>
+  <Fog.FullReveal.ImposterCascade.Text>One secret leads to another—{PAWN}'s entire résumé falls apart.</Fog.FullReveal.ImposterCascade.Text>
 
   <Fog.FullReveal.SlightMoodBreak.Label>Mask Shattered</Fog.FullReveal.SlightMoodBreak.Label>
   <Fog.FullReveal.SlightMoodBreak.Text>{PAWN}'s anxiety boils over, stripping away their mild deceptions in a single outburst.</Fog.FullReveal.SlightMoodBreak.Text>
@@ -66,7 +66,7 @@
 
   <!-- Settings -->
   <FogOfPawn.Settings.DeceiverJoinerOnly>Restrict Deceivers to colony joiners only</FogOfPawn.Settings.DeceiverJoinerOnly>
-  <FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>When enabled (default), only wanderers, refugees, quests or other pawns that join your colony can be Scammers or Sleepers. Disable to allow raiders and other outsiders to spawn as Deceivers.</FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>
+  <FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>When enabled (default), only wanderers, refugees, quests or other pawns that join your colony can be Imposters or Sleepers. Disable to allow raiders and other outsiders to spawn as Deceivers.</FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip>
 
   <!-- Sleeper choice letter -->
   <Fog_SleeperChoice.Label>{PAWN_nameFull} stands revealed</Fog_SleeperChoice.Label>
@@ -84,15 +84,15 @@
   <FogOfPawn.Settings.SpawnWeightHeader>Spawn composition weights (will be normalised):</FogOfPawn.Settings.SpawnWeightHeader>
   <FogOfPawn.Settings.Truthful>Truthful</FogOfPawn.Settings.Truthful>
   <FogOfPawn.Settings.Slight>Slightly-Deceived</FogOfPawn.Settings.Slight>
-  <FogOfPawn.Settings.Deceiver>Scammer/Sleeper</FogOfPawn.Settings.Deceiver>
+  <FogOfPawn.Settings.Deceiver>Imposter/Sleeper</FogOfPawn.Settings.Deceiver>
   <FogOfPawn.Settings.CurrentComposition>Current composition → Truthful {0}% | Slight {1}% | Deceiver {2}%</FogOfPawn.Settings.CurrentComposition>
 
   <FogOfPawn.Settings.SleeperCombatXP>Sleeper combat XP</FogOfPawn.Settings.SleeperCombatXP>
-  <FogOfPawn.Settings.ScammerSkillXP>Scammer low-skill XP</FogOfPawn.Settings.ScammerSkillXP>
+  <FogOfPawn.Settings.ImposterSkillXP>Imposter low-skill XP</FogOfPawn.Settings.ImposterSkillXP>
   <FogOfPawn.Settings.PassiveDailyRevealPct>Passive daily reveal chance</FogOfPawn.Settings.PassiveDailyRevealPct>
   <FogOfPawn.Settings.DisguiseKitWealth>Disguise kit wealth reduction</FogOfPawn.Settings.DisguiseKitWealth>
-  <FogOfPawn.Settings.ScammerHighSkills>Scammer high claimed skills</FogOfPawn.Settings.ScammerHighSkills>
-  <FogOfPawn.Settings.ScammerMidSkills>Scammer mid claimed skills</FogOfPawn.Settings.ScammerMidSkills>
+  <FogOfPawn.Settings.ImposterHighSkills>Imposter high claimed skills</FogOfPawn.Settings.ImposterHighSkills>
+  <FogOfPawn.Settings.ImposterMidSkills>Imposter mid claimed skills</FogOfPawn.Settings.ImposterMidSkills>
 
   <FogOfPawn.Settings.VerboseLogging>Enable verbose logging</FogOfPawn.Settings.VerboseLogging>
   <FogOfPawn.Settings.VerboseLogging_Tooltip>If enabled, Fog of Pawn will print detailed diagnostic messages to the console. Useful for debugging or reporting bugs.</FogOfPawn.Settings.VerboseLogging_Tooltip>
@@ -134,7 +134,7 @@
   <FogOfPawn.Settings.BiasBadTraitHiding_Tooltip>If enabled, certain negative traits (Pyromaniac, Wimp, etc.) are more likely to start hidden.</FogOfPawn.Settings.BiasBadTraitHiding_Tooltip>
 
   <FogOfPawn.Settings.ScoreBasedLiarChance>Scale deceiver chance by pawn value</FogOfPawn.Settings.ScoreBasedLiarChance>
-  <FogOfPawn.Settings.ScoreBasedLiarChance_Tooltip>When enabled, more capable pawns have a higher probability of spawning as liars (Scammers or Sleepers).</FogOfPawn.Settings.ScoreBasedLiarChance_Tooltip>
+  <FogOfPawn.Settings.ScoreBasedLiarChance_Tooltip>When enabled, more capable pawns have a higher probability of spawning as liars (Imposters or Sleepers).</FogOfPawn.Settings.ScoreBasedLiarChance_Tooltip>
 
   <FogOfPawn.Settings.PositiveMoodRevealPct>High-mood reveal chance</FogOfPawn.Settings.PositiveMoodRevealPct>
   <FogOfPawn.Settings.PositiveMoodRevealPctTooltip>Percentage chance per hourly check to reveal a hidden trait or skill when the pawn's mood is above 70%.</FogOfPawn.Settings.PositiveMoodRevealPctTooltip>

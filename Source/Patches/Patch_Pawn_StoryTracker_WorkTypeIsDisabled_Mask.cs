@@ -49,7 +49,7 @@ namespace FogOfPawn.Patches
             var comp = pawn.GetComp<CompPawnFog>();
             if (comp == null || !comp.compInitialized || comp.fullyRevealed) return;
 
-            // Until fully revealed, pretend they can do everything (scammers especially!)
+            // Until fully revealed, pretend they can do everything (imposters especially!)
             __result = false;
         }
     }

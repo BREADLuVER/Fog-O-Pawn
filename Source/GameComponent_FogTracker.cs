@@ -25,7 +25,7 @@ namespace FogOfPawn
 
         // Add joiner tracking fields and methods
         public bool hasSleeperJoiner;
-        public bool hasScammerJoiner;
+        public bool hasImposterJoiner;
         public int totalFogJoiners;
         public int lastFogJoinerTick = -999999;
 
@@ -70,7 +70,7 @@ namespace FogOfPawn
             // Hard guarantee after 90 days if a storyline hasn't happened yet.
             if (!hasSleeperJoiner && isSleeper && daysPassed >= GuaranteeDay)
                 chance = 1f;
-            if (!hasScammerJoiner && !isSleeper && daysPassed >= GuaranteeDay)
+            if (!hasImposterJoiner && !isSleeper && daysPassed >= GuaranteeDay)
                 chance = 1f;
 
             // Diminishing probability after we already have two fogged pawns overall
@@ -86,8 +86,8 @@ namespace FogOfPawn
             lastFogJoinerTick = Find.TickManager.TicksGame;
             if (tier == DeceptionTier.DeceiverSleeper)
                 hasSleeperJoiner = true;
-            else if (tier == DeceptionTier.DeceiverScammer)
-                hasScammerJoiner = true;
+            else if (tier == DeceptionTier.DeceiverImposter)
+                hasImposterJoiner = true;
         }
 
         #region Scribing helpers
@@ -209,7 +209,7 @@ namespace FogOfPawn
                 var list = _stories.Select(s => new SleeperStoryScribe(s)).ToList();
                 Scribe_Collections.Look(ref list, "sleeperStories", LookMode.Deep);
                 Scribe_Values.Look(ref hasSleeperJoiner, "hasSleeperJoiner");
-                Scribe_Values.Look(ref hasScammerJoiner, "hasScammerJoiner");
+                Scribe_Values.Look(ref hasImposterJoiner, "hasImposterJoiner");
                 Scribe_Values.Look(ref totalFogJoiners, "totalFogJoiners");
                 Scribe_Values.Look(ref lastFogJoinerTick, "lastFogJoinerTick");
             }
@@ -220,7 +220,7 @@ namespace FogOfPawn
                 if (list != null)
                     _stories = list.Select(l => new SleeperStory { pawnId = l.pawnId, stage = l.stage, dueTick = l.dueTick }).ToList();
                 Scribe_Values.Look(ref hasSleeperJoiner, "hasSleeperJoiner");
-                Scribe_Values.Look(ref hasScammerJoiner, "hasScammerJoiner");
+                Scribe_Values.Look(ref hasImposterJoiner, "hasImposterJoiner");
                 Scribe_Values.Look(ref totalFogJoiners, "totalFogJoiners");
                 Scribe_Values.Look(ref lastFogJoinerTick, "lastFogJoinerTick");
             }

@@ -9,7 +9,7 @@ namespace FogOfPawn.Patches
 {
     /// <summary>
     /// Reduces WealthPawn by 2 000 for any pawn wearing the disguise kit so raid points stay low
-    /// until the scammer is revealed and the kit drops.
+    /// until the imposter is revealed and the kit drops.
     /// </summary>
     [HarmonyPatch(typeof(StatWorker), "GetValue", new[] { typeof(StatRequest), typeof(bool) })]
     public static class Patch_StatWorker_WealthPawn_DisguiseKit

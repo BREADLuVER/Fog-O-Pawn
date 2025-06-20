@@ -37,13 +37,13 @@ namespace FogOfPawn
 
         // Full reveal mechanics
         public int sleeperCombatXp = 5000;
-        public int scammerSkillXp = 4000;
+        public int imposterSkillXp = 4000;
         public float passiveDailyRevealPct = 1f; // 1%
         public int disguiseKitWealth = 2000;
 
-        // Scammer balancing sliders
-        public int scammerHighSkills = 3; // # of high claimed skills 8-14
-        public int scammerMidSkills = 3; // # of mid claimed skills 4-8
+        // Imposter balancing sliders
+        public int imposterHighSkills = 3; // # of high claimed skills 8-14
+        public int imposterMidSkills = 3; // # of mid claimed skills 4-8
 
         // Add fields after deceptionIntensity
         public int pctTruthful = 65;
@@ -98,12 +98,12 @@ namespace FogOfPawn
             Scribe_Values.Look(ref traitHideChance, "traitHideChance", 0.3f);
 
             Scribe_Values.Look(ref sleeperCombatXp, "sleeperCombatXp", 5000);
-            Scribe_Values.Look(ref scammerSkillXp, "scammerSkillXp", 4000);
+            Scribe_Values.Look(ref imposterSkillXp, "imposterSkillXp", 4000);
             Scribe_Values.Look(ref passiveDailyRevealPct, "passiveDailyRevealPct", 1f);
             Scribe_Values.Look(ref disguiseKitWealth, "disguiseKitWealth", 2000);
 
-            Scribe_Values.Look(ref scammerHighSkills, "scammerHighSkills", 3);
-            Scribe_Values.Look(ref scammerMidSkills, "scammerMidSkills", 3);
+            Scribe_Values.Look(ref imposterHighSkills, "imposterHighSkills", 3);
+            Scribe_Values.Look(ref imposterMidSkills, "imposterMidSkills", 3);
 
             Scribe_Values.Look(ref pctTruthful, "pctTruthful", 65);
             Scribe_Values.Look(ref pctSlight, "pctSlight", 30);
@@ -236,8 +236,8 @@ namespace FogOfPawn
             list.Label("FogOfPawn.Settings.SleeperCombatXP".Translate() + ": " + sleeperCombatXp);
             sleeperCombatXp = (int)list.Slider(sleeperCombatXp, 500, 10000);
 
-            list.Label("FogOfPawn.Settings.ScammerSkillXP".Translate() + ": " + scammerSkillXp);
-            scammerSkillXp = (int)list.Slider(scammerSkillXp, 500, 10000);
+            list.Label("FogOfPawn.Settings.ImposterSkillXP".Translate() + ": " + imposterSkillXp);
+            imposterSkillXp = (int)list.Slider(imposterSkillXp, 500, 10000);
 
             list.Label("FogOfPawn.Settings.PassiveDailyRevealPct".Translate() + ": " + passiveDailyRevealPct.ToString("F1") + "%");
             passiveDailyRevealPct = list.Slider(passiveDailyRevealPct, 0f, 20f);
@@ -245,11 +245,11 @@ namespace FogOfPawn
             list.Label("FogOfPawn.Settings.DisguiseKitWealth".Translate() + ": " + disguiseKitWealth);
             disguiseKitWealth = (int)list.Slider(disguiseKitWealth, 0, 10000);
 
-            list.Label("FogOfPawn.Settings.ScammerHighSkills".Translate() + ": " + scammerHighSkills);
-            scammerHighSkills = (int)list.Slider(scammerHighSkills, 1, 6);
+            list.Label("FogOfPawn.Settings.ImposterHighSkills".Translate() + ": " + imposterHighSkills);
+            imposterHighSkills = (int)list.Slider(imposterHighSkills, 1, 6);
 
-            list.Label("FogOfPawn.Settings.ScammerMidSkills".Translate() + ": " + scammerMidSkills);
-            scammerMidSkills = (int)list.Slider(scammerMidSkills, 0, 6);
+            list.Label("FogOfPawn.Settings.ImposterMidSkills".Translate() + ": " + imposterMidSkills);
+            imposterMidSkills = (int)list.Slider(imposterMidSkills, 0, 6);
 
             list.CheckboxLabeled("FogOfPawn.Settings.WorkTabFallbackMask".Translate(), ref workTabFallbackMask, "FogOfPawn.Settings.WorkTabFallbackMask_Tooltip".Translate());
 

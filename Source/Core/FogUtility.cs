@@ -65,15 +65,15 @@ namespace FogOfPawn
 
             if (comp.fullyRevealed) return;
 
-            if (comp.tier == DeceptionTier.DeceiverScammer)
+            if (comp.tier == DeceptionTier.DeceiverImposter)
             {
-                TryAddScammerTrait(pawn);
+                TryAddImposterTrait(pawn);
             }
 
             comp.RevealAll();
             comp.fullyRevealed = true;
 
-            // Force disguise kit logic (Scammer only)
+            // Force disguise kit logic (Imposter only)
             comp.GetType().GetMethod("MaybeDropDisguiseKit", System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance)?.Invoke(comp, null);
 
             if (ShouldNotifyPlayer(pawn))
@@ -85,10 +85,10 @@ namespace FogOfPawn
             Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.PositiveEvent, pawn);
             }
 
-            // Reputation damage for scammer
-            if (comp.tier == DeceptionTier.DeceiverScammer)
+            // Reputation damage for imposter
+            if (comp.tier == DeceptionTier.DeceiverImposter)
             {
-                var thought = DefDatabase<ThoughtDef>.GetNamedSilentFail("Fog_ScammerRevealed_Betrayed");
+                var thought = DefDatabase<ThoughtDef>.GetNamedSilentFail("Fog_ImposterRevealed_Betrayed");
                 if (thought != null)
                 {
                     foreach (var other in pawn.MapHeld?.mapPawns?.FreeColonistsSpawned ?? Enumerable.Empty<Pawn>())
@@ -107,7 +107,7 @@ namespace FogOfPawn
             FogLog.Verbose($"[FULL REVEAL] {pawn.LabelShort} ({comp.tier}) via {reasonKey}");
         }
 
-        private static void TryAddScammerTrait(Pawn pawn)
+        private static void TryAddImposterTrait(Pawn pawn)
         {
             if (pawn?.story?.traits == null) return;
             List<TraitDef> badPool = new()

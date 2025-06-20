@@ -14,8 +14,8 @@
   </IncidentDef>
 
   <IncidentDef>
-    <defName>FogOfPawn_ScammerJoin</defName>
-    <workerClass>FogOfPawn.IncidentWorker_ScammerJoin</workerClass>
+    <defName>FogOfPawn_ImposterJoin</defName>
+    <workerClass>FogOfPawn.IncidentWorker_ImposterJoin</workerClass>
     <category>Misc</category>
     <letterDef>NeutralEvent</letterDef>
     <targetTags>

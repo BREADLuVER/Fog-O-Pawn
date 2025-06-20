@@ -82,17 +82,17 @@ namespace FogOfPawn
                 return DeceptionTier.Truthful;
             }
 
-            // Determine Sleeper vs Scammer based on pawn value
+            // Determine Sleeper vs Imposter based on pawn value
             float pv2 = GetPawnValue(pawn);
             float median2 = 250f;
             if (pv2 < median2)
             {
-                return DeceptionTier.DeceiverScammer;
+                return DeceptionTier.DeceiverImposter;
             }
 
             // Candidate for Sleeper – ensure it has no negative traits.
             bool hasBadTrait = pawn.story?.traits?.allTraits.Any(t => IsNegativeTrait(t.def)) ?? false;
-            return hasBadTrait ? DeceptionTier.DeceiverScammer : DeceptionTier.DeceiverSleeper;
+            return hasBadTrait ? DeceptionTier.DeceiverImposter : DeceptionTier.DeceiverSleeper;
         }
 
         private static void ApplyMasks(Pawn pawn, CompPawnFog comp, FogOfPawnSettings settings)
@@ -107,8 +107,8 @@ namespace FogOfPawn
                 case DeceptionTier.SlightlyDeceived:
                     ApplySlight(pawn, comp, settings);
                     break;
-                case DeceptionTier.DeceiverScammer:
-                    ApplyScammer(pawn, comp);
+                case DeceptionTier.DeceiverImposter:
+                    ApplyImposter(pawn, comp);
                     break;
                 case DeceptionTier.DeceiverSleeper:
                     ApplySleeper(pawn, comp);
@@ -155,13 +155,13 @@ namespace FogOfPawn
             }
         }
 
-        private static void ApplyScammer(Pawn pawn, CompPawnFog comp)
+        private static void ApplyImposter(Pawn pawn, CompPawnFog comp)
         {
             var settings = FogSettingsCache.Current;
             var skillsShuffled = pawn.skills.skills.InRandomOrder().ToList();
 
             // 1. High claimed skills (8-14) with passions (2-3 of them)
-            int highCount = Mathf.Clamp(settings.scammerHighSkills, 1, 6);
+            int highCount = Mathf.Clamp(settings.imposterHighSkills, 1, 6);
             for (int i = 0; i < highCount && i < skillsShuffled.Count; i++)
             {
                 var sk = skillsShuffled[i];
@@ -171,7 +171,7 @@ namespace FogOfPawn
             }
 
             // 2. Mid-level claimed skills (4-8)
-            int midCount = Mathf.Clamp(settings.scammerMidSkills, 0, 6);
+            int midCount = Mathf.Clamp(settings.imposterMidSkills, 0, 6);
             for (int i = highCount; i < highCount + midCount && i < skillsShuffled.Count; i++)
             {
                 var sk = skillsShuffled[i];
@@ -233,7 +233,7 @@ namespace FogOfPawn
                 return;
             }
 
-            bool forceHideBad = comp.tier == DeceptionTier.DeceiverScammer;
+            bool forceHideBad = comp.tier == DeceptionTier.DeceiverImposter;
 
             bool biasBad = settings.biasBadTraitHiding;
 

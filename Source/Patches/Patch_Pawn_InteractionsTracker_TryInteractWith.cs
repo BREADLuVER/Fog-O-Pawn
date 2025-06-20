@@ -27,13 +27,13 @@ namespace FogOfPawn.Patches
                 FogUtility.RevealRandomFoggedAttribute(recipient, preferSkill: true);
             }
 
-            // new: if the interaction is an insult and target is scammer -> full reveal
+            // new: if the interaction is an insult and target is imposter -> full reveal
             if (intDef == InteractionDefOf.Insult && recipient != null)
             {
                 var scamComp = recipient.GetComp<CompPawnFog>();
-                if (scamComp != null && scamComp.tier == DeceptionTier.DeceiverScammer && !scamComp.fullyRevealed)
+                if (scamComp != null && scamComp.tier == DeceptionTier.DeceiverImposter && !scamComp.fullyRevealed)
                 {
-                    FogUtility.TriggerFullReveal(recipient, "ScammerCalledOut");
+                    FogUtility.TriggerFullReveal(recipient, "ImposterCalledOut");
                     return;
                 }
             }

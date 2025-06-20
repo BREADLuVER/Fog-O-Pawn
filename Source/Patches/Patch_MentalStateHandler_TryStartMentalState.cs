@@ -17,11 +17,11 @@ namespace FogOfPawn.Patches
             var comp = pawn.GetComp<CompPawnFog>();
             if (comp == null || comp.fullyRevealed) return;
 
-            if (comp.tier == DeceptionTier.DeceiverScammer)
+            if (comp.tier == DeceptionTier.DeceiverImposter)
             {
                 if (ShouldRevealOnMoodBreak(comp))
                 {
-                    FogUtility.TriggerFullReveal(pawn, "ScammerMoodBreak");
+                    FogUtility.TriggerFullReveal(pawn, "ImposterMoodBreak");
                 }
                 return;
             }
@@ -46,7 +46,7 @@ namespace FogOfPawn.Patches
 
             if (reveal)
             {
-                FogUtility.TriggerFullReveal(pawn, "ScammerMoodBreak");
+                FogUtility.TriggerFullReveal(pawn, "ImposterMoodBreak");
             }
         }
 

@@ -20,7 +20,7 @@ namespace FogOfPawn.Patches
             if (comp.tier == DeceptionTier.DeceiverSleeper)
                 return;
 
-            if (comp.tier == DeceptionTier.DeceiverScammer)
+            if (comp.tier == DeceptionTier.DeceiverImposter)
             {
                 if (__instance.Level < 4)
                 {
@@ -29,9 +29,9 @@ namespace FogOfPawn.Patches
                     cur += xp;
                     comp.tempData[key] = cur;
 
-                    if (cur >= FogSettingsCache.Current.scammerSkillXp)
+                    if (cur >= FogSettingsCache.Current.imposterSkillXp)
                     {
-                        FogUtility.TriggerFullReveal(pawn, "ScammerCaughtLearning");
+                        FogUtility.TriggerFullReveal(pawn, "ImposterCaughtLearning");
                     }
                 }
             }

@@ -35,9 +35,9 @@ namespace FogOfPawn.Patches
                 // Base effective value (masked or real).
                 int baseVal = EffectiveSkillUtility.GetEffectiveSkill(pawn, __instance.def);
 
-                // Add random performance jitter for scammers – makes them occasionally botch jobs.
+                // Add random performance jitter for imposters – makes them occasionally botch jobs.
                 var comp = pawn.GetComp<CompPawnFog>();
-                if (comp != null && !comp.fullyRevealed && comp.tier == DeceptionTier.DeceiverScammer)
+                if (comp != null && !comp.fullyRevealed && comp.tier == DeceptionTier.DeceiverImposter)
                 {
                     // Seed based on pawn, skill and current hour so result is stable for short stretches.
                     int seed = pawn.thingIDNumber ^ __instance.def.shortHash ^ (Find.TickManager.TicksGame / 2500);

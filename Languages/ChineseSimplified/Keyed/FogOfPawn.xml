@@ -21,20 +21,20 @@
   <Fog.FullReveal.SleeperWounded.Label>潜伏者因伤露馅</Fog.FullReveal.SleeperWounded.Label>
   <Fog.FullReveal.SleeperWounded.Text>重伤迫使{PAWN}展示了他们真正的训练。</Fog.FullReveal.SleeperWounded.Text>
 
-  <Fog.FullReveal.ScammerCaughtLearning.Label>骗子被逮个正着！</Fog.FullReveal.ScammerCaughtLearning.Label>
-  <Fog.FullReveal.ScammerCaughtLearning.Text>{PAWN}在学习基础技能时的笨拙暴露了他们的骗局。</Fog.FullReveal.ScammerCaughtLearning.Text>
+  <Fog.FullReveal.ImposterCaughtLearning.Label>骗子被逮个正着！</Fog.FullReveal.ImposterCaughtLearning.Label>
+  <Fog.FullReveal.ImposterCaughtLearning.Text>{PAWN}在学习基础技能时的笨拙暴露了他们的骗局。</Fog.FullReveal.ImposterCaughtLearning.Text>
 
-  <Fog.FullReveal.ScammerCalledOut.Label>骗子被指认</Fog.FullReveal.ScammerCalledOut.Label>
-  <Fog.FullReveal.ScammerCalledOut.Text>在尖锐的指责后，{PAWN}承认了欺骗。</Fog.FullReveal.ScammerCalledOut.Text>
+  <Fog.FullReveal.ImposterCalledOut.Label>骗子被指认</Fog.FullReveal.ImposterCalledOut.Label>
+  <Fog.FullReveal.ImposterCalledOut.Text>在尖锐的指责后，{PAWN}承认了欺骗。</Fog.FullReveal.ImposterCalledOut.Text>
 
-  <Fog.FullReveal.ScammerMoodBreak.Label>骗子崩溃</Fog.FullReveal.ScammerMoodBreak.Label>
-  <Fog.FullReveal.ScammerMoodBreak.Text>一次精神崩溃撕下了{PAWN}的伪装。真相很丑陋。</Fog.FullReveal.ScammerMoodBreak.Text>
+  <Fog.FullReveal.ImposterMoodBreak.Label>骗子崩溃</Fog.FullReveal.ImposterMoodBreak.Label>
+  <Fog.FullReveal.ImposterMoodBreak.Text>一次精神崩溃撕下了{PAWN}的伪装。真相很丑陋。</Fog.FullReveal.ImposterMoodBreak.Text>
 
-  <Fog.FullReveal.ScammerPassive.Label>骗子现形</Fog.FullReveal.ScammerPassive.Label>
-  <Fog.FullReveal.ScammerPassive.Text>谣言四起，直到关于{PAWN}的真相浮出水面。</Fog.FullReveal.ScammerPassive.Text>
+  <Fog.FullReveal.ImposterPassive.Label>骗子现形</Fog.FullReveal.ImposterPassive.Label>
+  <Fog.FullReveal.ImposterPassive.Text>谣言四起，直到关于{PAWN}的真相浮出水面。</Fog.FullReveal.ImposterPassive.Text>
 
-  <Fog.FullReveal.ScammerCascade.Label>骗子被揭露</Fog.FullReveal.ScammerCascade.Label>
-  <Fog.FullReveal.ScammerCascade.Text>一个秘密牵出另一个——{PAWN}的整份简历瞬间崩塌。</Fog.FullReveal.ScammerCascade.Text>
+  <Fog.FullReveal.ImposterCascade.Label>骗子被揭露</Fog.FullReveal.ImposterCascade.Label>
+  <Fog.FullReveal.ImposterCascade.Text>一个秘密牵出另一个——{PAWN}的整份简历瞬间崩塌。</Fog.FullReveal.ImposterCascade.Text>
 
   <Fog.FullReveal.SlightMoodBreak.Label>伪装崩裂</Fog.FullReveal.SlightMoodBreak.Label>
   <Fog.FullReveal.SlightMoodBreak.Text>{PAWN}的情绪失控，轻度伪装在一声爆发中彻底瓦解。</Fog.FullReveal.SlightMoodBreak.Text>
@@ -103,11 +103,11 @@
   <FogOfPawn.Settings.CurrentComposition>当前构成 → 诚实 {0}% | 轻度 {1}% | 欺骗 {2}%</FogOfPawn.Settings.CurrentComposition>
 
   <FogOfPawn.Settings.SleeperCombatXP>潜伏者战斗经验阈值</FogOfPawn.Settings.SleeperCombatXP>
-  <FogOfPawn.Settings.ScammerSkillXP>骗子低技能经验阈值</FogOfPawn.Settings.ScammerSkillXP>
+  <FogOfPawn.Settings.ImposterSkillXP>骗子低技能经验阈值</FogOfPawn.Settings.ImposterSkillXP>
   <FogOfPawn.Settings.PassiveDailyRevealPct>每日被动揭露概率</FogOfPawn.Settings.PassiveDailyRevealPct>
   <FogOfPawn.Settings.DisguiseKitWealth>伪装工具减值</FogOfPawn.Settings.DisguiseKitWealth>
-  <FogOfPawn.Settings.ScammerHighSkills>骗子高技能伪称数量</FogOfPawn.Settings.ScammerHighSkills>
-  <FogOfPawn.Settings.ScammerMidSkills>骗子中等技能伪称数量</FogOfPawn.Settings.ScammerMidSkills>
+  <FogOfPawn.Settings.ImposterHighSkills>骗子高技能伪称数量</FogOfPawn.Settings.ImposterHighSkills>
+  <FogOfPawn.Settings.ImposterMidSkills>骗子中等技能伪称数量</FogOfPawn.Settings.ImposterMidSkills>
 
   <FogOfPawn.Settings.VerboseLogging>启用详细日志</FogOfPawn.Settings.VerboseLogging>
   <FogOfPawn.Settings.VerboseLogging_Tooltip>启用后，模组将在控制台输出详细诊断信息，便于调试或问题反馈。</FogOfPawn.Settings.VerboseLogging_Tooltip>
