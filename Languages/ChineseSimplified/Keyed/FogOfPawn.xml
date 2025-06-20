@@ -36,6 +36,9 @@
   <Fog.FullReveal.ScammerCascade.Label>骗子被揭露</Fog.FullReveal.ScammerCascade.Label>
   <Fog.FullReveal.ScammerCascade.Text>一个秘密牵出另一个——{PAWN}的整份简历瞬间崩塌。</Fog.FullReveal.ScammerCascade.Text>
 
+  <Fog.FullReveal.SlightMoodBreak.Label>伪装崩裂</Fog.FullReveal.SlightMoodBreak.Label>
+  <Fog.FullReveal.SlightMoodBreak.Text>{PAWN}的情绪失控，轻度伪装在一声爆发中彻底瓦解。</Fog.FullReveal.SlightMoodBreak.Text>
+
   <Fog_SleeperReveal_Suspicion.Text>这一天，殖民者开始注意到{PAWN_nameDef}行为中的细微不一致——挺拔的站姿，异常敏锐的反射。饭后闲聊已转为低声的猜测。</Fog_SleeperReveal_Suspicion.Text>
   <Fog_SleeperReveal_Suspicion.Text.1>有人听到{PAWN_nameDef}在搬运石块时哼唱某首军乐曲调，无人能够说出来源。</Fog_SleeperReveal_Suspicion.Text.1>
   <Fog_SleeperReveal_Suspicion.Text.2>一名殖民者记录，在一次纸牌游戏中，{PAWN_nameDef}似乎无需直视就能跟踪手牌。</Fog_SleeperReveal_Suspicion.Text.2>
@@ -113,4 +116,6 @@
   <FogOfPawn.Settings.AlterRange>技能偏差最大范围</FogOfPawn.Settings.AlterRange>
 
   <FogOfPawn.Settings.ResetDefaults>恢复默认设置</FogOfPawn.Settings.ResetDefaults>
+
+  <FogOfPawn.Settings.SlightSkillXP>轻度伪装技能揭露经验阈值</FogOfPawn.Settings.SlightSkillXP>
 </LanguageData> 

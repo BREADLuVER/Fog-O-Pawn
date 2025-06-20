@@ -78,11 +78,11 @@ namespace FogOfPawn
 
             if (ShouldNotifyPlayer(pawn))
             {
-                string labelKey = $"Fog.FullReveal.{reasonKey}.Label";
-                string textKey  = $"Fog.FullReveal.{reasonKey}.Text";
-                string label = labelKey.Translate(pawn.Named("PAWN"));
-                string text  = textKey.Translate(pawn.Named("PAWN"));
-                Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.PositiveEvent, pawn);
+            string labelKey = $"Fog.FullReveal.{reasonKey}.Label";
+            string textKey  = $"Fog.FullReveal.{reasonKey}.Text";
+            string label = labelKey.Translate(pawn.Named("PAWN"));
+            string text  = textKey.Translate(pawn.Named("PAWN"));
+            Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.PositiveEvent, pawn);
             }
 
             // Reputation damage for scammer

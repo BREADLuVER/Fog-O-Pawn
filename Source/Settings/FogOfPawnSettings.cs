@@ -56,6 +56,9 @@ namespace FogOfPawn
         // Range (±) for how much skill levels can be exaggerated or understated in Slight tier
         public int alteredSkillRange = 6;
 
+        // XP threshold for Slightly-Deceived skill reveal
+        public int slightSkillXp = 1000;
+
         private const int MinXp = 1000;
         private const int MaxXp = 5000;
 
@@ -98,6 +101,8 @@ namespace FogOfPawn
             Scribe_Values.Look(ref workTabFallbackMask, "workTabFallbackMask", false);
 
             Scribe_Values.Look(ref alteredSkillRange, "alteredSkillRange", 6);
+
+            Scribe_Values.Look(ref slightSkillXp, "slightSkillXp", 2000);
         }
 
         public void DoWindowContents(Rect inRect)
@@ -139,6 +144,10 @@ namespace FogOfPawn
             // XP to reveal
             list.Label("FogOfPawn.Settings.XPToReveal".Translate() + $": {xpToReveal}", -1f, "FogOfPawn.Settings.XPToRevealTooltip".Translate());
             xpToReveal = (int)list.Slider(xpToReveal, MinXp, MaxXp);
+            list.GapLine();
+
+            list.Label("FogOfPawn.Settings.SlightSkillXP".Translate() + ": " + slightSkillXp);
+            slightSkillXp = (int)list.Slider(slightSkillXp, 500, 5000);
             list.GapLine();
 
             // Toggles

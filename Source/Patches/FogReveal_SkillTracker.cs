@@ -35,6 +35,18 @@ namespace FogOfPawn.Patches
                     }
                 }
             }
+            else if (comp.tier == DeceptionTier.SlightlyDeceived)
+            {
+                string key2 = "skillxp_slight_" + __instance.def.defName;
+                if (!comp.tempData.TryGetValue(key2, out float cur2)) cur2 = 0f;
+                cur2 += xp;
+                comp.tempData[key2] = cur2;
+
+                if (cur2 >= FogSettingsCache.Current.slightSkillXp && !comp.revealedSkills.Contains(__instance.def))
+                {
+                    comp.RevealSkill(__instance.def);
+                }
+            }
         }
     }
 } 

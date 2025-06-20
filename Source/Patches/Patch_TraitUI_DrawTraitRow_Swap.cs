@@ -15,28 +15,11 @@ namespace FogOfPawn.Patches
     [StaticConstructorOnStartup]
     public static class Patch_TraitUI_DrawTraitRow_Swap
     {
-        // Lazy-constructed placeholder used during masking.
-        private static readonly TraitDef UnknownTraitDef;
-
         // Sentinels so we only log once per session.
         private static readonly HashSet<int> _loggedPawns = new();
 
         static Patch_TraitUI_DrawTraitRow_Swap()
         {
-            // Create lightweight placeholder TraitDef (not registered in DefDatabase; UI-only).
-            UnknownTraitDef = new TraitDef
-            {
-                defName    = "FogOfPawn_UnknownTraitRuntime",   // runtime only
-                label      = "FogOfPawn.UnknownTrait".Translate(),
-                description= "FogOfPawn.UnknownTrait.Tooltip".Translate(),
-                degreeDatas = Enumerable.Range(0,5).Select(i => new TraitDegreeData
-                {
-                    degree = i - 2, // -2 to +2
-                    label = "FogOfPawn.UnknownTrait".Translate(),
-                    description = "FogOfPawn.UnknownTrait.Tooltip".Translate()
-                }).ToList()
-            };
-
             var harmony = new Harmony("FogOfPawn.TraitUI.Swap");
             // In RW 1.6 the old RimWorld.TraitUI class was removed; that triggers the edge-case path below.
             // We simply fall back to masking via ITab_Pawn_Character.FillTab, so this is an expected scenario
@@ -56,47 +39,31 @@ namespace FogOfPawn.Patches
             }
 
             harmony.Patch(drawMethod,
-                prefix: new HarmonyMethod(typeof(Patch_TraitUI_DrawTraitRow_Swap), nameof(Prefix)),
-                postfix: new HarmonyMethod(typeof(Patch_TraitUI_DrawTraitRow_Swap), nameof(Postfix)));
+                prefix: new HarmonyMethod(typeof(Patch_TraitUI_DrawTraitRow_Swap), nameof(Prefix)));
 
             FogLog.Reflect("TraitUI.DrawTraitRow.Patched", "TraitUI.DrawTraitRow patched for fog masking (swap mode).");
         }
 
-        /// <summary>
-        /// Swap unrevealed traits to the placeholder just for the duration of the row draw.
-        /// We accept generic parameter order; Harmony will match by type.
-        /// </summary>
-        private static void Prefix(Rect rect, Pawn pawn, Trait trait, out (TraitDef def, int degree) __state)
+        // Prefix now returns bool – false skips vanilla DrawTraitRow, effectively hiding the row.
+        private static bool Prefix(Rect rect, Pawn pawn, Trait trait)
         {
-            __state = default;
-
-            if (trait == null || pawn == null) return;
-            if (!FogSettingsCache.Current.fogTraits) return;
+            if (trait == null || pawn == null) return true;
+            if (!FogSettingsCache.Current.fogTraits) return true;
 
             var comp = pawn.GetComp<CompPawnFog>();
-            if (comp == null || !comp.compInitialized) return;
-            if (comp.revealedTraits.Contains(trait.def)) return; // already revealed
+            if (comp == null || !comp.compInitialized) return true;
 
-            // Store original and swap.
-            __state = (trait.def, trait.Degree);
-            trait.def    = UnknownTraitDef;
-            Traverse.Create(trait).Field("tipCachedInt").SetValue(null);
-
-            if (Prefs.DevMode && _loggedPawns.Add(pawn.thingIDNumber))
+            if (!comp.revealedTraits.Contains(trait.def))
             {
-                FogLog.Verbose($"Masking traits for {pawn.LabelShort} (draw-time swap mode)");
+                // Hidden trait → skip drawing
+                if (Prefs.DevMode && _loggedPawns.Add(pawn.thingIDNumber))
+                {
+                    FogLog.Verbose($"Hiding trait row for {pawn.LabelShort} (unrevealed trait {trait.def.defName})");
+                }
+                return false; // cancel original DrawTraitRow
             }
-        }
 
-        /// <summary>
-        /// Restore original TraitDef/degree after vanilla row rendering.
-        /// </summary>
-        private static void Postfix(Trait trait, (TraitDef def, int degree) __state)
-        {
-            if (__state.def == null) return;
-
-            trait.def    = __state.def;
-            Traverse.Create(trait).Field("tipCachedInt").SetValue(null);
+            return true; // draw normally
         }
     }
 } 

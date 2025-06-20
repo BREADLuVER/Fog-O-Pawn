@@ -15,19 +15,6 @@ namespace FogOfPawn.Patches
     [StaticConstructorOnStartup]
     public static class Patch_ITab_Pawn_Character_FillTab_Swap
     {
-        private static readonly TraitDef UnknownTraitDef = new TraitDef
-        {
-            defName = "FogOfPawn_UnknownTraitRuntime",
-            label = "FogOfPawn.UnknownTrait".Translate(),
-            description = "FogOfPawn.UnknownTrait.Tooltip".Translate(),
-            degreeDatas = Enumerable.Range(0,5).Select(i => new TraitDegreeData
-            {
-                degree = i - 2,
-                label = "FogOfPawn.UnknownTrait".Translate(),
-                description = "FogOfPawn.UnknownTrait.Tooltip".Translate()
-            }).ToList()
-        };
-
         private static readonly HashSet<int> _loggedPawns = new();
 
         static Patch_ITab_Pawn_Character_FillTab_Swap()
@@ -66,22 +53,21 @@ namespace FogOfPawn.Patches
             if (comp == null || !comp.compInitialized) return;
             if (pawn.story?.traits == null) return;
 
-            List<(Trait, TraitDef, int)> swapped = null;
+            List<Trait> removed = null;
 
-            foreach (var tr in pawn.story.traits.allTraits)
+            foreach (var tr in pawn.story.traits.allTraits.ToList())
             {
                 if (!comp.revealedTraits.Contains(tr.def))
                 {
-                    swapped ??= new();
-                    swapped.Add((tr, tr.def, tr.Degree));
-                    tr.def    = UnknownTraitDef;
-                    Traverse.Create(tr).Field("tipCachedInt").SetValue(null);
+                    removed ??= new();
+                    removed.Add(tr);
+                    pawn.story.traits.allTraits.Remove(tr);
                 }
             }
 
-            if (swapped != null)
+            if (removed != null)
             {
-                __state = swapped;
+                __state = removed.Select(t=> (t, (TraitDef)null, 0)).ToList();
 
                 if (Prefs.DevMode && _loggedPawns.Add(pawn.thingIDNumber))
                 {
@@ -93,10 +79,10 @@ namespace FogOfPawn.Patches
         private static void Postfix(List<(Trait trait, TraitDef originalDef, int originalDegree)> __state)
         {
             if (__state == null) return;
-            foreach (var (trait, def, degree) in __state)
+            foreach (var (trait, _, _) in __state)
             {
-                trait.def    = def;
-                Traverse.Create(trait).Field("tipCachedInt").SetValue(null);
+                if(!trait.pawn.story.traits.allTraits.Contains(trait))
+                    trait.pawn.story.traits.allTraits.Add(trait);
             }
         }
     }

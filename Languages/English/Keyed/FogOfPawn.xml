@@ -37,6 +37,9 @@
   <Fog.FullReveal.ScammerCascade.Label>Scammer Revealed</Fog.FullReveal.ScammerCascade.Label>
   <Fog.FullReveal.ScammerCascade.Text>One secret leads to another—{PAWN}'s entire résumé falls apart.</Fog.FullReveal.ScammerCascade.Text>
 
+  <Fog.FullReveal.SlightMoodBreak.Label>Mask Shattered</Fog.FullReveal.SlightMoodBreak.Label>
+  <Fog.FullReveal.SlightMoodBreak.Text>{PAWN}'s anxiety boils over, stripping away their mild deceptions in a single outburst.</Fog.FullReveal.SlightMoodBreak.Text>
+
   <Fog_SleeperReveal_Suspicion.Text>On this day, colonists began noting subtle inconsistencies in {PAWN_nameDef}'s behavior—an upright stance, unusually sharp reflexes. Informal mealtime chatter has turned toward quiet speculation.</Fog_SleeperReveal_Suspicion.Text>
 
   <Fog_SleeperReveal_Suspicion.Text.1>{PAWN_nameDef} was heard humming a military march while hauling stone. No one else could place the melody.</Fog_SleeperReveal_Suspicion.Text.1>
@@ -97,5 +100,7 @@
   <FogOfPawn.Settings.AlterRange>Max skill deviation range</FogOfPawn.Settings.AlterRange>
 
   <FogOfPawn.Settings.ResetDefaults>Reset to Defaults</FogOfPawn.Settings.ResetDefaults>
+
+  <FogOfPawn.Settings.SlightSkillXP>XP to reveal Slightly-Deceived skill</FogOfPawn.Settings.SlightSkillXP>
 
 </LanguageData> 

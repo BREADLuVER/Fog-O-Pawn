@@ -14,7 +14,19 @@ namespace FogOfPawn.Patches
             Pawn pawn = Traverse.Create(__instance).Field("pawn").GetValue<Pawn>();
             if (pawn == null) return;
             var comp = pawn.GetComp<CompPawnFog>();
-            if (comp == null || comp.tier != DeceptionTier.DeceiverScammer || comp.fullyRevealed) return;
+            if (comp == null || comp.fullyRevealed) return;
+
+            if (comp.tier == DeceptionTier.DeceiverScammer)
+            {
+                FogUtility.TriggerFullReveal(pawn, "ScammerMoodBreak");
+                return;
+            }
+
+            if (comp.tier == DeceptionTier.SlightlyDeceived)
+            {
+                FogUtility.TriggerFullReveal(pawn, "SlightMoodBreak");
+                return;
+            }
 
             // If the mental state aligns with a hidden trait, trigger reveal
             bool reveal = false;
