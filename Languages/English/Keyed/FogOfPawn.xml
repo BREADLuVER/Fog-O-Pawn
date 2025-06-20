@@ -136,4 +136,17 @@
   <FogOfPawn.Settings.ScoreBasedLiarChance>Scale deceiver chance by pawn value</FogOfPawn.Settings.ScoreBasedLiarChance>
   <FogOfPawn.Settings.ScoreBasedLiarChance_Tooltip>When enabled, more capable pawns have a higher probability of spawning as liars (Scammers or Sleepers).</FogOfPawn.Settings.ScoreBasedLiarChance_Tooltip>
 
+  <FogOfPawn.Settings.PositiveMoodRevealPct>High-mood reveal chance</FogOfPawn.Settings.PositiveMoodRevealPct>
+  <FogOfPawn.Settings.PositiveMoodRevealPctTooltip>Percentage chance per hourly check to reveal a hidden trait or skill when the pawn's mood is above 70%.</FogOfPawn.Settings.PositiveMoodRevealPctTooltip>
+
+  <FogOfPawn.Settings.PositiveMoodThresholdPct>High-mood threshold</FogOfPawn.Settings.PositiveMoodThresholdPct>
+  <FogOfPawn.Settings.PositiveMoodThresholdPctTooltip>Mood percentage above which the high-mood reveal roll is evaluated.</FogOfPawn.Settings.PositiveMoodThresholdPctTooltip>
+
+  <FogOfPawn.Settings.SectionGeneral>--- General Reveal Settings ---</FogOfPawn.Settings.SectionGeneral>
+  <FogOfPawn.Settings.SectionFogToggles>--- Fogging Toggles ---</FogOfPawn.Settings.SectionFogToggles>
+  <FogOfPawn.Settings.SectionAmbient>--- Ambient Reveal Tuning ---</FogOfPawn.Settings.SectionAmbient>
+  <FogOfPawn.Settings.SectionAdvanced>--- Advanced Deception Features ---</FogOfPawn.Settings.SectionAdvanced>
+  <FogOfPawn.Settings.SectionHighMood>--- High-Mood Reveals ---</FogOfPawn.Settings.SectionHighMood>
+  <FogOfPawn.Settings.SectionTraitMasking>--- Trait Masking ---</FogOfPawn.Settings.SectionTraitMasking>
+
 </LanguageData> 

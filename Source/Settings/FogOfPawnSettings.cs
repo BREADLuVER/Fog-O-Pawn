@@ -66,6 +66,10 @@ namespace FogOfPawn
         // When true, chance to spawn as a Deceiver scales with pawn skill/trait score.
         public bool scoreBasedLiarChance = false; // default off
 
+        // High-mood reveal tuning
+        public int positiveMoodRevealPct = 5; // % chance per hourly check when mood > threshold
+        public int positiveMoodThresholdPct = 70; // Mood level threshold (0-100)
+
         private const int MinXp = 1000;
         private const int MaxXp = 5000;
 
@@ -114,20 +118,32 @@ namespace FogOfPawn
             // New toggles
             Scribe_Values.Look(ref biasBadTraitHiding, "biasBadTraitHiding", false);
             Scribe_Values.Look(ref scoreBasedLiarChance, "scoreBasedLiarChance", false);
+
+            Scribe_Values.Look(ref positiveMoodRevealPct, "positiveMoodRevealPct", 5);
+            Scribe_Values.Look(ref positiveMoodThresholdPct, "positiveMoodThresholdPct", 70);
         }
 
         public void DoWindowContents(Rect inRect)
         {
             // Simple scroll view because we now have a lot of settings.
-            float viewHeight = 1600f;
+            float viewHeight = 2400f;
             Rect viewRect = new Rect(0, 0, inRect.width - 16f, viewHeight);
             Widgets.BeginScrollView(inRect, ref _scrollPos, viewRect);
 
             var list = new Listing_Standard();
             list.Begin(viewRect);
 
+            // Helper for clearer section separators
+            void SectionBreak()
+            {
+                list.Gap();
+                list.GapLine();
+                list.Gap();
+            }
+
             // Spawn composition sliders – Truthful then Slight; Deceiver computed as remainder.
             list.Label("FogOfPawn.Settings.SpawnWeightHeader".Translate());
+
             // Toggle restriction visibility
             list.CheckboxLabeled("FogOfPawn.Settings.DeceiverJoinerOnly".Translate(), ref deceiverJoinersOnly, "FogOfPawn.Settings.DeceiverJoinerOnly_Tooltip".Translate());
 
@@ -144,30 +160,32 @@ namespace FogOfPawn
             pctDeceiver = 100 - pctTruthful - pctSlight;
             list.Label("FogOfPawn.Settings.Deceiver".Translate() + ": " + pctDeceiver + "%");
             pctDeceiver = Mathf.Clamp(pctDeceiver, 0, 100);
-
-            list.GapLine();
             
             // Display final composition (already sums to 100)
             list.Label("FogOfPawn.Settings.CurrentComposition".Translate(pctTruthful, pctSlight, pctDeceiver));
 
-            list.GapLine();
+            SectionBreak();
+            list.Label("FogOfPawn.Settings.SectionGeneral".Translate());
 
             // XP to reveal
             list.Label("FogOfPawn.Settings.XPToReveal".Translate() + $": {xpToReveal}", -1f, "FogOfPawn.Settings.XPToRevealTooltip".Translate());
             xpToReveal = (int)list.Slider(xpToReveal, MinXp, MaxXp);
-            list.GapLine();
 
             list.Label("FogOfPawn.Settings.SlightSkillXP".Translate() + ": " + slightSkillXp);
             slightSkillXp = (int)list.Slider(slightSkillXp, 500, 5000);
-            list.GapLine();
 
+            SectionBreak();
+
+            list.Label("FogOfPawn.Settings.SectionFogToggles".Translate());
             // Toggles
             list.CheckboxLabeled("FogOfPawn.Settings.FogSkills".Translate(), ref fogSkills);
             list.CheckboxLabeled("FogOfPawn.Settings.FogTraits".Translate(), ref fogTraits);
             list.CheckboxLabeled("FogOfPawn.Settings.FogGenes".Translate(), ref fogGenes);
             list.CheckboxLabeled("FogOfPawn.Settings.VerboseLogging".Translate(), ref verboseLogging, "FogOfPawn.Settings.VerboseLogging_Tooltip".Translate());
 
-            list.GapLine();
+            SectionBreak();
+
+            list.Label("FogOfPawn.Settings.SectionAmbient".Translate());
 
             // Ambient reveal tuning section
             list.Label("FogOfPawn.Settings.SocialRevealPct".Translate() + $": {socialRevealPct} %", -1f, "FogOfPawn.Settings.SocialRevealPctTooltip".Translate());
@@ -181,26 +199,38 @@ namespace FogOfPawn
             list.CheckboxLabeled("FogOfPawn.Settings.AllowPassiveSkillReveal".Translate(), ref allowPassiveSkillReveal);
             list.CheckboxLabeled("FogOfPawn.Settings.AllowPassiveTraitReveal".Translate(), ref allowPassiveTraitReveal);
 
-            list.GapLine();
             list.Label("FogOfPawn.Settings.MaxAlteredSkills".Translate() + $": {maxAlteredSkills}");
             maxAlteredSkills = (int)list.Slider(maxAlteredSkills, 1, 5);
             list.CheckboxLabeled("FogOfPawn.Settings.AllowUnderstate".Translate(), ref allowUnderstate);
 
-            list.GapLine();
             list.Label("FogOfPawn.Settings.AlterRange".Translate() + $": ±{alteredSkillRange}");
             alteredSkillRange = (int)list.Slider(alteredSkillRange, 2, 10);
-            list.GapLine();
+            SectionBreak();
+
+            list.Label("FogOfPawn.Settings.SectionAdvanced".Translate());
 
             // --- New feature toggles ---
             list.CheckboxLabeled("FogOfPawn.Settings.BiasBadTraitHiding".Translate(), ref biasBadTraitHiding, "FogOfPawn.Settings.BiasBadTraitHiding_Tooltip".Translate());
 
             list.CheckboxLabeled("FogOfPawn.Settings.ScoreBasedLiarChance".Translate(), ref scoreBasedLiarChance, "FogOfPawn.Settings.ScoreBasedLiarChance_Tooltip".Translate());
 
-            list.GapLine();
+            SectionBreak();
+
+            list.Label("FogOfPawn.Settings.SectionHighMood".Translate());
+
+            // High-mood reveal slider
+            list.Label("FogOfPawn.Settings.PositiveMoodRevealPct".Translate() + $": {positiveMoodRevealPct} %", -1f, "FogOfPawn.Settings.PositiveMoodRevealPctTooltip".Translate());
+            positiveMoodRevealPct = (int)list.Slider(positiveMoodRevealPct, 0, 100);
+
+            list.Label("FogOfPawn.Settings.PositiveMoodThresholdPct".Translate() + $": {positiveMoodThresholdPct} %", -1f, "FogOfPawn.Settings.PositiveMoodThresholdPctTooltip".Translate());
+            positiveMoodThresholdPct = (int)list.Slider(positiveMoodThresholdPct, 50, 100);
+
+            SectionBreak();
+
+            list.Label("FogOfPawn.Settings.SectionTraitMasking".Translate());
 
             list.Label("FogOfPawn.Settings.TraitHideChance".Translate() + $": {(int)(traitHideChance*100)} %", -1f, "FogOfPawn.Settings.TraitHideChanceTooltip".Translate());
             traitHideChance = list.Slider(traitHideChance, 0f, 1f);
-            list.GapLine();
 
             list.Label("FogOfPawn.Settings.FullRevealHeader".Translate());
             list.Label("FogOfPawn.Settings.SleeperCombatXP".Translate() + ": " + sleeperCombatXp);
@@ -214,7 +244,6 @@ namespace FogOfPawn
 
             list.Label("FogOfPawn.Settings.DisguiseKitWealth".Translate() + ": " + disguiseKitWealth);
             disguiseKitWealth = (int)list.Slider(disguiseKitWealth, 0, 10000);
-            list.GapLine();
 
             list.Label("FogOfPawn.Settings.ScammerHighSkills".Translate() + ": " + scammerHighSkills);
             scammerHighSkills = (int)list.Slider(scammerHighSkills, 1, 6);
@@ -222,11 +251,10 @@ namespace FogOfPawn
             list.Label("FogOfPawn.Settings.ScammerMidSkills".Translate() + ": " + scammerMidSkills);
             scammerMidSkills = (int)list.Slider(scammerMidSkills, 0, 6);
 
-            list.GapLine();
             list.CheckboxLabeled("FogOfPawn.Settings.WorkTabFallbackMask".Translate(), ref workTabFallbackMask, "FogOfPawn.Settings.WorkTabFallbackMask_Tooltip".Translate());
 
             // Reset button
-            list.GapLine();
+            SectionBreak();
             Color prev = GUI.color;
             GUI.color = Color.red;
             if (list.ButtonText("FogOfPawn.Settings.ResetDefaults".Translate()))
@@ -260,6 +288,8 @@ namespace FogOfPawn
             verboseLogging = false;
             biasBadTraitHiding = false;
             scoreBasedLiarChance = false;
+            positiveMoodRevealPct = 5;
+            positiveMoodThresholdPct = 70;
             // add more defaults as needed
         }
     }

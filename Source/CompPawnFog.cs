@@ -278,6 +278,19 @@ namespace FogOfPawn
                                 FogUtility.RevealRandomFoggedAttribute(pawnParent, preferSkill: false);
                         }
                     }
+
+                    // Good-treatment (high mood) reveal
+                    if (settings.positiveMoodRevealPct > 0 && parent is Pawn pmood)
+                    {
+                        var moodNeed = pmood.needs?.mood as Need_Mood;
+                        if (moodNeed != null && moodNeed.CurLevel * 100f > settings.positiveMoodThresholdPct)
+                        {
+                            if (Rand.Chance(settings.positiveMoodRevealPct / 100f))
+                            {
+                                FogUtility.RevealRandomFoggedAttribute(pmood, preferSkill: false);
+                            }
+                        }
+                    }
                 }
 
                 // 1% base daily chance for sleepers/scammers if nothing else triggered
