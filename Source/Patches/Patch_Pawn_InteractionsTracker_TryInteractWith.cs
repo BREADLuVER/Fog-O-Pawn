@@ -15,14 +15,17 @@ namespace FogOfPawn.Patches
             var settings = FogSettingsCache.Current;
             if (settings.socialRevealPct <= 0) return;
 
-            // Actor
-            if (Rand.Chance(settings.socialRevealPct / 100f))
+            float baseChance = settings.socialRevealPct / 100f;
+
+            float ActorFactor = ___pawn?.skills?.GetSkill(RimWorld.SkillDefOf.Social)?.Level / 20f ?? 0f;
+            float RecipFactor = recipient?.skills?.GetSkill(RimWorld.SkillDefOf.Social)?.Level / 20f ?? 0f;
+
+            if (ActorFactor > 0 && Rand.Chance(baseChance * ActorFactor))
             {
                 FogUtility.RevealRandomFoggedAttribute(___pawn, preferSkill: true);
             }
 
-            // Recipient
-            if (Rand.Chance(settings.socialRevealPct / 100f))
+            if (RecipFactor > 0 && Rand.Chance(baseChance * RecipFactor))
             {
                 FogUtility.RevealRandomFoggedAttribute(recipient, preferSkill: true);
             }
