@@ -95,6 +95,7 @@ namespace FogOfPawn
                     {
                         if (other == pawn) continue;
                         other.needs?.mood?.thoughts?.memories?.TryGainMemory(thought, pawn);
+                        FogLog.Verbose($"[MEMORY] {other.LabelShort} gained Betrayed memory because of {pawn.LabelShort}.");
                     }
                 }
             }

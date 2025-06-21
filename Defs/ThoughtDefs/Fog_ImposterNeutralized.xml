@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <ThoughtDef>
+    <defName>Fog_ImposterNeutralized_Relief</defName>
+    <label>imposter neutralized</label>
+    <description>Relieved that an imposter has been driven out or eliminated.</description>
+    <durationDays>6</durationDays>
+    <stackLimit>1</stackLimit>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <stages>
+      <li>
+        <label>imposter neutralized</label>
+        <description>The colony feels safer now that the imposter threat is gone.</description>
+        <baseMoodEffect>8</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+</Defs> 

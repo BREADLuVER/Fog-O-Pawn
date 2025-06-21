@@ -39,6 +39,9 @@ namespace FogOfPawn
         public bool tierManuallySet;
 
         public bool fullyRevealed;
+        // Set once the imposter has been killed, banished or otherwise removed and
+        // the colony‐wide relief thought has already been given. Prevents double applying.
+        public bool outcomeProcessed;
 
         // transient counters used by reveal logic (not saved)
         [System.NonSerialized]
@@ -324,6 +327,7 @@ namespace FogOfPawn
             Scribe_Values.Look(ref tier, "deceptionTier", DeceptionTier.Truthful);
             Scribe_Values.Look(ref tierManuallySet, "tierManual", false);
             Scribe_Values.Look(ref fullyRevealed, "fullyRevealed", false);
+            Scribe_Values.Look(ref outcomeProcessed, "outcomeProcessed", false);
             
             Scribe_Collections.Look(ref reportedSkills, "reportedSkills", LookMode.Def, LookMode.Value);
             Scribe_Collections.Look(ref reportedPassions, "reportedPassions", LookMode.Def, LookMode.Value);

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <ThoughtDef>
+    <defName>Fog_SleeperKept_Trusted</defName>
+    <label>trusted sleeper</label>
+    <durationDays>4</durationDays>
+    <stackLimit>1</stackLimit>
+    <thoughtClass>Thought_MemorySocial</thoughtClass>
+    <stages>
+      <li>
+        <label>trusted sleeper</label>
+        <description>I trust this sleeper despite their secret past.</description>
+        <baseMoodEffect>4</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+</Defs> 

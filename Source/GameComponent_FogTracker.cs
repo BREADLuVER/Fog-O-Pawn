@@ -118,6 +118,9 @@ namespace FogOfPawn
         {
             if (Find.TickManager.TicksGame % CheckInterval != 0) return;
 
+            // First, process any imposters that have been killed, banished or otherwise removed.
+            CheckImposterOutcomes();
+
             if (_stories.Count == 0) return;
 
             for (int i = _stories.Count - 1; i >= 0; i--)
@@ -305,6 +308,61 @@ namespace FogOfPawn
                     FogUtility.TriggerFullReveal(pawn, "SleeperStory");
                     _stories.RemoveAt(i);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Grants a positive mood memory to all colonists once an imposter has been removed from the colony – by death, exile or banishment.
+        /// </summary>
+        private static void CheckImposterOutcomes()
+        {
+            ThoughtDef reliefThought = DefDatabase<ThoughtDef>.GetNamedSilentFail("Fog_ImposterNeutralized_Relief");
+            if (reliefThought == null) return;
+
+            // Build a candidate list containing:
+            //   • all world pawns currently alive (used for banished imposters)
+            //   • every pawn present on any map (alive or dead – covers killed imposters prior to being discarded)
+            var candidates = new List<Pawn>();
+            candidates.AddRange(Find.WorldPawns.AllPawnsAlive);
+            foreach (var map in Find.Maps)
+            {
+                candidates.AddRange(map.mapPawns.AllPawns);
+            }
+
+            foreach (var pawn in candidates.Distinct())
+            {
+                var comp = pawn.GetComp<CompPawnFog>();
+                if (comp == null) continue;
+                if (comp.tier != DeceptionTier.DeceiverImposter) continue;
+                if (comp.outcomeProcessed) continue;
+
+                bool neutralized = pawn.Dead || pawn.Destroyed;
+
+                // Banished or exiled pawns keep player faction but are no longer free colonists.
+                if (!neutralized)
+                {
+                    neutralized = !pawn.IsFreeColonist;
+                }
+
+                FogLog.Verbose($"[CHECK] {pawn.LabelShort}: alive={ !pawn.Dead } faction={(pawn.Faction?.ToString()??"null")} player={(pawn.Faction?.IsPlayer==true)} neutralized={neutralized}");
+
+                if (!neutralized) continue;
+
+                // Give mood buff to every current colonist (maps + caravans)
+                foreach (var map in Find.Maps)
+                {
+                    foreach (var col in map.mapPawns.FreeColonistsSpawned)
+                    {
+                        if (col.needs?.mood?.thoughts?.memories != null)
+                        {
+                            col.needs.mood.thoughts.memories.TryGainMemory(reliefThought, pawn);
+                            FogLog.Verbose($"[MEMORY] {col.LabelShort} gained Relief memory because {pawn.LabelShort} neutralized.");
+                        }
+                    }
+                }
+
+                comp.outcomeProcessed = true;
+                FogLog.Verbose($"[IMPOSTER REMOVED] Granted relief thought for {pawn.LabelShort}.");
             }
         }
     }
