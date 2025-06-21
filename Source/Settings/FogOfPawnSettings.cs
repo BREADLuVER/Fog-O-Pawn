@@ -70,6 +70,10 @@ namespace FogOfPawn
         public int positiveMoodRevealPct = 5; // % chance per hourly check when mood > threshold
         public int positiveMoodThresholdPct = 70; // Mood level threshold (0-100)
 
+        // Mood-break full reveal chance tuning
+        public int moodBreakBasePct = 50; // base % chance on first mood break
+        public float moodBreakPerDayPct = 2f; // % added per day in colony
+
         private const int MinXp = 1000;
         private const int MaxXp = 5000;
 
@@ -121,6 +125,9 @@ namespace FogOfPawn
 
             Scribe_Values.Look(ref positiveMoodRevealPct, "positiveMoodRevealPct", 5);
             Scribe_Values.Look(ref positiveMoodThresholdPct, "positiveMoodThresholdPct", 70);
+
+            Scribe_Values.Look(ref moodBreakBasePct, "moodBreakBasePct", 50);
+            Scribe_Values.Look(ref moodBreakPerDayPct, "moodBreakPerDayPct", 2f);
         }
 
         public void DoWindowContents(Rect inRect)
@@ -251,6 +258,13 @@ namespace FogOfPawn
             list.Label("FogOfPawn.Settings.ImposterMidSkills".Translate() + ": " + imposterMidSkills);
             imposterMidSkills = (int)list.Slider(imposterMidSkills, 0, 6);
 
+            // Mood break reveal sliders
+            list.Label("FogOfPawn.Settings.MoodBreakBasePct".Translate() + $": {moodBreakBasePct} %", -1f, "FogOfPawn.Settings.MoodBreakBasePctTooltip".Translate());
+            moodBreakBasePct = (int)list.Slider(moodBreakBasePct, 0, 100);
+
+            list.Label("FogOfPawn.Settings.MoodBreakPerDayPct".Translate() + $": {moodBreakPerDayPct:F1} %", -1f, "FogOfPawn.Settings.MoodBreakPerDayPctTooltip".Translate());
+            moodBreakPerDayPct = Mathf.Clamp(list.Slider(moodBreakPerDayPct, 0f, 10f), 0f, 10f);
+
             list.CheckboxLabeled("FogOfPawn.Settings.WorkTabFallbackMask".Translate(), ref workTabFallbackMask, "FogOfPawn.Settings.WorkTabFallbackMask_Tooltip".Translate());
 
             // Reset button
@@ -290,6 +304,8 @@ namespace FogOfPawn
             scoreBasedLiarChance = false;
             positiveMoodRevealPct = 5;
             positiveMoodThresholdPct = 70;
+            moodBreakBasePct = 50;
+            moodBreakPerDayPct = 2f;
             // add more defaults as needed
         }
     }

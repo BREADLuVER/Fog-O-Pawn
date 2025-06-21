@@ -117,4 +117,10 @@
   <FogOfPawn.Settings.ResetDefaults>恢复默认设置</FogOfPawn.Settings.ResetDefaults>
 
   <FogOfPawn.Settings.SlightSkillXP>轻度伪装技能揭露经验阈值</FogOfPawn.Settings.SlightSkillXP>
+
+  <!-- Mood-break full reveal settings -->
+  <FogOfPawn.Settings.MoodBreakBasePct>精神崩溃揭露基础概率</FogOfPawn.Settings.MoodBreakBasePct>
+  <FogOfPawn.Settings.MoodBreakBasePctTooltip>潜伏者第一次精神崩溃时触发完全揭露的基础概率百分比。</FogOfPawn.Settings.MoodBreakBasePctTooltip>
+  <FogOfPawn.Settings.MoodBreakPerDayPct>每日概率增幅</FogOfPawn.Settings.MoodBreakPerDayPct>
+  <FogOfPawn.Settings.MoodBreakPerDayPctTooltip>潜伏者在殖民地每多待一天，额外增加的揭露概率百分比。</FogOfPawn.Settings.MoodBreakPerDayPctTooltip>
 </LanguageData> 

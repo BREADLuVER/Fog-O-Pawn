@@ -54,7 +54,10 @@ namespace FogOfPawn.Patches
         {
             // Base 50% chance, increasing linearly with time in colony (days) up to 100% after ~25 days.
             float daysSinceJoin = comp.ticksSinceJoin / 60000f; // 60k ticks per day
-            float chance = 0.5f + Mathf.Clamp01(daysSinceJoin * 0.02f); // +2% per day
+            var settings = FogSettingsCache.Current;
+            float baseChance = Mathf.Clamp01(settings.moodBreakBasePct / 100f);
+            float perDay = Mathf.Clamp(settings.moodBreakPerDayPct / 100f, 0f, 1f);
+            float chance = baseChance + Mathf.Clamp01(daysSinceJoin * perDay);
             return Rand.Chance(chance);
         }
     }

@@ -149,4 +149,10 @@
   <FogOfPawn.Settings.SectionHighMood>--- High-Mood Reveals ---</FogOfPawn.Settings.SectionHighMood>
   <FogOfPawn.Settings.SectionTraitMasking>--- Trait Masking ---</FogOfPawn.Settings.SectionTraitMasking>
 
+  <!-- Mood-break full reveal settings -->
+  <FogOfPawn.Settings.MoodBreakBasePct>Base mood-break reveal chance</FogOfPawn.Settings.MoodBreakBasePct>
+  <FogOfPawn.Settings.MoodBreakBasePctTooltip>Percentage chance that a deceiver will fully reveal on a mental break, before any time-based scaling.</FogOfPawn.Settings.MoodBreakBasePctTooltip>
+  <FogOfPawn.Settings.MoodBreakPerDayPct>Additional chance per day in colony</FogOfPawn.Settings.MoodBreakPerDayPct>
+  <FogOfPawn.Settings.MoodBreakPerDayPctTooltip>Extra reveal chance added for each day the pawn has been part of the colony.</FogOfPawn.Settings.MoodBreakPerDayPctTooltip>
+
 </LanguageData> 
