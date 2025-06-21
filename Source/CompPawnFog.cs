@@ -42,6 +42,8 @@ namespace FogOfPawn
         // Set once the imposter has been killed, banished or otherwise removed and
         // the colony‐wide relief thought has already been given. Prevents double applying.
         public bool outcomeProcessed;
+        public int lastInterrogatedTick;
+        public bool wasPlayerColonist;
 
         // transient counters used by reveal logic (not saved)
         [System.NonSerialized]
@@ -267,6 +269,8 @@ namespace FogOfPawn
             // Only count time for player's faction members, not prisoners or visitors
             if (parent.Faction?.IsPlayer == true)
             {
+                if (!wasPlayerColonist && parent is Pawn pcol && pcol.IsFreeColonist)
+                    wasPlayerColonist = true;
                 ticksSinceJoin++;
 
                 if (ticksSinceJoin % 2500 == 0) // ~once per in-game hour
@@ -328,6 +332,8 @@ namespace FogOfPawn
             Scribe_Values.Look(ref tierManuallySet, "tierManual", false);
             Scribe_Values.Look(ref fullyRevealed, "fullyRevealed", false);
             Scribe_Values.Look(ref outcomeProcessed, "outcomeProcessed", false);
+            Scribe_Values.Look(ref lastInterrogatedTick, "lastInterrogatedTick", 0);
+            Scribe_Values.Look(ref wasPlayerColonist, "wasPlayerColonist", false);
             
             Scribe_Collections.Look(ref reportedSkills, "reportedSkills", LookMode.Def, LookMode.Value);
             Scribe_Collections.Look(ref reportedPassions, "reportedPassions", LookMode.Def, LookMode.Value);

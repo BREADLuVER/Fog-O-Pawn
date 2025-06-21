@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <JobDef>
+    <defName>Fog_InterrogatePawn</defName>
+    <driverClass>FogOfPawn.Jobs.JobDriver_Interrogate</driverClass>
+    <reportString>interrogating {0}</reportString>
+    <playerInterruptible>true</playerInterruptible>
+  </JobDef>
+</Defs> 

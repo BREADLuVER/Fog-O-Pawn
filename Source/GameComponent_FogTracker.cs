@@ -334,6 +334,8 @@ namespace FogOfPawn
                 var comp = pawn.GetComp<CompPawnFog>();
                 if (comp == null) continue;
                 if (comp.tier != DeceptionTier.DeceiverImposter) continue;
+                if (!comp.wasPlayerColonist) continue; // ignore imposters who never joined us
+                if (!comp.fullyRevealed) continue; // only care if we knew they were imposters
                 if (comp.outcomeProcessed) continue;
 
                 bool neutralized = pawn.Dead || pawn.Destroyed;

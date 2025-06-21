@@ -95,7 +95,6 @@ namespace FogOfPawn
                     {
                         if (other == pawn) continue;
                         other.needs?.mood?.thoughts?.memories?.TryGainMemory(thought, pawn);
-                        FogLog.Verbose($"[MEMORY] {other.LabelShort} gained Betrayed memory because of {pawn.LabelShort}.");
                     }
                 }
             }
@@ -133,6 +132,40 @@ namespace FogOfPawn
         public static bool ShouldNotifyPlayer(Pawn pawn)
         {
             return pawn.Faction?.IsPlayer == true || pawn.IsPrisonerOfColony || pawn.IsSlaveOfColony;
+        }
+
+        public static void GiveMoodBuffForImposterRemoval(Pawn pawn)
+        {
+            // Pawn must be a player colonist at the time of removal.
+            if (pawn?.Faction != Faction.OfPlayer)
+            {
+                return;
+            }
+
+            var comp = pawn.GetComp<CompPawnFog>();
+            if (comp == null || comp.tier != DeceptionTier.DeceiverImposter)
+            {
+                return;
+            }
+
+            // At this point, the pawn is a player-faction imposter who is being removed.
+            var thoughtDef = DefDatabase<ThoughtDef>.GetNamedSilentFail("Fog_ImposterRemoved");
+            if (thoughtDef == null)
+            {
+                FogLog.Fail("MissingThoughtDef", "Could not find ThoughtDef 'Fog_ImposterRemoved'.");
+                return;
+            }
+
+            // Apply mood buff to all colonists on the same map.
+            var map = pawn.MapHeld;
+            if (map == null) return;
+
+            foreach (var colonist in map.mapPawns.FreeColonistsSpawned)
+            {
+                colonist.needs?.mood?.thoughts?.memories?.TryGainMemory(thoughtDef);
+            }
+
+            FogLog.Verbose($"Applied 'Imposter Removed' mood buff to colonists for the removal of {pawn.LabelShort}.");
         }
     }
 } 
