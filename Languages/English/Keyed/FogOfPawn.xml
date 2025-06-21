@@ -124,7 +124,7 @@
   <FogOfPawn.Settings.MaxAlteredSkills>Maximum altered skills</FogOfPawn.Settings.MaxAlteredSkills>
   <FogOfPawn.Settings.AllowUnderstate>Allow understating skills</FogOfPawn.Settings.AllowUnderstate>
 
-  <FogOfPawn.Settings.FullRevealHeader>Full-reveal mechanics</FogOfPawn.Settings.FullRevealHeader>
+  <FogOfPawn.Settings.FullRevealHeader>--- Full-reveal mechanics ---</FogOfPawn.Settings.FullRevealHeader>
 
   <FogOfPawn.Settings.WorkTabFallbackMask>Work tab fallback masking</FogOfPawn.Settings.WorkTabFallbackMask>
   <FogOfPawn.Settings.WorkTabFallbackMask_Tooltip>Uses a safer but less accurate method to hide skills in the Work tab for compatibility.</FogOfPawn.Settings.WorkTabFallbackMask_Tooltip>
