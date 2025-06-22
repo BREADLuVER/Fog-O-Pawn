@@ -155,4 +155,12 @@
   <FogOfPawn.Settings.MoodBreakPerDayPct>Additional chance per day in colony</FogOfPawn.Settings.MoodBreakPerDayPct>
   <FogOfPawn.Settings.MoodBreakPerDayPctTooltip>Extra reveal chance added for each day the pawn has been part of the colony.</FogOfPawn.Settings.MoodBreakPerDayPctTooltip>
 
+  <!-- Special Joiner Event -->
+  <FogOfPawn.SpecialJoiner.Label>Wanderer Joins</FogOfPawn.SpecialJoiner.Label>
+  <FogOfPawn.SpecialJoiner.Text>A person named {PAWN_nameDef} has arrived and is offering to join your colony. They claim to be a {PAWN_title}.\n\nWill you accept them?</FogOfPawn.SpecialJoiner.Text>
+
+  <!-- Late-game joiner chance setting -->
+  <FogOfPawn.Settings.LateJoinerChance>Late-game deceiver incident chance</FogOfPawn.Settings.LateJoinerChance>
+  <FogOfPawn.Settings.LateJoinerChance_Tooltip>Percentage chance per storyteller roll, starting in year 2, for additional Sleeper or Imposter wanderers to appear. Lower values make them extremely rare.</FogOfPawn.Settings.LateJoinerChance_Tooltip>
+
 </LanguageData> 

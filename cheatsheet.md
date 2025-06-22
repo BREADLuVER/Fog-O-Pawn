@@ -41,4 +41,18 @@ Sleepers are the core of the mod's story. They are valuable, highly skilled pawn
 ### Mechanics NOT in the Mod
 To avoid confusion with older versions or other mods, be aware of what's *not* a feature:
 - **No Hidden Addictions**: The mod does not hide addictions.
-- **No Reveal on Damage**: Taking damage or being downed will not reveal a Sleeper. 
+- **No Reveal on Damage**: Taking damage or being downed will not reveal a Sleeper.
+
+# Key Fixes
+1.  **Special Joiner Timing**: Adjusted the incident scheduler (`GameComponent_FogTracker.cs`) to ensure the Sleeper/Imposter joiner events only start after Day 60 (1 year), with a guaranteed event by Day 90 (1.5 years). This prevents the "too early" and "too frequent" reports.
+
+2.  **Missing Translations**: Added the missing Chinese and English text for the special joiner event. Players will now see a proper, translated message ("Suspicious Joiner") instead of a code tag.
+
+3.  **Build Script**: Ran the `build.ps1` script to compile the changes into the DLL for version 1.6.
+
+# Next Steps
+The changes above should resolve the bugs your players were seeing.
+
+The other piece of feedback was a feature request: **allowing players to refuse the special joiner**. I can implement this next if you'd like. It would involve changing the event to show a choice letter with "Accept" and "Refuse" buttons instead of the pawn joining automatically.
+
+Let me know if you want to proceed with that change! 

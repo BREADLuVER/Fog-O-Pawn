@@ -123,4 +123,15 @@
   <FogOfPawn.Settings.MoodBreakBasePctTooltip>潜伏者第一次精神崩溃时触发完全揭露的基础概率百分比。</FogOfPawn.Settings.MoodBreakBasePctTooltip>
   <FogOfPawn.Settings.MoodBreakPerDayPct>每日概率增幅</FogOfPawn.Settings.MoodBreakPerDayPct>
   <FogOfPawn.Settings.MoodBreakPerDayPctTooltip>潜伏者在殖民地每多待一天，额外增加的揭露概率百分比。</FogOfPawn.Settings.MoodBreakPerDayPctTooltip>
+
+  <!-- Special Joiner Event -->
+  <FogOfPawn.SpecialJoiner.Label>流浪者加入</FogOfPawn.SpecialJoiner.Label>
+  <FogOfPawn.SpecialJoiner.Text>一个名叫 {PAWN_nameDef} 的人抵达了这里，并希望能加入你的殖民地。此人自称是{PAWN_title}。\n\n你要接纳他们吗？</FogOfPawn.SpecialJoiner.Text>
+
+  <!-- Late-game joiner chance setting -->
+  <FogOfPawn.Settings.LateJoinerChance>后期欺骗者事件概率</FogOfPawn.Settings.LateJoinerChance>
+  <FogOfPawn.Settings.LateJoinerChance_Tooltip>第 2 年后，每次事件轮询额外潜伏者/骗子加入的概率（%）。数值越低，出现越罕见。</FogOfPawn.Settings.LateJoinerChance_Tooltip>
+
+  <AcceptButton>接受</AcceptButton>
+  <RejectButton>拒绝</RejectButton>
 </LanguageData> 

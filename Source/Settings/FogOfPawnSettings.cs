@@ -74,6 +74,9 @@ namespace FogOfPawn
         public int moodBreakBasePct = 50; // base % chance on first mood break
         public float moodBreakPerDayPct = 2f; // % added per day in colony
 
+        // Chance (%) for late-game deceiver wanderer (year 2+). 0 = disabled.
+        public float lateJoinerChancePct = 1.5f;
+
         private const int MinXp = 1000;
         private const int MaxXp = 5000;
 
@@ -128,6 +131,8 @@ namespace FogOfPawn
 
             Scribe_Values.Look(ref moodBreakBasePct, "moodBreakBasePct", 50);
             Scribe_Values.Look(ref moodBreakPerDayPct, "moodBreakPerDayPct", 2f);
+
+            Scribe_Values.Look(ref lateJoinerChancePct, "lateJoinerChancePct", 1.5f);
         }
 
         public void DoWindowContents(Rect inRect)
@@ -221,6 +226,10 @@ namespace FogOfPawn
 
             list.CheckboxLabeled("FogOfPawn.Settings.ScoreBasedLiarChance".Translate(), ref scoreBasedLiarChance, "FogOfPawn.Settings.ScoreBasedLiarChance_Tooltip".Translate());
 
+            // Late-game joiner chance slider
+            list.Label("FogOfPawn.Settings.LateJoinerChance".Translate() + $": {lateJoinerChancePct:F1} %", -1f, "FogOfPawn.Settings.LateJoinerChance_Tooltip".Translate());
+            lateJoinerChancePct = Mathf.Clamp(list.Slider(lateJoinerChancePct, 0f, 5f), 0f, 5f);
+
             SectionBreak();
 
             list.Label("FogOfPawn.Settings.SectionHighMood".Translate());
@@ -306,6 +315,7 @@ namespace FogOfPawn
             positiveMoodThresholdPct = 70;
             moodBreakBasePct = 50;
             moodBreakPerDayPct = 2f;
+            lateJoinerChancePct = 1.5f;
             // add more defaults as needed
         }
     }

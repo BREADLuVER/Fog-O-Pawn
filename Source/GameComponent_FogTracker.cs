@@ -2,6 +2,7 @@ using Verse;
 using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace FogOfPawn
 {
@@ -31,9 +32,26 @@ namespace FogOfPawn
 
         // Constants
         private const int TicksPerDay = 60000;
-        private const int GuaranteeDay = 90; // 1.5 years (60 days per year)
-        private const int SpacingDays = 20;
-        private const int OversaturationWindowDays = 120; // first 2 years
+
+        // --- Joiner timing rules ----------------------------------------------------------
+        // Earliest any Fog-O-Pawn joiner may appear (1 RimWorld year = 60 in-game days)
+        private const int EarliestDay = 60;
+
+        // Guaranteed Sleeper window – if the colony has not yet received a Sleeper
+        // by the end of this window, the mod forces one to spawn.
+        private const int GuaranteeWindowStartDay = 60;  // open at exactly one year
+        private const int GuaranteeWindowEndDay   = 90;  // close at 1.5 years
+
+        // Minimum spacing between any two Fog joiners.  We choose two full seasons
+        // (≈ 30 days) to ensure stories have room to breathe.
+        private const int SpacingDays = 30;
+
+        // Suppress any *additional* deceiver joiners until early-mid game.
+        // We unlock additional deceivers from Year-2 (day 120) onward.
+        private const int LateGameUnlockDay = 120; // ≈ Year 2
+
+        // Clamp total deceivers to avoid saturation – especially valuable for long runs.
+        private const int HardCapTotalFogJoiners = 4;
 
         public static GameComponent_FogTracker Get => Current.Game.GetComponent<GameComponent_FogTracker>();
 
@@ -43,39 +61,54 @@ namespace FogOfPawn
         /// </summary>
         public bool CanFireFoggedJoiner(DeceptionTier tier)
         {
-            int now = Find.TickManager.TicksGame;
+            int nowTicks = Find.TickManager.TicksGame;
+            float daysPassed = nowTicks / (float)TicksPerDay;
 
-            // Prevent more than 2 fogged pawns in the first two years (120 days)
-            if ((now < OversaturationWindowDays * TicksPerDay) && totalFogJoiners >= 2)
+            // 1. Early-game block ──────────────────────────────────────────────
+            // We block ALL fog joiners until the colony has survived one full
+            // RimWorld year (60 in-game days).
+            if (daysPassed < EarliestDay)
                 return false;
 
-            // Ensure at least 20 days between fogged joiners
-            if (lastFogJoinerTick > 0 && (now - lastFogJoinerTick) < SpacingDays * TicksPerDay)
+            // 2. Spacing rule – always leave breathing room between arrivals.
+            if (lastFogJoinerTick > 0 && (nowTicks - lastFogJoinerTick) < SpacingDays * TicksPerDay)
                 return false;
 
-            // Determine base chance according to the time curve
-            float daysPassed = now / (float)TicksPerDay;
             bool isSleeper = tier == DeceptionTier.DeceiverSleeper;
 
-            float chance = 0f;
-            if (daysPassed <= 45f)
-                chance = 0f;
-            else if (daysPassed <= 90f)
-                chance = isSleeper ? 0.10f : 0.20f;
-            else if (daysPassed <= 150f)
-                chance = 0.30f;
-            else
-                chance = 0.50f;
+            // 3. Guaranteed Sleeper window ─────────────────────────────────────
+            if (!hasSleeperJoiner && daysPassed >= GuaranteeWindowStartDay && daysPassed <= GuaranteeWindowEndDay)
+            {
+                // During the window, ONLY a Sleeper may spawn and we always
+                // return true to force the incident if the storyteller picks it.
+                return isSleeper;
+            }
 
-            // Hard guarantee after 90 days if a storyline hasn't happened yet.
-            if (!hasSleeperJoiner && isSleeper && daysPassed >= GuaranteeDay)
-                chance = 1f;
-            if (!hasImposterJoiner && !isSleeper && daysPassed >= GuaranteeDay)
-                chance = 1f;
+            // 4. Hard guarantee fallback – if the window expired with no Sleeper
+            // (e.g., storyteller never rolled the incident), we *force* allow
+            // the next Sleeper request regardless of timing.
+            if (!hasSleeperJoiner && daysPassed > GuaranteeWindowEndDay)
+            {
+                return isSleeper; // still block imposters
+            }
 
-            // Diminishing probability after we already have two fogged pawns overall
-            if (totalFogJoiners >= 2 && Rand.Chance(0.5f))
+            // 5. Mid-game suppression – until Year 4 we suppress any additional
+            // deceivers to avoid crowding the narrative.
+            if (daysPassed < LateGameUnlockDay)
                 return false;
+
+            // 6. Late-game chance curve – configurable in mod settings.
+            //    We further clamp total population to a hard cap.
+            if (totalFogJoiners >= HardCapTotalFogJoiners)
+                return false;
+
+            // Pull percentage from settings (0‒5). Convert to 0-1 range.
+            float chance = Mathf.Clamp(FogSettingsCache.Current.lateJoinerChancePct * 0.01f, 0f, 0.05f);
+
+            // Slightly favour imposters over sleepers in the late game because we
+            // already had (at least) one sleeper.
+            if (isSleeper)
+                chance *= 0.6f; // 40% reduction
 
             return Rand.Chance(chance);
         }
