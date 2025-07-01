@@ -32,19 +32,26 @@ namespace FogOfPawn
             var comp = pawn.GetComp<CompPawnFog>();
             if (comp == null || !comp.compInitialized)
             {
-                return realLevel;
+                return sr.Level; // Return effective level (with gene modifiers)
             }
 
             // Revealed skills always show the real value.
             if (comp.revealedSkills.Contains(def))
             {
-                return realLevel;
+                return sr.Level; // Return effective level (with gene modifiers)
             }
 
-            // If a reported (fake) value exists prefer that.
+            // If a reported (fake) value exists, calculate the effective level including gene modifiers
             if (comp.reportedSkills.TryGetValue(def, out var rep) && rep.HasValue)
             {
-                return Mathf.Clamp(Mathf.RoundToInt(rep.Value), 0, 20);
+                int reportedTrainedLevel = Mathf.Clamp(Mathf.RoundToInt(rep.Value), 0, 20);
+                
+                // Calculate the aptitude modifier from the real skill
+                int aptitudeModifier = sr.Level - sr.levelInt;
+                
+                // Apply the same aptitude modifier to the reported trained level
+                int effectiveLevel = Mathf.Clamp(reportedTrainedLevel + aptitudeModifier, 0, 20);
+                return effectiveLevel;
             }
 
             // Unknown – treat as completely unskilled so work priorities etc. stay safe.

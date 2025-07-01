@@ -136,9 +136,28 @@ namespace FogOfPawn
                 bool understate = settings.allowUnderstate && Rand.Chance(0.5f);
                 int range = Mathf.Clamp(settings.alteredSkillRange, 2, 10);
                 int delta = Rand.RangeInclusive(2, range);
-                int reported = Mathf.Clamp(skill.levelInt + (understate ? -delta : delta), 0, 20);
-                comp.reportedSkills[skill.def] = reported;
-
+                
+                // Get the effective skill level (including gene modifiers)
+                int effectiveLevel = skill.Level;
+                // Get the raw trained level (without gene modifiers)
+                int trainedLevel = skill.levelInt;
+                
+                // Calculate the aptitude modifier
+                int aptitudeModifier = effectiveLevel - trainedLevel;
+                
+                // Apply delta to the effective level, then subtract aptitude to get reported trained level
+                int targetEffectiveLevel = Mathf.Clamp(effectiveLevel + (understate ? -delta : delta), 0, 20);
+                int reportedTrainedLevel = Mathf.Clamp(targetEffectiveLevel - aptitudeModifier, 0, 20);
+                
+                comp.reportedSkills[skill.def] = reportedTrainedLevel;
+                
+#if DEBUG
+                if (Prefs.DevMode && aptitudeModifier != 0)
+                {
+                    FogLog.Verbose($"[GENE] {pawn.LabelShort} {skill.def.label}: target={targetEffectiveLevel}, aptitude={aptitudeModifier}, reportedTrained={reportedTrainedLevel}");
+                }
+#endif
+                
                 if (Rand.Chance(0.4f))
                 {
                     comp.reportedPassions[skill.def] = skill.passion == Passion.None ? Passion.Minor : skill.passion;
@@ -165,7 +184,21 @@ namespace FogOfPawn
             for (int i = 0; i < highCount && i < skillsShuffled.Count; i++)
             {
                 var sk = skillsShuffled[i];
-                comp.reportedSkills[sk.def] = Rand.RangeInclusive(8, 14);
+                
+                // Calculate what trained level would give the desired effective level
+                int targetEffectiveLevel = Rand.RangeInclusive(8, 14);
+                int aptitudeModifier = sk.Level - sk.levelInt;
+                int reportedTrainedLevel = Mathf.Clamp(targetEffectiveLevel - aptitudeModifier, 0, 20);
+                
+                comp.reportedSkills[sk.def] = reportedTrainedLevel;
+                
+#if DEBUG
+                if (Prefs.DevMode && aptitudeModifier != 0)
+                {
+                    FogLog.Verbose($"[GENE] {pawn.LabelShort} {sk.def.label}: target={targetEffectiveLevel}, aptitude={aptitudeModifier}, reportedTrained={reportedTrainedLevel}");
+                }
+#endif
+                
                 // 50% minor, 50% major passion for first few
                 comp.reportedPassions[sk.def] = Rand.Chance(0.5f) ? Passion.Major : Passion.Minor;
             }
@@ -175,7 +208,21 @@ namespace FogOfPawn
             for (int i = highCount; i < highCount + midCount && i < skillsShuffled.Count; i++)
             {
                 var sk = skillsShuffled[i];
-                comp.reportedSkills[sk.def] = Rand.RangeInclusive(4, 8);
+                
+                // Calculate what trained level would give the desired effective level
+                int targetEffectiveLevel = Rand.RangeInclusive(4, 8);
+                int aptitudeModifier = sk.Level - sk.levelInt;
+                int reportedTrainedLevel = Mathf.Clamp(targetEffectiveLevel - aptitudeModifier, 0, 20);
+                
+                comp.reportedSkills[sk.def] = reportedTrainedLevel;
+                
+#if DEBUG
+                if (Prefs.DevMode && aptitudeModifier != 0)
+                {
+                    FogLog.Verbose($"[GENE] {pawn.LabelShort} {sk.def.label}: target={targetEffectiveLevel}, aptitude={aptitudeModifier}, reportedTrained={reportedTrainedLevel}");
+                }
+#endif
+                
                 if (Rand.Chance(0.3f))
                     comp.reportedPassions[sk.def] = Passion.Minor;
             }
@@ -196,8 +243,20 @@ namespace FogOfPawn
             {
                 if (skill.levelInt >= 6)
                 {
-                    // Present as mediocre (3–5) rather than abysmal; looks believable but still underwhelming.
-                    comp.reportedSkills[skill.def] = Rand.RangeInclusive(3, 5);
+                    // Calculate what trained level would give the desired effective level
+                    int targetEffectiveLevel = Rand.RangeInclusive(3, 5);
+                    int aptitudeModifier = skill.Level - skill.levelInt;
+                    int reportedTrainedLevel = Mathf.Clamp(targetEffectiveLevel - aptitudeModifier, 0, 20);
+                    
+                    comp.reportedSkills[skill.def] = reportedTrainedLevel;
+                    
+#if DEBUG
+                    if (Prefs.DevMode && aptitudeModifier != 0)
+                    {
+                        FogLog.Verbose($"[GENE] {pawn.LabelShort} {skill.def.label}: target={targetEffectiveLevel}, aptitude={aptitudeModifier}, reportedTrained={reportedTrainedLevel}");
+                    }
+#endif
+                    
                     // Keep the original passion visible so the low reported level isn't a giveaway.
                     comp.reportedPassions[skill.def] = skill.passion;
                 }

@@ -151,7 +151,13 @@ namespace FogOfPawn.Patches
             }
             else if (comp.reportedSkills.TryGetValue(skill.def, out var reported) && reported.HasValue)
             {
-                valueStr = $"Reported: {reported.Value:F0}";
+                // Calculate the effective level including gene modifiers
+                int reportedTrainedLevel = Mathf.RoundToInt(reported.Value);
+                int aptitudeModifier = skill.Level - skill.levelInt;
+                int effectiveLevel = Mathf.Clamp(reportedTrainedLevel + aptitudeModifier, 0, 20);
+                
+                // Show the effective level that would result from the reported trained level
+                valueStr = $"Reported: {effectiveLevel}";
             }
             else
             {

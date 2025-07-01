@@ -92,8 +92,13 @@ namespace FogOfPawn.Patches
                     // Substitute reported / unknown values.
                     if (comp.reportedSkills.TryGetValue(sk.def, out var rep) && rep.HasValue)
                     {
-                        sk.levelInt = Mathf.Clamp(Mathf.RoundToInt(rep.Value), 0, 20);
-                        sb.AppendLine($"  {sk.def.label}: real {originalLevel} → reported {sk.levelInt}");
+                        // Calculate the effective level including gene modifiers
+                        int reportedTrainedLevel = Mathf.Clamp(Mathf.RoundToInt(rep.Value), 0, 20);
+                        int aptitudeModifier = sk.Level - sk.levelInt;
+                        int effectiveLevel = Mathf.Clamp(reportedTrainedLevel + aptitudeModifier, 0, 20);
+                        
+                        sk.levelInt = effectiveLevel;
+                        sb.AppendLine($"  {sk.def.label}: real {originalLevel} → reported {effectiveLevel}");
                     }
                     else
                     {
