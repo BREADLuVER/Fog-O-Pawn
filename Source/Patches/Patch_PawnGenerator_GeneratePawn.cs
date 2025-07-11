@@ -15,6 +15,13 @@ namespace FogOfPawn.Patches
                 return;
             }
 
+            // Additional null safety checks
+            if (__result.RaceProps == null)
+            {
+                FogLog.Verbose($"Skipping fog for {__result?.LabelShort ?? "null pawn"} - RaceProps is null");
+                return;
+            }
+
             // Skip cases where fogging is inappropriate or risky.
             //  • Player-starter pawns
             //  • Animals / mechanoids (no skills)
@@ -38,15 +45,21 @@ namespace FogOfPawn.Patches
                 {
                     comp.compInitialized = true;
                     comp.fullyRevealed  = true;
-                    if (__result.skills != null)
+                    if (__result.skills?.skills != null)
                     {
                         foreach (var sk in __result.skills.skills)
-                            comp.revealedSkills.Add(sk.def);
+                        {
+                            if (sk?.def != null)
+                                comp.revealedSkills.Add(sk.def);
+                        }
                     }
-                    if (__result.story?.traits != null)
+                    if (__result.story?.traits?.allTraits != null)
                     {
                         foreach (var tr in __result.story.traits.allTraits)
-                            comp.revealedTraits.Add(tr.def);
+                        {
+                            if (tr?.def != null)
+                                comp.revealedTraits.Add(tr.def);
+                        }
                     }
                 }
                 return;
@@ -61,7 +74,15 @@ namespace FogOfPawn.Patches
             }
             catch (System.Exception ex)
             {
-                Log.Error($"[FogOfPawn] Exception while initializing fog for {__result}: {ex}");
+                Log.Error($"[FogOfPawn] Exception while initializing fog for {__result?.LabelShort ?? "null pawn"}: {ex}");
+                
+                // Ensure the pawn has a safe state even if initialization fails
+                var comp = __result?.GetComp<CompPawnFog>();
+                if (comp != null)
+                {
+                    comp.compInitialized = true;
+                    comp.fullyRevealed = true;
+                }
             }
         }
     }

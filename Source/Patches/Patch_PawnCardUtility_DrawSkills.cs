@@ -49,15 +49,17 @@ namespace FogOfPawn.Patches
             {
                 valueStr = skill.Level.ToString();
             }
+            else if (comp.maskOffsets.TryGetValue(skill.def, out int offset))
+            {
+                // Use offset-based calculation (avoid recursion)
+                int maskedLevel = Mathf.Clamp(skill.levelInt + offset, 0, 20);
+                valueStr = $"Reported: {maskedLevel}";
+            }
             else if (comp.reportedSkills.TryGetValue(skill.def, out var reported) && reported.HasValue)
             {
-                // Calculate the effective level including gene modifiers
-                int reportedTrainedLevel = Mathf.RoundToInt(reported.Value);
-                int aptitudeModifier = skill.Level - skill.levelInt;
-                int effectiveLevel = Mathf.Clamp(reportedTrainedLevel + aptitudeModifier, 0, 20);
-                
-                // Show the effective level that would result from the reported trained level
-                valueStr = $"Reported: {effectiveLevel}";
+                // LEGACY: Support old format during migration
+                int reportedLevel = Mathf.RoundToInt(reported.Value);
+                valueStr = $"Reported: {reportedLevel}";
             }
             else
             {
@@ -66,11 +68,31 @@ namespace FogOfPawn.Patches
             Widgets.Label(valueRect, valueStr);
 
             // Draw real/fake passions
-            var passion = isRevealed ? skill.passion : comp.reportedPassions[skill.def];
-            if (passion.HasValue && passion.Value > Passion.None)
+            Passion displayPassion;
+            if (isRevealed)
+            {
+                displayPassion = skill.passion;
+            }
+            else if (comp.passionOffsets.TryGetValue(skill.def, out int passionOffset))
+            {
+                // Use offset-based calculation
+                int newPassionLevel = (int)skill.passion + passionOffset;
+                displayPassion = (Passion)Mathf.Clamp(newPassionLevel, 0, 2);
+            }
+            else if (comp.reportedPassions.TryGetValue(skill.def, out var fakePassion) && fakePassion.HasValue)
+            {
+                // LEGACY: Support old format during migration
+                displayPassion = fakePassion.Value;
+            }
+            else
+            {
+                displayPassion = Passion.None;
+            }
+            
+            if (displayPassion > Passion.None)
             {
                 var passionRect = new Rect(valueRect.xMax + 5f, rect.y, 24f, 24f);
-                var passionIcon = (passion.Value == Passion.Major) ? ContentFinder<Texture2D>.Get("UI/Icons/PassionMajor") : ContentFinder<Texture2D>.Get("UI/Icons/PassionMinor");
+                var passionIcon = (displayPassion == Passion.Major) ? ContentFinder<Texture2D>.Get("UI/Icons/PassionMajor") : ContentFinder<Texture2D>.Get("UI/Icons/PassionMinor");
                 GUI.DrawTexture(passionRect, passionIcon);
             }
         }

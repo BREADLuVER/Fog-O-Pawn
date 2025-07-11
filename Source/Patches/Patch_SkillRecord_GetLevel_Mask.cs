@@ -17,19 +17,21 @@ namespace FogOfPawn.Patches
         {
             try
             {
+                // Basic null safety checks
+                if (__instance == null) return;
+                
                 // Retrieve pawn via reflection (field or property) for cross-version safety.
                 Pawn pawn = null;
-                if (__instance != null)
+                
+                // Try common field/property names.
+                pawn = AccessTools.Field(typeof(SkillRecord), "pawn")?.GetValue(__instance) as Pawn;
+                if (pawn == null)
                 {
-                    // Try common field/property names.
-                    pawn = AccessTools.Field(typeof(SkillRecord), "pawn")?.GetValue(__instance) as Pawn;
-                    if (pawn == null)
-                    {
-                        var prop = AccessTools.PropertyGetter(typeof(SkillRecord), "Pawn");
-                        if (prop != null)
-                            pawn = prop.Invoke(__instance, null) as Pawn;
-                    }
+                    var prop = AccessTools.PropertyGetter(typeof(SkillRecord), "Pawn");
+                    if (prop != null)
+                        pawn = prop.Invoke(__instance, null) as Pawn;
                 }
+                
                 if (pawn == null) return;
 
                 // Base effective value (masked or real).

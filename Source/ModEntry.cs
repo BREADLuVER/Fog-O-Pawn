@@ -11,7 +11,6 @@ namespace FogOfPawn
         static Startup()
         {
             var harmony = new Harmony("FogOfPawn");
-	    Harmony.DEBUG = true;
             harmony.PatchAll();
             FogLog.Reflect("HarmonyPatched", "Harmony patches applied.");
 

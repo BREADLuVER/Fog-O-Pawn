@@ -1,6 +1,9 @@
 using HarmonyLib;
-using RimWorld;
 using Verse;
+using Verse.AI;
+using RimWorld;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FogOfPawn.Patches
 {
@@ -12,7 +15,8 @@ namespace FogOfPawn.Patches
             var pawn = __instance.pawn;
             var comp = pawn.GetComp<CompPawnFog>();
             if (comp == null || !comp.compInitialized) return;
-            
+            if (comp.tier == DeceptionTier.Truthful || comp.fullyRevealed) return; // Never mask truthful/revealed pawns
+
             // A pawn igniting something is a dead giveaway for a pyromaniac
             var pyroTrait = pawn.story.traits.GetTrait(TraitDefOf.Pyromaniac);
             if (pyroTrait != null)

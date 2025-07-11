@@ -9,17 +9,39 @@ namespace FogOfPawn
     {
         static PostLoadDefPatcher()
         {
-            foreach (var def in DefDatabase<ThingDef>.AllDefs)
+            try
             {
-                // Target any pawn type that has skills.
-                if (def.race != null && def.race.hediffGiverSets != null)
+                foreach (var def in DefDatabase<ThingDef>.AllDefs)
                 {
-                    if (def.comps == null)
+                    // Target any pawn type that has skills.
+                    if (def?.race != null && def.race.intelligence == Intelligence.Humanlike)
                     {
-                        def.comps = new List<CompProperties>();
+                        if (def.comps == null)
+                        {
+                            def.comps = new List<CompProperties>();
+                        }
+                        
+                        // Check if CompPawnFog is already added
+                        bool hasCompPawnFog = false;
+                        foreach (var comp in def.comps)
+                        {
+                            if (comp is CompProperties_PawnFog)
+                            {
+                                hasCompPawnFog = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!hasCompPawnFog)
+                        {
+                            def.comps.Add(new CompProperties_PawnFog());
+                        }
                     }
-                    def.comps.Add(new CompProperties_PawnFog());
                 }
+            }
+            catch (System.Exception ex)
+            {
+                Log.Error($"[FogOfPawn] Failed to patch ThingDefs: {ex}");
             }
         }
     }

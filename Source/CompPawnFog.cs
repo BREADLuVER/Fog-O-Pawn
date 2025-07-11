@@ -23,13 +23,24 @@ namespace FogOfPawn
         public float truthfulness; // legacy, no longer used
         private bool disguiseKitSpawned;
 
-        // Skills
+        // Skills - OLD format (keep for migration)
         public Dictionary<SkillDef, float?> reportedSkills = new Dictionary<SkillDef, float?>();
         public Dictionary<SkillDef, Passion?> reportedPassions = new Dictionary<SkillDef, Passion?>();
         public HashSet<SkillDef> revealedSkills = new HashSet<SkillDef>();
 
+        // Skills - NEW format (offset-based)
+        public Dictionary<SkillDef, int> maskOffsets = new Dictionary<SkillDef, int>();
+        public Dictionary<SkillDef, int> passionOffsets = new Dictionary<SkillDef, int>(); // -1=remove passion, 0=no change, 1=add minor, 2=add major
+        
+        // Migration flag
+        public bool migratedToOffsets = false;
+
         // Traits
         public HashSet<TraitDef> revealedTraits = new HashSet<TraitDef>();
+        
+        // Change detection for auto-reveal
+        private HashSet<TraitDef> lastKnownTraits = new HashSet<TraitDef>();
+        private int lastTraitCheckTick = -1;
         
         // Health & Genes
         public bool healthRevealed;
@@ -111,7 +122,23 @@ namespace FogOfPawn
                     if (parent is Pawn p)
                     {
                         var comp = this;
-                        FogLog.Verbose($"[PROFILE] {p.LabelShort}: Tier={comp.tier}, RevealedSkills={comp.revealedSkills.Count}, ReportedSkills={string.Join(",", comp.reportedSkills.Where(kv=>kv.Value!=null).Select(kv=>kv.Key.defName))}");
+                        var maskedSkills = comp.maskOffsets.Count > 0 ? 
+                            string.Join(",", comp.maskOffsets.Select(kv => $"{kv.Key.defName}({kv.Value:+0;-0;+0})")) : 
+                            "none";
+                        FogLog.Verbose($"[PROFILE] {p.LabelShort}: Tier={comp.tier}, RevealedSkills={comp.revealedSkills.Count}, MaskedSkills={maskedSkills}");
+                    }
+                }
+            };
+            
+            yield return new Command_Action
+            {
+                defaultLabel = "Dev: Test Offset System",
+                defaultDesc = "Tests the new offset-based masking system to verify gene compatibility.",
+                action = () =>
+                {
+                    if (parent is Pawn p)
+                    {
+                        EffectiveSkillUtility.TestGeneIntegration(p);
                     }
                 }
             };
@@ -169,6 +196,9 @@ namespace FogOfPawn
 
         public void RevealSkill(SkillDef skillDef)
         {
+            // Truthful and fully revealed pawns don't need skill revealing
+            if (tier == DeceptionTier.Truthful || fullyRevealed) return;
+            
             // If this pawn is a Sleeper or Imposter and not yet fully revealed,
             // any attempt to expose a single skill should instead trigger a dramatic
             // full reveal for narrative impact.
@@ -200,6 +230,9 @@ namespace FogOfPawn
 
         public void RevealTrait(Trait trait)
         {
+            // Truthful and fully revealed pawns don't need trait revealing
+            if (tier == DeceptionTier.Truthful || fullyRevealed) return;
+            
             if (!fullyRevealed && (tier == DeceptionTier.DeceiverSleeper || tier == DeceptionTier.DeceiverImposter))
             {
                 string reason = tier == DeceptionTier.DeceiverSleeper ? "SleeperCascade" : "ImposterCascade";
@@ -254,8 +287,13 @@ namespace FogOfPawn
         {
             revealedSkills.Clear();
             revealedTraits.Clear();
+            maskOffsets.Clear();
+            passionOffsets.Clear();
 
-            // Optionally regenerate reported numbers here later.
+            // Clear old data too (for compatibility)
+            reportedSkills.Clear();
+            reportedPassions.Clear();
+
             healthRevealed = false;
             genesRevealed  = false;
             ticksSinceJoin = 0;
@@ -266,60 +304,11 @@ namespace FogOfPawn
         public override void CompTick()
         {
             base.CompTick();
-            // Only count time for player's faction members, not prisoners or visitors
-            if (parent.Faction?.IsPlayer == true)
+            
+            // Run change detection every 60 ticks (~1 second) for responsiveness
+            if (Find.TickManager.TicksGame % 60 == 0)
             {
-                if (!wasPlayerColonist && parent is Pawn pcol && pcol.IsFreeColonist)
-                    wasPlayerColonist = true;
-                ticksSinceJoin++;
-
-                if (ticksSinceJoin % 2500 == 0) // ~once per in-game hour
-                {
-                    var settings = FogSettingsCache.Current;
-                    if (settings.passiveRevealDays > 0f)
-                    {
-                        // The MTB calculation: mtbDays, check interval, per-tick multiplier inside helper.
-                        if (Rand.MTBEventOccurs(settings.passiveRevealDays, 60000f, 2500f))
-                        {
-                            if (parent is Pawn pawnParent)
-                                FogUtility.RevealRandomFoggedAttribute(pawnParent, preferSkill: false);
-                        }
-                    }
-
-                    // Good-treatment (high mood) reveal
-                    if (settings.positiveMoodRevealPct > 0 && parent is Pawn pmood)
-                    {
-                        var moodNeed = pmood.needs?.mood as Need_Mood;
-                        if (moodNeed != null && moodNeed.CurLevel * 100f > settings.positiveMoodThresholdPct)
-                        {
-                            if (Rand.Chance(settings.positiveMoodRevealPct / 100f))
-                            {
-                                FogUtility.RevealRandomFoggedAttribute(pmood, preferSkill: false);
-                            }
-                        }
-                    }
-                }
-
-                // 1% base daily chance for sleepers/imposters if nothing else triggered
-                if ((tier == DeceptionTier.DeceiverImposter) && ticksSinceJoin % 60000 == 0 && !tierManuallySet)
-                {
-                    if (Rand.Chance(FogSettingsCache.Current.passiveDailyRevealPct / 100f))
-                    {
-                        string reason = tier == DeceptionTier.DeceiverImposter ? "ImposterPassive" : "ImposterPassive";
-                        FogUtility.TriggerFullReveal((Pawn)parent, reason);
-                    }
-                }
-
-                // Health-based Sleeper reveal removed – story-driven only
-                /*
-                if (tier == DeceptionTier.DeceiverSleeper && !fullyRevealed && parent is Pawn hpawn)
-                {
-                    if (!hpawn.Downed && hpawn.health?.summaryHealth?.SummaryHealthPercent < 0.20f)
-                    {
-                        FogUtility.TriggerFullReveal(hpawn, "SleeperWounded");
-                    }
-                }
-                */
+                DetectAndAutoRevealChanges();
             }
         }
 
@@ -335,89 +324,173 @@ namespace FogOfPawn
             Scribe_Values.Look(ref lastInterrogatedTick, "lastInterrogatedTick", 0);
             Scribe_Values.Look(ref wasPlayerColonist, "wasPlayerColonist", false);
             
+            // Migration flag
+            Scribe_Values.Look(ref migratedToOffsets, "migratedToOffsets", false);
+            
+            // NEW format (offset-based)
+            Scribe_Collections.Look(ref maskOffsets, "maskOffsets", LookMode.Def, LookMode.Value);
+            Scribe_Collections.Look(ref passionOffsets, "passionOffsets", LookMode.Def, LookMode.Value);
+            
+            // OLD format (keep for migration)
             Scribe_Collections.Look(ref reportedSkills, "reportedSkills", LookMode.Def, LookMode.Value);
             Scribe_Collections.Look(ref reportedPassions, "reportedPassions", LookMode.Def, LookMode.Value);
+            
             Scribe_Collections.Look(ref revealedSkills, "revealedSkills", LookMode.Def);
             Scribe_Collections.Look(ref revealedTraits, "revealedTraits", LookMode.Def);
 
             Scribe_Values.Look(ref healthRevealed, "healthRevealed", false);
             Scribe_Values.Look(ref genesRevealed, "genesRevealed", false);
             Scribe_Values.Look(ref disguiseKitSpawned, "disguiseKitSpawned", false);
+            
+            // Change tracking data
+            Scribe_Collections.Look(ref lastKnownTraits, "lastKnownTraits", LookMode.Def);
+            Scribe_Values.Look(ref lastTraitCheckTick, "lastTraitCheckTick", -1);
+            
+            // Initialize collections if null (for new saves)
+            if (maskOffsets == null) maskOffsets = new Dictionary<SkillDef, int>();
+            if (passionOffsets == null) passionOffsets = new Dictionary<SkillDef, int>();
+            if (reportedSkills == null) reportedSkills = new Dictionary<SkillDef, float?>();
+            if (reportedPassions == null) reportedPassions = new Dictionary<SkillDef, Passion?>();
+            if (revealedSkills == null) revealedSkills = new HashSet<SkillDef>();
+            if (revealedTraits == null) revealedTraits = new HashSet<TraitDef>();
+            if (lastKnownTraits == null) lastKnownTraits = new HashSet<TraitDef>();
+            
+            // Migration: Convert old format to new format
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && !migratedToOffsets)
+            {
+                MigrateToOffsetSystem();
+            }
+        }
+        
+        /// <summary>
+        /// Migrates old absolute skill values to new offset-based system
+        /// </summary>
+        private void MigrateToOffsetSystem()
+        {
+            if (parent is not Pawn pawn || pawn.skills == null)
+            {
+                migratedToOffsets = true;
+                return;
+            }
+            
+            FogLog.Verbose($"Migrating {pawn.LabelShort} from old skill system to offset-based system");
+            
+            // Convert old reportedSkills to maskOffsets
+            foreach (var kvp in reportedSkills)
+            {
+                if (!kvp.Value.HasValue) continue;
+                
+                var skill = pawn.skills.GetSkill(kvp.Key);
+                if (skill == null) continue;
+                
+                int currentTrainedLevel = skill.levelInt; // Use trained level to avoid recursion
+                int oldReported = Mathf.RoundToInt(kvp.Value.Value);
+                int offset = oldReported - currentTrainedLevel;
+                
+                // Only store non-zero offsets
+                if (offset != 0)
+                {
+                    maskOffsets[kvp.Key] = offset;
+                    FogLog.Verbose($"  {kvp.Key.defName}: trained={currentTrainedLevel}, old_reported={oldReported}, offset={offset}");
+                }
+            }
+            
+            // Convert old reportedPassions to passionOffsets
+            foreach (var kvp in reportedPassions)
+            {
+                if (!kvp.Value.HasValue) continue;
+                
+                var skill = pawn.skills.GetSkill(kvp.Key);
+                if (skill == null) continue;
+                
+                Passion currentPassion = skill.passion;
+                Passion fakePassion = kvp.Value.Value;
+                
+                int offset = 0;
+                if (currentPassion == Passion.None && fakePassion == Passion.Minor) offset = 1;
+                else if (currentPassion == Passion.None && fakePassion == Passion.Major) offset = 2;
+                else if (currentPassion == Passion.Minor && fakePassion == Passion.Major) offset = 1;
+                else if (currentPassion == Passion.Minor && fakePassion == Passion.None) offset = -1;
+                else if (currentPassion == Passion.Major && fakePassion == Passion.None) offset = -2;
+                else if (currentPassion == Passion.Major && fakePassion == Passion.Minor) offset = -1;
+                
+                if (offset != 0)
+                {
+                    passionOffsets[kvp.Key] = offset;
+                    FogLog.Verbose($"  {kvp.Key.defName} passion: real={currentPassion}, fake={fakePassion}, offset={offset}");
+                }
+            }
+            
+            // Clear old data after migration
+            reportedSkills.Clear();
+            reportedPassions.Clear();
+            
+            migratedToOffsets = true;
+            FogLog.Verbose($"Migration complete for {pawn.LabelShort}");
         }
 
         private void MaybeDropDisguiseKit()
         {
-            if (disguiseKitSpawned)
-            {
-                FogLog.Verbose("[KIT] Already spawned – skipping.");
-                return;
-            }
-            if (!fullyRevealed)
-            {
-                FogLog.Verbose("[KIT] Pawn not fully revealed yet.");
-                return;
-            }
-            if (tier != DeceptionTier.DeceiverImposter)
-            {
-                FogLog.Verbose("[KIT] Pawn is not a imposter tier.");
-                return;
-            }
-            if (!FogUtility.ShouldNotifyPlayer(parent as Pawn))
-            {
-                FogLog.Verbose("[KIT] Pawn does not belong to player – skipping kit drop.");
-                return;
-            }
-            if (parent is not Pawn pawn)
-            {
-                FogLog.Verbose("[KIT] Parent is not a pawn.");
-                return;
-            }
-
-            FogLog.Verbose($"[KIT] Attempting to spawn disguise kit for {pawn.LabelShort}.");
-
-            // Remove the wealth-penalty hediff if it still exists.
-            var penaltyDef = DefDatabase<HediffDef>.GetNamedSilentFail("Fog_DisguisePenalty");
-            if (penaltyDef != null)
-            {
-                var penalty = pawn.health?.hediffSet?.GetFirstHediffOfDef(penaltyDef);
-                if (penalty != null)
-                {
-                    pawn.health.RemoveHediff(penalty);
-                    FogLog.Verbose("[KIT] Removed disguise penalty hediff.");
-                }
-            }
-
-            var kitDef = DefDatabase<ThingDef>.GetNamedSilentFail("FogOfPawn_DisguiseKit");
-            if (kitDef == null)
-            {
-                FogLog.Verbose("[KIT] ThingDef FogOfPawn_DisguiseKit not found.");
-                return;
-            }
-
-            Thing kit = ThingMaker.MakeThing(kitDef);
-            bool placedOk = GenPlace.TryPlaceThing(kit, pawn.PositionHeld, pawn.MapHeld, ThingPlaceMode.Near, out var placed);
-
-            if (!placedOk || placed == null)
-            {
-                // Fallback: put it in inventory
-                if (pawn.inventory != null)
-                {
-                    pawn.inventory.TryAddItemNotForSale(kit);
-                    FogLog.Verbose("[KIT] Placed in pawn inventory as fallback.");
-                }
-                else
-                {
-                    kit.Destroy();
-                    FogLog.Verbose("[KIT] Failed to spawn kit – destroyed (no inventory).");
-                }
-            }
-            else
-            {
-                placed.SetForbidden(false);
-                FogLog.Verbose("[KIT] Spawned at pawn position.");
-            }
+            if (disguiseKitSpawned || tier != DeceptionTier.DeceiverImposter) return;
 
             disguiseKitSpawned = true;
+
+            var kitDef = DefDatabase<ThingDef>.GetNamedSilentFail("FogOfPawn_DisguiseKit");
+            if (kitDef == null) return;
+            
+            var disguiseKit = ThingMaker.MakeThing(kitDef);
+            GenPlace.TryPlaceThing(disguiseKit, parent.Position, parent.Map, ThingPlaceMode.Near);
+        }
+
+        /// <summary>
+        /// Detects external modifications (traits, genes, etc.) and automatically reveals them.
+        /// This ensures user modifications via Character Editor or other tools are immediately visible.
+        /// </summary>
+        public void DetectAndAutoRevealChanges()
+        {
+            var pawn = parent as Pawn;
+            if (pawn?.story?.traits == null) return;
+            
+            // Skip if pawn is already truthful or fully revealed - no need to track changes
+            if (tier == DeceptionTier.Truthful || fullyRevealed) return;
+
+            int currentTick = Find.TickManager.TicksGame;
+            
+            // Initialize tracking on first run
+            if (lastTraitCheckTick == -1)
+            {
+                lastKnownTraits.Clear();
+                foreach (var trait in pawn.story.traits.allTraits)
+                {
+                    lastKnownTraits.Add(trait.def);
+                }
+                lastTraitCheckTick = currentTick;
+                return;
+            }
+
+            // Check for new traits (user additions)
+            var currentTraits = new HashSet<TraitDef>();
+            foreach (var trait in pawn.story.traits.allTraits)
+            {
+                currentTraits.Add(trait.def);
+                
+                // If this trait wasn't there before, it's a user addition - reveal it immediately
+                if (!lastKnownTraits.Contains(trait.def))
+                {
+                    if (!revealedTraits.Contains(trait.def))
+                    {
+                        revealedTraits.Add(trait.def);
+                        if (Prefs.DevMode)
+                        {
+                            FogLog.Verbose($"[AUTO-REVEAL] User-added trait {trait.def.defName} revealed for {pawn.LabelShort}");
+                        }
+                    }
+                }
+            }
+
+            // Update tracking
+            lastKnownTraits = currentTraits;
+            lastTraitCheckTick = currentTick;
         }
     }
 }

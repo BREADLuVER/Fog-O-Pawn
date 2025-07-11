@@ -11,9 +11,20 @@ namespace FogOfPawn
         // Entry point from patch – assigns tier (unless pre-set) and applies masks.
         public static void InitializeFogFor(Pawn pawn, PawnGenerationRequest? request = null)
         {
+            if (pawn == null) return;
+            
             var comp = pawn.GetComp<CompPawnFog>();
             if (comp == null || comp.compInitialized)
                 return;
+
+            // Additional safety checks
+            if (pawn.skills == null || pawn.story == null)
+            {
+                FogLog.Verbose($"Skipping fog initialization for {pawn.LabelShort} - missing skills or story");
+                comp.compInitialized = true;
+                comp.fullyRevealed = true;
+                return;
+            }
 
             var settings = FogSettingsCache.Current;
 
@@ -35,11 +46,16 @@ namespace FogOfPawn
 
         public static void RegenerateMasksFor(Pawn pawn, CompPawnFog comp)
         {
-            // clear previous reported skills/passions then apply again.
-            comp.reportedSkills.Clear();
-            comp.reportedPassions.Clear();
+            // Clear previous masks and apply new ones
+            comp.maskOffsets.Clear();
+            comp.passionOffsets.Clear();
             comp.revealedSkills.Clear();
             comp.revealedTraits.Clear();
+            
+            // Clear old data too (for compatibility)
+            comp.reportedSkills.Clear();
+            comp.reportedPassions.Clear();
+            
             ApplyMasks(pawn, comp, FogSettingsCache.Current);
             ApplyTraitMasks(pawn, comp, FogSettingsCache.Current);
         }
@@ -98,6 +114,7 @@ namespace FogOfPawn
         private static void ApplyMasks(Pawn pawn, CompPawnFog comp, FogOfPawnSettings settings)
         {
             if (!settings.fogSkills) return;
+            if (pawn?.skills?.skills == null) return;
 
             switch (comp.tier)
             {
@@ -108,7 +125,7 @@ namespace FogOfPawn
                     ApplySlight(pawn, comp, settings);
                     break;
                 case DeceptionTier.DeceiverImposter:
-                    ApplyImposter(pawn, comp);
+                    ApplyImposter(pawn, comp, settings);
                     break;
                 case DeceptionTier.DeceiverSleeper:
                     ApplySleeper(pawn, comp);
@@ -119,9 +136,12 @@ namespace FogOfPawn
         private static void ApplyTruthful(Pawn pawn, CompPawnFog comp)
         {
             // Reveal everything; no reported overrides.
+            if (pawn?.skills?.skills == null) return;
+            
             foreach (var sk in pawn.skills.skills)
             {
-                comp.revealedSkills.Add(sk.def);
+                if (sk?.def != null)
+                    comp.revealedSkills.Add(sk.def);
             }
         }
 
@@ -137,70 +157,77 @@ namespace FogOfPawn
                 int range = Mathf.Clamp(settings.alteredSkillRange, 2, 10);
                 int delta = Rand.RangeInclusive(2, range);
                 
-                // Get the effective skill level (including gene modifiers)
-                int effectiveLevel = skill.Level;
-                // Get the raw trained level (without gene modifiers)
-                int trainedLevel = skill.levelInt;
+                // Use gene-modified skill level for proper masking
+                int currentLevel = EffectiveSkillUtility.GetGeneModifiedSkillLevel(skill);
                 
-                // Calculate the aptitude modifier
-                int aptitudeModifier = effectiveLevel - trainedLevel;
+                // Calculate the offset to apply
+                int offset = understate ? -delta : delta;
                 
-                // Apply delta to the effective level, then subtract aptitude to get reported trained level
-                int targetEffectiveLevel = Mathf.Clamp(effectiveLevel + (understate ? -delta : delta), 0, 20);
-                int reportedTrainedLevel = Mathf.Clamp(targetEffectiveLevel - aptitudeModifier, 0, 20);
+                // Ensure the final masked level stays within bounds
+                int maskedLevel = Mathf.Clamp(currentLevel + offset, 0, 20);
+                offset = maskedLevel - currentLevel; // Adjust offset if clamping occurred
                 
-                comp.reportedSkills[skill.def] = reportedTrainedLevel;
-                
-#if DEBUG
-                if (Prefs.DevMode && aptitudeModifier != 0)
+                if (offset != 0)
                 {
-                    FogLog.Verbose($"[GENE] {pawn.LabelShort} {skill.def.label}: target={targetEffectiveLevel}, aptitude={aptitudeModifier}, reportedTrained={reportedTrainedLevel}");
+                    comp.maskOffsets[skill.def] = offset;
                 }
-#endif
                 
+                // Sometimes add fake passion
                 if (Rand.Chance(0.4f))
                 {
-                    comp.reportedPassions[skill.def] = skill.passion == Passion.None ? Passion.Minor : skill.passion;
+                    Passion currentPassion = skill.passion;
+                    Passion fakePassion = Rand.Chance(0.5f) ? Passion.Major : Passion.Minor;
+                    
+                    int passionOffset = (int)fakePassion - (int)currentPassion;
+                    if (passionOffset != 0)
+                    {
+                        comp.passionOffsets[skill.def] = passionOffset;
+                    }
                 }
             }
 
-            // all other skills revealed
+            // All other skills are revealed (no mask applied)
             foreach (var sk in pawn.skills.skills)
             {
-                if (!comp.reportedSkills.ContainsKey(sk.def))
+                if (!comp.maskOffsets.ContainsKey(sk.def))
                 {
                     comp.revealedSkills.Add(sk.def);
                 }
             }
         }
 
-        private static void ApplyImposter(Pawn pawn, CompPawnFog comp)
+        private static void ApplyImposter(Pawn pawn, CompPawnFog comp, FogOfPawnSettings settings)
         {
-            var settings = FogSettingsCache.Current;
             var skillsShuffled = pawn.skills.skills.InRandomOrder().ToList();
-
+            
             // 1. High claimed skills (8-14) with passions (2-3 of them)
             int highCount = Mathf.Clamp(settings.imposterHighSkills, 1, 6);
             for (int i = 0; i < highCount && i < skillsShuffled.Count; i++)
             {
                 var sk = skillsShuffled[i];
                 
-                // Calculate what trained level would give the desired effective level
-                int targetEffectiveLevel = Rand.RangeInclusive(8, 14);
-                int aptitudeModifier = sk.Level - sk.levelInt;
-                int reportedTrainedLevel = Mathf.Clamp(targetEffectiveLevel - aptitudeModifier, 0, 20);
+                // Use gene-modified skill level for proper masking
+                int currentLevel = EffectiveSkillUtility.GetGeneModifiedSkillLevel(sk);
                 
-                comp.reportedSkills[sk.def] = reportedTrainedLevel;
+                // Target fake skill level
+                int targetLevel = Rand.RangeInclusive(8, 14);
                 
-#if DEBUG
-                if (Prefs.DevMode && aptitudeModifier != 0)
+                // Calculate offset
+                int offset = targetLevel - currentLevel;
+                if (offset != 0)
                 {
-                    FogLog.Verbose($"[GENE] {pawn.LabelShort} {sk.def.label}: target={targetEffectiveLevel}, aptitude={aptitudeModifier}, reportedTrained={reportedTrainedLevel}");
+                    comp.maskOffsets[sk.def] = offset;
                 }
-#endif
                 
-                // 50% minor, 50% major passion for first few
-                comp.reportedPassions[sk.def] = Rand.Chance(0.5f) ? Passion.Major : Passion.Minor;
+                // Add fake passion (50% minor, 50% major)
+                Passion currentPassion = sk.passion;
+                Passion fakePassion = Rand.Chance(0.5f) ? Passion.Major : Passion.Minor;
+                
+                int passionOffset = (int)fakePassion - (int)currentPassion;
+                if (passionOffset != 0)
+                {
+                    comp.passionOffsets[sk.def] = passionOffset;
+                }
             }
 
             // 2. Mid-level claimed skills (4-8)
@@ -209,22 +236,31 @@ namespace FogOfPawn
             {
                 var sk = skillsShuffled[i];
                 
-                // Calculate what trained level would give the desired effective level
-                int targetEffectiveLevel = Rand.RangeInclusive(4, 8);
-                int aptitudeModifier = sk.Level - sk.levelInt;
-                int reportedTrainedLevel = Mathf.Clamp(targetEffectiveLevel - aptitudeModifier, 0, 20);
+                // Use gene-modified skill level for proper masking
+                int currentLevel = EffectiveSkillUtility.GetGeneModifiedSkillLevel(sk);
                 
-                comp.reportedSkills[sk.def] = reportedTrainedLevel;
+                // Target fake skill level
+                int targetLevel = Rand.RangeInclusive(4, 8);
                 
-#if DEBUG
-                if (Prefs.DevMode && aptitudeModifier != 0)
+                // Calculate offset
+                int offset = targetLevel - currentLevel;
+                if (offset != 0)
                 {
-                    FogLog.Verbose($"[GENE] {pawn.LabelShort} {sk.def.label}: target={targetEffectiveLevel}, aptitude={aptitudeModifier}, reportedTrained={reportedTrainedLevel}");
+                    comp.maskOffsets[sk.def] = offset;
                 }
-#endif
                 
+                // Sometimes add minor passion
                 if (Rand.Chance(0.3f))
-                    comp.reportedPassions[sk.def] = Passion.Minor;
+                {
+                    Passion currentPassion = sk.passion;
+                    Passion fakePassion = Passion.Minor;
+                    
+                    int passionOffset = (int)fakePassion - (int)currentPassion;
+                    if (passionOffset != 0)
+                    {
+                        comp.passionOffsets[sk.def] = passionOffset;
+                    }
+                }
             }
 
             // 3. Low or truthful skills – reveal the rest so UI isn't Unknown
@@ -236,32 +272,33 @@ namespace FogOfPawn
 
         private static void ApplySleeper(Pawn pawn, CompPawnFog comp)
         {
-            // Sleeper: any competent skill (≥6) is lied about – shown as poor (2-4).
+            // Sleeper: any competent skill (≥6) is hidden by claiming to be poor (3-5).
             // All other low skills are revealed truthfully so the UI never shows "???".
 
             foreach (var skill in pawn.skills.skills)
             {
-                if (skill.levelInt >= 6)
+                // Use gene-modified skill level for proper masking
+                int currentLevel = EffectiveSkillUtility.GetGeneModifiedSkillLevel(skill);
+                
+                if (currentLevel >= 6)
                 {
-                    // Calculate what trained level would give the desired effective level
-                    int targetEffectiveLevel = Rand.RangeInclusive(3, 5);
-                    int aptitudeModifier = skill.Level - skill.levelInt;
-                    int reportedTrainedLevel = Mathf.Clamp(targetEffectiveLevel - aptitudeModifier, 0, 20);
+                    // Target fake skill level (appear incompetent)
+                    int targetLevel = Rand.RangeInclusive(3, 5);
                     
-                    comp.reportedSkills[skill.def] = reportedTrainedLevel;
-                    
-#if DEBUG
-                    if (Prefs.DevMode && aptitudeModifier != 0)
+                    // Calculate offset (will be negative since we're hiding ability)
+                    int offset = targetLevel - currentLevel;
+                    if (offset != 0)
                     {
-                        FogLog.Verbose($"[GENE] {pawn.LabelShort} {skill.def.label}: target={targetEffectiveLevel}, aptitude={aptitudeModifier}, reportedTrained={reportedTrainedLevel}");
+                        comp.maskOffsets[skill.def] = offset;
                     }
-#endif
                     
-                    // Keep the original passion visible so the low reported level isn't a giveaway.
-                    comp.reportedPassions[skill.def] = skill.passion;
+                    // Keep the original passion visible so the low reported level isn't a complete giveaway
+                    // This creates suspicious inconsistency: "Why does this terrible doctor have burning passion for medicine?"
+                    // No passion offset needed - we want to show the real passion
                 }
                 else
                 {
+                    // Low skills are revealed truthfully
                     comp.revealedSkills.Add(skill.def);
                 }
             }
@@ -269,8 +306,8 @@ namespace FogOfPawn
 #if DEBUG
             if (Prefs.DevMode)
             {
-                int repCount = comp.reportedSkills.Count;
-                FogLog.Verbose($"[PROFILE] {pawn.LabelShort}: Sleeper masks set for {repCount} skills (tier={comp.tier}).");
+                int maskedCount = comp.maskOffsets.Count;
+                FogLog.Verbose($"[PROFILE] {pawn.LabelShort}: Sleeper masks set for {maskedCount} skills (tier={comp.tier}).");
             }
 #endif
         }
@@ -384,5 +421,60 @@ namespace FogOfPawn
         }
 
         private static readonly HashSet<int> _loggedTraitMask = new();
+        
+        /// <summary>
+        /// Safely calculates the aptitude modifier for a skill without triggering initialization issues.
+        /// This returns the difference between effective level and trained level due to gene modifiers.
+        /// For now, this is simplified to avoid crashes - proper gene support is disabled.
+        /// </summary>
+        private static int GetAptitudeModifier(Pawn pawn, SkillDef skillDef)
+        {
+            // For RimWorld 1.6 compatibility, we'll disable gene aptitude calculations
+            // until proper implementation is complete to avoid crashes
+            return 0;
+            
+            /* TODO: Implement proper gene aptitude support
+            try
+            {
+                // Check if the pawn has genes (Biotech DLC)
+                if (pawn.genes?.GenesListForReading == null)
+                    return 0;
+                
+                int modifier = 0;
+                foreach (var gene in pawn.genes.GenesListForReading)
+                {
+                    if (gene.def.statOffsets != null)
+                    {
+                        foreach (var statOffset in gene.def.statOffsets)
+                        {
+                            // Check if this stat offset affects the skill's learn rate or aptitude
+                            if (IsSkillAptitudeStat(statOffset.stat, skillDef))
+                            {
+                                modifier += Mathf.RoundToInt(statOffset.value);
+                            }
+                        }
+                    }
+                }
+                
+                return modifier;
+            }
+            catch (System.Exception ex)
+            {
+                // If anything goes wrong, just return 0 (no modifier)
+                FogLog.Verbose($"[GENE] Error calculating aptitude for {pawn.LabelShort} {skillDef.label}: {ex.Message}");
+                return 0;
+            }
+            */
+        }
+        
+        /// <summary>
+        /// Checks if a stat affects the aptitude/level of a specific skill.
+        /// Currently disabled to avoid crashes - will be implemented properly later.
+        /// </summary>
+        private static bool IsSkillAptitudeStat(StatDef stat, SkillDef skill)
+        {
+            // Disabled for now to avoid crashes
+            return false;
+        }
     }
 } 

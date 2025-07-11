@@ -51,6 +51,7 @@ namespace FogOfPawn.Patches
 
             var comp = pawn.GetComp<CompPawnFog>();
             if (comp == null || !comp.compInitialized) return;
+            if (comp.tier == DeceptionTier.Truthful || comp.fullyRevealed) return; // Never mask truthful/revealed pawns
             if (pawn.story?.traits == null) return;
 
             List<Trait> removed = null;
