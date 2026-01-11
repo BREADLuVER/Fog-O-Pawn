@@ -2,6 +2,7 @@ using System;
 using HarmonyLib;
 using RimWorld;
 using Verse;
+using System.Reflection;
 
 namespace FogOfPawn.Patches
 {
@@ -19,12 +20,33 @@ namespace FogOfPawn.Patches
             {
                 var harmony = new Harmony("FogOfPawn.WorkTypeMask");
 
-                // The typical method is WorkTypeIsDisabled(WorkTypeDef) on Pawn_StoryTracker.
+                // The pre-1.6 method is WorkTypeIsDisabled(WorkTypeDef). RimWorld 1.6 renamed it, so we attempt
+                // a signature search to stay version-agnostic.
                 var target = AccessTools.Method(typeof(Pawn_StoryTracker), "WorkTypeIsDisabled", new[] { typeof(WorkTypeDef) });
 
                 if (target == null)
                 {
-                    FogLog.Fail("WorkTypeIsDisabled", "Could not locate Pawn_StoryTracker.WorkTypeIsDisabled – work-type masking disabled.");
+                    // Fallback: find ANY bool-returning instance method with WorkTypeDef parameter.
+                    foreach (var mi in typeof(Pawn_StoryTracker).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+                    {
+                        if (mi.ReturnType != typeof(bool)) continue;
+                        var pars = mi.GetParameters();
+                        if (pars.Length != 1) continue;
+                        if (pars[0].ParameterType != typeof(WorkTypeDef)) continue;
+
+                        // Heuristic: method name contains "WorkType" and "Disabled" or "IsDisabled"
+                        string n = mi.Name;
+                        if (n.Contains("WorkType") && (n.Contains("Disabled") || n.Contains("IsDisabled")))
+                        {
+                            target = mi;
+                            break;
+                        }
+                    }
+                }
+
+                if (target == null)
+                {
+                    FogLog.Fail("WorkTypeIsDisabled", "Could not locate suitable WorkType disabled checker – work-type masking disabled.");
                     return;
                 }
 

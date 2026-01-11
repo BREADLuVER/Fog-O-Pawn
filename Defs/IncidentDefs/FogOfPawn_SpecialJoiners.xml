@@ -10,7 +10,7 @@
     </targetTags>
     <letterLabel>A wanderer joins</letterLabel>
     <letterText>A wanderer named {PAWN_nameFull} joins your colony.</letterText>
-    <baseChance>0.2</baseChance>
+    <baseChance>0.3</baseChance>
   </IncidentDef>
 
   <IncidentDef>
@@ -23,6 +23,19 @@
     </targetTags>
     <letterLabel>A wanderer joins</letterLabel>
     <letterText>A wanderer named {PAWN_nameFull} joins your colony.</letterText>
-    <baseChance>0.2</baseChance>
+    <baseChance>0.3</baseChance>
+  </IncidentDef>
+
+  <IncidentDef>
+    <defName>FogOfPawn_InnocentJoin</defName>
+    <workerClass>FogOfPawn.IncidentWorker_InnocentJoin</workerClass>
+    <category>Misc</category>
+    <letterDef>NeutralEvent</letterDef>
+    <targetTags>
+      <li>Map_PlayerHome</li>
+    </targetTags>
+    <letterLabel>A wanderer joins</letterLabel>
+    <letterText>A wanderer named {PAWN_nameFull} joins your colony.</letterText>
+    <baseChance>0.3</baseChance>
   </IncidentDef>
 </Defs> 

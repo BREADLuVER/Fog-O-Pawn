@@ -4,7 +4,7 @@
     <defName>FogOfPawn_DisguiseKit</defName>
     <label>disguise kit</label>
     <thingClass>Apparel</thingClass>
-    <description>A bundle of cheap props, wigs and makeup used to disguise one's appearance. When worn it conveniently hides a pawn's true nature at least until the jig is up.</description>
+    <description>A collection of cheap props, wigs, and makeup used by imposters to hide their true identity. When worn, this kit reduces the wearer's apparent value to the colony, making them seem less wealthy than they actually are. Finding this item indicates that someone in your colony was not who they claimed to be.</description>
     <graphicData>
       <texPath>Things/Item/disguise-kit</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -18,17 +18,32 @@
       <MarketValue>1</MarketValue>
       <Mass>0.1</Mass>
       <MaxHitPoints>120</MaxHitPoints>
+      <DeteriorationRate>2.0</DeteriorationRate>
     </statBases>
+    <useHitPoints>true</useHitPoints>
     <apparel>
       <bodyPartGroups>
         <li>Torso</li>
       </bodyPartGroups>
       <layers>
-        <li>Belt</li>
+        <li>OuterClothing</li>
       </layers>
+      <tags>
+        <li>Utility</li>
+      </tags>
     </apparel>
     <comps>
       <li Class="CompProperties_Forbiddable" />
+      <li Class="FogOfPawn.CompProperties_DisguiseKitWealth" />
     </comps>
+    <tradeTags>
+      <li>ExoticMisc</li>
+    </tradeTags>
+    <alwaysHaulable>true</alwaysHaulable>
+    <rotatable>false</rotatable>
+    <fillPercent>0.3</fillPercent>
+    <pathCost>14</pathCost>
+    <soundInteract>Thing_Metal_Impact_Small</soundInteract>
+    <soundDrop>Thing_Metal_Impact_Small</soundDrop>
   </ThingDef>
 </Defs> 

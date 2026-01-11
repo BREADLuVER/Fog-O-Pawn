@@ -132,6 +132,15 @@
   <FogOfPawn.Settings.LateJoinerChance>后期欺骗者事件概率</FogOfPawn.Settings.LateJoinerChance>
   <FogOfPawn.Settings.LateJoinerChance_Tooltip>第 2 年后，每次事件轮询额外潜伏者/骗子加入的概率（%）。数值越低，出现越罕见。</FogOfPawn.Settings.LateJoinerChance_Tooltip>
 
+  <FogOfPawn.DisguiseKit.InspectString>欺骗证据 - 此工具曾被用来隐藏某人的真实身份。</FogOfPawn.DisguiseKit.InspectString>
+  <FogOfPawn.DisguiseKit.DestroyLabel>丢弃工具</FogOfPawn.DisguiseKit.DestroyLabel>
+  <FogOfPawn.DisguiseKit.DestroyDesc>安全地处理这些欺诈证据。这将摧毁该物品。</FogOfPawn.DisguiseKit.DestroyDesc>
+  <FogOfPawn.Settings.SpawnDisguiseKitOnReveal>揭露时生成伪装工具</FogOfPawn.Settings.SpawnDisguiseKitOnReveal>
+  <FogOfPawn.Settings.SpawnDisguiseKitOnReveal_Tooltip>如果启用（默认），在骗子身份暴露时，伪装工具会掉落在地上。禁用后，工具将完全不再出现。</FogOfPawn.Settings.SpawnDisguiseKitOnReveal_Tooltip>
+  
+  <FogOfPawn_DisguiseKit.label>伪装工具</FogOfPawn_DisguiseKit.label>
+  <FogOfPawn_DisguiseKit.description>骗子用来隐藏真实身份的道具、假发和化妆品的集合。穿戴时，此工具会降低穿戴者在殖民地中的表面价值，使他们看起来比实际更贫穷。发现此物品表明你殖民地中有人并非他们声称的身份。</FogOfPawn_DisguiseKit.description>
+
   <AcceptButton>接受</AcceptButton>
   <RejectButton>拒绝</RejectButton>
 </LanguageData> 

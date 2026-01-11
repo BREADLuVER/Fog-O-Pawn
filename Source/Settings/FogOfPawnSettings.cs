@@ -44,13 +44,16 @@ namespace FogOfPawn
         // Imposter balancing sliders
         public int imposterHighSkills = 3; // # of high claimed skills 8-14
         public int imposterMidSkills = 3; // # of mid claimed skills 4-8
+        public bool spawnDisguiseKitOnReveal = true;
 
         // Add fields after deceptionIntensity
         public int pctTruthful = 65;
         public int pctSlight = 30;
         public int pctDeceiver = 5;
 
-        // Work tab masking fallback – when true use safer but less accurate capacity override instead of transpiler.
+        // OBSOLETE: Work tab masking is now handled by RenderContext accessor patches.
+        // Kept for save compatibility only.
+        [System.Obsolete("No longer used - RenderContext system handles all masking")]
         public bool workTabFallbackMask = false;
 
         // Range (±) for how much skill levels can be exaggerated or understated in Slight tier
@@ -111,6 +114,7 @@ namespace FogOfPawn
 
             Scribe_Values.Look(ref imposterHighSkills, "imposterHighSkills", 3);
             Scribe_Values.Look(ref imposterMidSkills, "imposterMidSkills", 3);
+            Scribe_Values.Look(ref spawnDisguiseKitOnReveal, "spawnDisguiseKitOnReveal", true);
 
             Scribe_Values.Look(ref pctTruthful, "pctTruthful", 65);
             Scribe_Values.Look(ref pctSlight, "pctSlight", 30);
@@ -261,6 +265,8 @@ namespace FogOfPawn
             list.Label("FogOfPawn.Settings.DisguiseKitWealth".Translate() + ": " + disguiseKitWealth);
             disguiseKitWealth = (int)list.Slider(disguiseKitWealth, 0, 10000);
 
+            list.CheckboxLabeled("FogOfPawn.Settings.SpawnDisguiseKitOnReveal".Translate(), ref spawnDisguiseKitOnReveal, "FogOfPawn.Settings.SpawnDisguiseKitOnReveal_Tooltip".Translate());
+
             list.Label("FogOfPawn.Settings.ImposterHighSkills".Translate() + ": " + imposterHighSkills);
             imposterHighSkills = (int)list.Slider(imposterHighSkills, 1, 6);
 
@@ -274,7 +280,7 @@ namespace FogOfPawn
             list.Label("FogOfPawn.Settings.MoodBreakPerDayPct".Translate() + $": {moodBreakPerDayPct:F1} %", -1f, "FogOfPawn.Settings.MoodBreakPerDayPctTooltip".Translate());
             moodBreakPerDayPct = Mathf.Clamp(list.Slider(moodBreakPerDayPct, 0f, 10f), 0f, 10f);
 
-            list.CheckboxLabeled("FogOfPawn.Settings.WorkTabFallbackMask".Translate(), ref workTabFallbackMask, "FogOfPawn.Settings.WorkTabFallbackMask_Tooltip".Translate());
+            // Note: workTabFallbackMask setting removed - RenderContext system now handles all masking automatically
 
             // Reset button
             SectionBreak();
@@ -316,6 +322,7 @@ namespace FogOfPawn
             moodBreakBasePct = 50;
             moodBreakPerDayPct = 2f;
             lateJoinerChancePct = 1.5f;
+            spawnDisguiseKitOnReveal = true;
             // add more defaults as needed
         }
     }

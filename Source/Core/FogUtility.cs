@@ -110,13 +110,32 @@ namespace FogOfPawn
         private static void TryAddImposterTrait(Pawn pawn)
         {
             if (pawn?.story?.traits == null) return;
+
+            // If the pawn already has any negative trait, don't add another one.
+            // This ensures Imposters don't end up with too many harsh penalties.
+            if (pawn.story.traits.allTraits.Any(t => FogInitializer.IsNegativeTrait(t.def)))
+            {
+                FogLog.Verbose($"[IMPOSTER REVEAL] {pawn.LabelShort} already has negative traits. Skipping additional trait assignment.");
+                return;
+            }
+
             List<TraitDef> badPool = new()
             {
                 DefDatabase<TraitDef>.GetNamedSilentFail("Volatile"),
                 DefDatabase<TraitDef>.GetNamedSilentFail("Nervous"),
                 DefDatabase<TraitDef>.GetNamedSilentFail("ChemicalInterest"),
-                DefDatabase<TraitDef>.GetNamedSilentFail("ChemicalFascination"),
-                DefDatabase<TraitDef>.GetNamedSilentFail("Pyromaniac"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("Wimp"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("Pessimist"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("Ugly"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("AnnoyingVoice"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("Recluse"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("Abrasive"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("CreepyBreathing"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("Jealous"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("Greedy"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("SlowLearner"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("Slothful"),
+                DefDatabase<TraitDef>.GetNamedSilentFail("Lazy"),
                 DefDatabase<TraitDef>.GetNamedSilentFail("Gourmand")
             };
             foreach (var td in badPool.InRandomOrder())
@@ -124,6 +143,7 @@ namespace FogOfPawn
                 if (td != null && !pawn.story.traits.HasTrait(td))
                 {
                     pawn.story.traits.GainTrait(new Trait(td));
+                    FogLog.Verbose($"[IMPOSTER REVEAL] Added negative trait {td.defName} to {pawn.LabelShort}.");
                     break;
                 }
             }

@@ -6,72 +6,127 @@ using UnityEngine;
 namespace FogOfPawn.Patches
 {
     /// <summary>
-    /// Ensures every read of <see cref="SkillRecord.Level"/> returns the masked value if the pawn is still fogged.
-    /// This provides a transparent illusion: UI, work priorities, job drivers – everything sees the fake level
-    /// until the skill is actually revealed. Once revealed we fall back to vanilla behaviour automatically.
+    /// Core skill masking patch using the RenderContext system.
+    /// During UI rendering (RenderContext.IsRendering = true), returns masked skill levels.
+    /// During game logic, returns real skill levels.
     /// </summary>
     [HarmonyPatch(typeof(SkillRecord), "get_Level")]
     public static class Patch_SkillRecord_GetLevel_Mask
     {
+        private static readonly System.Reflection.FieldInfo _pawnField = 
+            AccessTools.Field(typeof(SkillRecord), "pawn");
+        
+        private static int _debugLogCount = 0;
+        
         static void Postfix(SkillRecord __instance, ref int __result)
+        {
+            if (!RenderContext.IsRendering) return;
+            ApplyMask(__instance, ref __result, "get_Level");
+        }
+
+        public static void ApplyMask(SkillRecord instance, ref int result, string source)
         {
             try
             {
-                // Basic null safety checks
-                if (__instance == null) return;
+                if (instance == null) return;
                 
-                // Retrieve pawn via reflection (field or property) for cross-version safety.
-                Pawn pawn = null;
-                
-                // Try common field/property names.
-                pawn = AccessTools.Field(typeof(SkillRecord), "pawn")?.GetValue(__instance) as Pawn;
-                if (pawn == null)
-                {
-                    var prop = AccessTools.PropertyGetter(typeof(SkillRecord), "Pawn");
-                    if (prop != null)
-                        pawn = prop.Invoke(__instance, null) as Pawn;
-                }
-                
+                Pawn pawn = _pawnField?.GetValue(instance) as Pawn;
                 if (pawn == null) return;
-
-                // Base effective value (masked or real).
-                int baseVal = EffectiveSkillUtility.GetEffectiveSkill(pawn, __instance.def);
-
-                // Add random performance jitter for imposters – makes them occasionally botch jobs.
+                
                 var comp = pawn.GetComp<CompPawnFog>();
-                if (comp != null && !comp.fullyRevealed && comp.tier == DeceptionTier.DeceiverImposter)
+                
+                // Detailed debug logging for specific pawn to track Artistic
+                if (Prefs.DevMode && _debugLogCount < 200 && pawn.LabelShort == "Olive")
                 {
-                    // Seed based on pawn, skill and current hour so result is stable for short stretches.
-                    int seed = pawn.thingIDNumber ^ __instance.def.shortHash ^ (Find.TickManager.TicksGame / 2500);
-                    Rand.PushState(seed);
-                    if (Rand.Chance(0.15f))
+                    _debugLogCount++;
+                    string reason = "";
+                    if (comp == null) reason = "No comp";
+                    else if (!comp.compInitialized) reason = "Not init";
+                    else if (comp.fullyRevealed) reason = "Fully revealed";
+                    else if (comp.tier == DeceptionTier.Truthful) reason = "Truthful tier";
+                    else if (comp.revealedSkills.Contains(instance.def)) reason = "Already revealed";
+                    else if (FogMaskUtility.HasVisibleGeneAptitude(pawn, instance.def)) reason = "Gene aptitude visible";
+                    
+                    if (reason != "")
                     {
-                        // 3–6 level penalty simulating a conspicuous failure.
-                        baseVal = Mathf.Max(0, baseVal - Rand.RangeInclusive(3, 6));
+                        Log.Message($"[FogOfPawn] Masking SKIPPED ({source}) for {pawn.LabelShort} {instance.def.defName}. Reason: {reason}");
                     }
-                    Rand.PopState();
                 }
 
-                // Mild performance wobble for Slightly-Deceived – rare and small.
-                else if (comp != null && !comp.fullyRevealed && comp.tier == DeceptionTier.SlightlyDeceived)
+                if (comp == null || !comp.compInitialized || comp.fullyRevealed || comp.tier == DeceptionTier.Truthful) return;
+                
+                if (FogMaskUtility.ShouldMaskSkill(pawn, instance.def, comp))
                 {
-                    int seed = pawn.thingIDNumber ^ __instance.def.shortHash ^ (Find.TickManager.TicksGame / 2500) ^ 0x5A5A;
-                    Rand.PushState(seed);
-                    if (Rand.Chance(0.05f))
+                    int originalResult = result;
+                    result = FogMaskUtility.GetMaskedSkillLevel(pawn, instance.def, comp);
+                    
+                    if (Prefs.DevMode && _debugLogCount < 200)
                     {
-                        // 1–3 level penalty – just enough to raise suspicion.
-                        baseVal = Mathf.Max(0, baseVal - Rand.RangeInclusive(1, 3));
+                        _debugLogCount++;
+                        Log.Message($"[FogOfPawn] MASK APPLIED ({source}) to {pawn.LabelShort} {instance.def.defName}: {originalResult} → {result}");
                     }
-                    Rand.PopState();
                 }
-
-                __result = baseVal;
             }
             catch (System.Exception ex)
             {
-                // Avoid hard failure – just emit a warning once.
-                Log.Warning("[FogOfPawn] Exception in SkillMask patch: " + ex);
+                if (Prefs.DevMode)
+                {
+                    Log.Warning($"[FogOfPawn] Exception in SkillMask ApplyMask: {ex.Message}");
+                }
             }
         }
     }
-} 
+
+    /// <summary>
+    /// Patch for GetLevel(bool includeGenes) which is used by many mods (like RimHUD).
+    /// </summary>
+    [HarmonyPatch(typeof(SkillRecord), "GetLevel")]
+    public static class Patch_SkillRecord_GetLevel_Method_Mask
+    {
+        static void Postfix(SkillRecord __instance, ref int __result)
+        {
+            if (!RenderContext.IsRendering) return;
+            Patch_SkillRecord_GetLevel_Mask.ApplyMask(__instance, ref __result, "GetLevel(bool)");
+        }
+    }
+    
+    /// <summary>
+    /// Passion masking using the same RenderContext system.
+    /// </summary>
+    [HarmonyPatch(typeof(SkillRecord), "get_passion")]
+    public static class Patch_SkillRecord_GetPassion_Mask
+    {
+        private static readonly System.Reflection.FieldInfo _pawnField = 
+            AccessTools.Field(typeof(SkillRecord), "pawn");
+        
+        static void Postfix(SkillRecord __instance, ref Passion __result)
+        {
+            // Only mask during UI rendering
+            if (!RenderContext.IsRendering) return;
+            
+            try
+            {
+                if (__instance == null) return;
+                
+                Pawn pawn = _pawnField?.GetValue(__instance) as Pawn;
+                if (pawn == null) return;
+                
+                var comp = pawn.GetComp<CompPawnFog>();
+                if (comp == null || !comp.compInitialized) return;
+                
+                // Check if this skill should be masked (including gene awareness)
+                if (FogMaskUtility.ShouldMaskSkill(pawn, __instance.def, comp))
+                {
+                    __result = FogMaskUtility.GetMaskedPassion(pawn, __instance.def, comp);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                if (Prefs.DevMode)
+                {
+                    Log.Warning($"[FogOfPawn] Exception in PassionMask patch: {ex.Message}");
+                }
+            }
+        }
+    }
+}

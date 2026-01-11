@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ApparelLayerDef>
+    <defName>OuterClothing</defName>
+    <label>outer clothing</label>
+    <description>Outer clothing layer for utility items and accessories that can be worn over other clothing.</description>
+    <drawOrder>5000</drawOrder>
+  </ApparelLayerDef>
+</Defs> 

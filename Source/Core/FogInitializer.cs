@@ -20,9 +20,7 @@ namespace FogOfPawn
             // Additional safety checks
             if (pawn.skills == null || pawn.story == null)
             {
-                FogLog.Verbose($"Skipping fog initialization for {pawn.LabelShort} - missing skills or story");
-                comp.compInitialized = true;
-                comp.fullyRevealed = true;
+                FogLog.Verbose($"Skipping fog initialization for {pawn.LabelShort} - missing skills or story (will retry on next load phase)");
                 return;
             }
 
@@ -150,15 +148,20 @@ namespace FogOfPawn
             int maxAltered = Mathf.Max(1, settings.maxAlteredSkills);
             int count = Rand.RangeInclusive(1, maxAltered);
 
-            var skillsToAlter = pawn.skills.skills.InRandomOrder().Take(count);
-            foreach (var skill in skillsToAlter)
+            // Only mask skills that don't have gene aptitudes (Option A)
+            var maskableSkills = FogMaskUtility.GetMaskableSkills(pawn);
+            var skillsToAlter = maskableSkills.InRandomOrder().Take(count);
+            
+            foreach (var skillDef in skillsToAlter)
             {
+                var skill = pawn.skills.GetSkill(skillDef);
+                if (skill == null) continue;
+                
                 bool understate = settings.allowUnderstate && Rand.Chance(0.5f);
                 int range = Mathf.Clamp(settings.alteredSkillRange, 2, 10);
                 int delta = Rand.RangeInclusive(2, range);
                 
-                // Use gene-modified skill level for proper masking
-                int currentLevel = EffectiveSkillUtility.GetGeneModifiedSkillLevel(skill);
+                int currentLevel = skill.levelInt;
                 
                 // Calculate the offset to apply
                 int offset = understate ? -delta : delta;
@@ -167,10 +170,8 @@ namespace FogOfPawn
                 int maskedLevel = Mathf.Clamp(currentLevel + offset, 0, 20);
                 offset = maskedLevel - currentLevel; // Adjust offset if clamping occurred
                 
-                if (offset != 0)
-                {
-                    comp.maskOffsets[skill.def] = offset;
-                }
+                // Always store the offset so ShouldMaskSkill knows this skill is fogged
+                comp.maskOffsets[skillDef] = offset;
                 
                 // Sometimes add fake passion
                 if (Rand.Chance(0.4f))
@@ -181,12 +182,12 @@ namespace FogOfPawn
                     int passionOffset = (int)fakePassion - (int)currentPassion;
                     if (passionOffset != 0)
                     {
-                        comp.passionOffsets[skill.def] = passionOffset;
+                        comp.passionOffsets[skillDef] = passionOffset;
                     }
                 }
             }
 
-            // All other skills are revealed (no mask applied)
+            // All other skills are revealed (no mask applied, or have gene aptitudes)
             foreach (var sk in pawn.skills.skills)
             {
                 if (!comp.maskOffsets.ContainsKey(sk.def))
@@ -198,26 +199,35 @@ namespace FogOfPawn
 
         private static void ApplyImposter(Pawn pawn, CompPawnFog comp, FogOfPawnSettings settings)
         {
-            var skillsShuffled = pawn.skills.skills.InRandomOrder().ToList();
+            // Only mask skills that don't have gene aptitudes (Option A)
+            var maskableSkills = FogMaskUtility.GetMaskableSkills(pawn);
+            var skillsShuffled = maskableSkills.InRandomOrder().ToList();
+            
+            FogLog.Verbose($"[IMPOSTER INIT] {pawn.LabelShort}: maskable skills={maskableSkills.Count}, total skills={pawn.skills.skills.Count}");
+            
+            // Track which skills we're trying to mask
+            var targetedSkills = new HashSet<SkillDef>();
             
             // 1. High claimed skills (8-14) with passions (2-3 of them)
             int highCount = Mathf.Clamp(settings.imposterHighSkills, 1, 6);
             for (int i = 0; i < highCount && i < skillsShuffled.Count; i++)
             {
-                var sk = skillsShuffled[i];
+                var skillDef = skillsShuffled[i];
+                var sk = pawn.skills.GetSkill(skillDef);
+                if (sk == null) continue;
                 
-                // Use gene-modified skill level for proper masking
-                int currentLevel = EffectiveSkillUtility.GetGeneModifiedSkillLevel(sk);
+                targetedSkills.Add(skillDef);
+                
+                int currentLevel = sk.levelInt;
                 
                 // Target fake skill level
                 int targetLevel = Rand.RangeInclusive(8, 14);
                 
-                // Calculate offset
+                // Calculate offset - always store it even if 0 so skill isn't auto-revealed
                 int offset = targetLevel - currentLevel;
-                if (offset != 0)
-                {
-                    comp.maskOffsets[sk.def] = offset;
-                }
+                comp.maskOffsets[skillDef] = offset;
+                
+                FogLog.Verbose($"  [HIGH] {skillDef.defName}: real={currentLevel}, target={targetLevel}, offset={offset}");
                 
                 // Add fake passion (50% minor, 50% major)
                 Passion currentPassion = sk.passion;
@@ -226,7 +236,7 @@ namespace FogOfPawn
                 int passionOffset = (int)fakePassion - (int)currentPassion;
                 if (passionOffset != 0)
                 {
-                    comp.passionOffsets[sk.def] = passionOffset;
+                    comp.passionOffsets[skillDef] = passionOffset;
                 }
             }
 
@@ -234,20 +244,22 @@ namespace FogOfPawn
             int midCount = Mathf.Clamp(settings.imposterMidSkills, 0, 6);
             for (int i = highCount; i < highCount + midCount && i < skillsShuffled.Count; i++)
             {
-                var sk = skillsShuffled[i];
+                var skillDef = skillsShuffled[i];
+                var sk = pawn.skills.GetSkill(skillDef);
+                if (sk == null) continue;
                 
-                // Use gene-modified skill level for proper masking
-                int currentLevel = EffectiveSkillUtility.GetGeneModifiedSkillLevel(sk);
+                targetedSkills.Add(skillDef);
+                
+                int currentLevel = sk.levelInt;
                 
                 // Target fake skill level
                 int targetLevel = Rand.RangeInclusive(4, 8);
                 
-                // Calculate offset
+                // Calculate offset - always store it even if 0 so skill isn't auto-revealed
                 int offset = targetLevel - currentLevel;
-                if (offset != 0)
-                {
-                    comp.maskOffsets[sk.def] = offset;
-                }
+                comp.maskOffsets[skillDef] = offset;
+                
+                FogLog.Verbose($"  [MID] {skillDef.defName}: real={currentLevel}, target={targetLevel}, offset={offset}");
                 
                 // Sometimes add minor passion
                 if (Rand.Chance(0.3f))
@@ -258,27 +270,41 @@ namespace FogOfPawn
                     int passionOffset = (int)fakePassion - (int)currentPassion;
                     if (passionOffset != 0)
                     {
-                        comp.passionOffsets[sk.def] = passionOffset;
+                        comp.passionOffsets[skillDef] = passionOffset;
                     }
                 }
             }
 
-            // 3. Low or truthful skills – reveal the rest so UI isn't Unknown
-            for (int i = highCount + midCount; i < skillsShuffled.Count; i++)
+            // 3. All remaining skills are revealed (including gene-affected ones)
+            foreach (var sk in pawn.skills.skills)
             {
-                comp.revealedSkills.Add(skillsShuffled[i].def);
+                if (!comp.maskOffsets.ContainsKey(sk.def))
+                {
+                    comp.revealedSkills.Add(sk.def);
+                }
             }
+            
+            FogLog.Verbose($"[IMPOSTER INIT] Complete: maskOffsets={comp.maskOffsets.Count}, revealedSkills={comp.revealedSkills.Count}");
         }
 
         private static void ApplySleeper(Pawn pawn, CompPawnFog comp)
         {
             // Sleeper: any competent skill (≥6) is hidden by claiming to be poor (3-5).
             // All other low skills are revealed truthfully so the UI never shows "???".
+            // Option A: Don't mask skills that have gene aptitudes.
+
+            var maskableSkills = FogMaskUtility.GetMaskableSkills(pawn);
 
             foreach (var skill in pawn.skills.skills)
             {
-                // Use gene-modified skill level for proper masking
-                int currentLevel = EffectiveSkillUtility.GetGeneModifiedSkillLevel(skill);
+                // Skip skills with gene aptitudes - they can't be masked
+                if (!maskableSkills.Contains(skill.def))
+                {
+                    comp.revealedSkills.Add(skill.def);
+                    continue;
+                }
+                
+                int currentLevel = skill.levelInt;
                 
                 if (currentLevel >= 6)
                 {
@@ -287,10 +313,9 @@ namespace FogOfPawn
                     
                     // Calculate offset (will be negative since we're hiding ability)
                     int offset = targetLevel - currentLevel;
-                    if (offset != 0)
-                    {
-                        comp.maskOffsets[skill.def] = offset;
-                    }
+                    
+                    // Always store the offset so ShouldMaskSkill knows this skill is fogged
+                    comp.maskOffsets[skill.def] = offset;
                     
                     // Keep the original passion visible so the low reported level isn't a complete giveaway
                     // This creates suspicious inconsistency: "Why does this terrible doctor have burning passion for medicine?"
@@ -303,13 +328,11 @@ namespace FogOfPawn
                 }
             }
 
-#if DEBUG
             if (Prefs.DevMode)
             {
                 int maskedCount = comp.maskOffsets.Count;
                 FogLog.Verbose($"[PROFILE] {pawn.LabelShort}: Sleeper masks set for {maskedCount} skills (tier={comp.tier}).");
             }
-#endif
         }
 
         /// <summary>
@@ -381,14 +404,16 @@ namespace FogOfPawn
             }
         }
 
-        private static readonly HashSet<string> _knownBadTraitDefNames = new()
+        public static readonly HashSet<string> _knownBadTraitDefNames = new()
         {
             "Pyromaniac", "Gourmand", "ChemicalInterest", "ChemicalFascination", "Jealous", "Greedy",
-            "Volatile", "Nervous", "Slothful", "Lazy", "Sickly"
+            "Volatile", "Nervous", "Slothful", "Lazy", "Sickly", "Wimp", "Pessimist", "Ugly", "StaggeringlyUgly",
+            "AnnoyingVoice", "CreepyBreathing", "Recluse", "Abrasive", "Misandrist", "Misogynist", "SlowLearner",
+            "Depressive", "ToxSickly"
         };
 
         private static bool IsPositiveTrait(TraitDef def) => false; // placeholder
-        private static bool IsNegativeTrait(TraitDef def)
+        public static bool IsNegativeTrait(TraitDef def)
         {
             return _knownBadTraitDefNames.Contains(def.defName);
         }

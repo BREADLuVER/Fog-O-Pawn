@@ -91,6 +91,8 @@
   <FogOfPawn.Settings.ImposterSkillXP>Imposter low-skill XP</FogOfPawn.Settings.ImposterSkillXP>
   <FogOfPawn.Settings.PassiveDailyRevealPct>Passive daily reveal chance</FogOfPawn.Settings.PassiveDailyRevealPct>
   <FogOfPawn.Settings.DisguiseKitWealth>Disguise kit wealth reduction</FogOfPawn.Settings.DisguiseKitWealth>
+  <FogOfPawn.Settings.SpawnDisguiseKitOnReveal>Spawn disguise kit on reveal</FogOfPawn.Settings.SpawnDisguiseKitOnReveal>
+  <FogOfPawn.Settings.SpawnDisguiseKitOnReveal_Tooltip>If enabled (default), a disguise kit will drop to the ground when an imposter is revealed. Disable to prevent the kit from appearing entirely.</FogOfPawn.Settings.SpawnDisguiseKitOnReveal_Tooltip>
   <FogOfPawn.Settings.ImposterHighSkills>Imposter high claimed skills</FogOfPawn.Settings.ImposterHighSkills>
   <FogOfPawn.Settings.ImposterMidSkills>Imposter mid claimed skills</FogOfPawn.Settings.ImposterMidSkills>
 
@@ -162,5 +164,30 @@
   <!-- Late-game joiner chance setting -->
   <FogOfPawn.Settings.LateJoinerChance>Late-game deceiver incident chance</FogOfPawn.Settings.LateJoinerChance>
   <FogOfPawn.Settings.LateJoinerChance_Tooltip>Percentage chance per storyteller roll, starting in year 2, for additional Sleeper or Imposter wanderers to appear. Lower values make them extremely rare.</FogOfPawn.Settings.LateJoinerChance_Tooltip>
+
+  <FogOfPawn.DisguiseKit.InspectString>Evidence of deception - this kit was used to hide someone's true identity.</FogOfPawn.DisguiseKit.InspectString>
+  <FogOfPawn.DisguiseKit.DestroyLabel>Discard kit</FogOfPawn.DisguiseKit.DestroyLabel>
+  <FogOfPawn.DisguiseKit.DestroyDesc>Safely dispose of this evidence of deception. This will destroy the item.</FogOfPawn.DisguiseKit.DestroyDesc>
+
+  <!-- Accusation System -->
+  <FogOfPawn.Accuse.Label>Accuse of Deception</FogOfPawn.Accuse.Label>
+  <FogOfPawn.Accuse.Desc>Formally confront this pawn about their inconsistent behavior and suspicious background. This will either reveal the truth or cause a serious incident.</FogOfPawn.Accuse.Desc>
+  
+  <FogOfPawn.Accuse.Dialog.Title>Confrontation: {0}</FogOfPawn.Accuse.Dialog.Title>
+  <FogOfPawn.Accuse.Dialog.Text.1>{0}'s behavior has been... inconsistent. The colony is starting to whisper. Are you ready to bring these suspicions into the light?</FogOfPawn.Accuse.Dialog.Text.1>
+  <FogOfPawn.Accuse.Dialog.Text.2>You've noticed the cracks in {0}'s story. One wrong move could ruin morale, but letting a snake stay in the grass is worse.</FogOfPawn.Accuse.Dialog.Text.2>
+  <FogOfPawn.Accuse.Dialog.Text.3>The way {0} looks at the others... it's not right. A formal confrontation will either clear the air or reveal a monster.</FogOfPawn.Accuse.Dialog.Text.3>
+  
+  <FogOfPawn.Accuse.Dialog.Confirm>I've seen enough. Drop the act!</FogOfPawn.Accuse.Dialog.Confirm>
+  <FogOfPawn.Accuse.Dialog.Cancel>Perhaps I'm just seeing shadows.</FogOfPawn.Accuse.Dialog.Cancel>
+
+  <FogOfPawn.Accuse.Tooltip.Confirm>If you are correct:\n- Imposter: +12 mood to colony (7 days)\n- Minor Liar: +8 mood to colony (7 days)\n\nIf you are wrong:\n- Falsely Accused: -20 mood to this pawn (5 days)</FogOfPawn.Accuse.Tooltip.Confirm>
+  <FogOfPawn.Accuse.Tooltip.Cancel>Take no action. Your suspicions remain quiet for now.</FogOfPawn.Accuse.Tooltip.Cancel>
+
+  <FogOfPawn.Accuse.Success.Label>Accusation Proven</FogOfPawn.Accuse.Success.Label>
+  <FogOfPawn.Accuse.Success.Text>Your intuition was correct! {0} breaks under the pressure of the colony's gaze and admits their deception.</FogOfPawn.Accuse.Success.Text>
+  
+  <FogOfPawn.Accuse.Failure.Label>False Accusation</FogOfPawn.Accuse.Failure.Label>
+  <FogOfPawn.Accuse.Failure.Text>"You're paranoid!" {0} screams in frustration. "I've given everything to this colony, and this is how you treat me?"\n\nIt seems your suspicions were unfounded. {0} is deeply insulted.</FogOfPawn.Accuse.Failure.Text>
 
 </LanguageData> 

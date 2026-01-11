@@ -24,6 +24,13 @@ namespace FogOfPawn
         private const int TicksPerSeason = 900000; // 15 days
         private static int NextBeatIntervalTicks => Rand.Range(TicksPerSeason + TicksPerSeason / 2, TicksPerSeason * 2); // 1.5–2 seasons
 
+        // --- Joiner timing state (initialized randomly) -----------------------------------
+        private int _earliestDay = -1;
+        private int _guaranteeStartDay = -1;
+        private int _guaranteeEndDay = -1;
+        private int _lateGameUnlockDay = -1;
+        private int _spacingDays = -1;
+
         // Add joiner tracking fields and methods
         public bool hasSleeperJoiner;
         public bool hasImposterJoiner;
@@ -33,82 +40,85 @@ namespace FogOfPawn
         // Constants
         private const int TicksPerDay = 60000;
 
-        // --- Joiner timing rules ----------------------------------------------------------
-        // Earliest any Fog-O-Pawn joiner may appear (1 RimWorld year = 60 in-game days)
-        private const int EarliestDay = 60;
-
-        // Guaranteed Sleeper window – if the colony has not yet received a Sleeper
-        // by the end of this window, the mod forces one to spawn.
-        private const int GuaranteeWindowStartDay = 60;  // open at exactly one year
-        private const int GuaranteeWindowEndDay   = 90;  // close at 1.5 years
-
-        // Minimum spacing between any two Fog joiners.  We choose two full seasons
-        // (≈ 30 days) to ensure stories have room to breathe.
-        private const int SpacingDays = 30;
-
-        // Suppress any *additional* deceiver joiners until early-mid game.
-        // We unlock additional deceivers from Year-2 (day 120) onward.
-        private const int LateGameUnlockDay = 120; // ≈ Year 2
-
         // Clamp total deceivers to avoid saturation – especially valuable for long runs.
         private const int HardCapTotalFogJoiners = 4;
 
         public static GameComponent_FogTracker Get => Current.Game.GetComponent<GameComponent_FogTracker>();
 
-        /// <summary>
-        /// Determine if a new fogged joiner of the requested tier should be allowed to fire now.
-        /// Implements guarantee, spacing and global-limit rules.
-        /// </summary>
+        private void InitializeTiming()
+        {
+            if (_earliestDay != -1) return;
+
+            // Earliest arrival: anywhere from 15 days (1 season) to 45 days (3 seasons)
+            _earliestDay = Rand.RangeInclusive(15, 45);
+
+            // Guarantee window: starts 5-15 days after earliest arrival
+            _guaranteeStartDay = _earliestDay + Rand.RangeInclusive(5, 15);
+            
+            // Guarantee window duration: 15-45 days
+            _guaranteeEndDay = _guaranteeStartDay + Rand.RangeInclusive(15, 45);
+
+            // Spacing: 15-45 days
+            _spacingDays = Rand.RangeInclusive(15, 45);
+
+            // Late game unlock (Year 2-3): 60-120 days
+            _lateGameUnlockDay = Rand.RangeInclusive(60, 120);
+
+            FogLog.Verbose($"[FogTracker] Initialized randomized timing: Earliest={_earliestDay}, Guarantee={_guaranteeStartDay}-{_guaranteeEndDay}, Spacing={_spacingDays}, Unlock={_lateGameUnlockDay}");
+        }
+
         public bool CanFireFoggedJoiner(DeceptionTier tier)
         {
+            InitializeTiming();
+
             int nowTicks = Find.TickManager.TicksGame;
             float daysPassed = nowTicks / (float)TicksPerDay;
 
-            // 1. Early-game block ──────────────────────────────────────────────
-            // We block ALL fog joiners until the colony has survived one full
-            // RimWorld year (60 in-game days).
-            if (daysPassed < EarliestDay)
+            // Spacing rule – always leave breathing room between arrivals.
+            // This now applies to ALL special joiners (Innocent, Imposter, Sleeper)
+            // to spread them out and make the "Special Joiner" event type itself rare.
+            if (lastFogJoinerTick > 0 && (nowTicks - lastFogJoinerTick) < _spacingDays * TicksPerDay)
                 return false;
 
-            // 2. Spacing rule – always leave breathing room between arrivals.
-            if (lastFogJoinerTick > 0 && (nowTicks - lastFogJoinerTick) < SpacingDays * TicksPerDay)
+            if (tier == DeceptionTier.Truthful)
+            {
+                // Truthful joiners are allowed whenever spacing allows.
+                return true;
+            }
+
+            // 1. Early-game block ──────────────────────────────────────────────
+            if (daysPassed < _earliestDay)
                 return false;
 
             bool isSleeper = tier == DeceptionTier.DeceiverSleeper;
 
-            // 3. Guaranteed Sleeper window ─────────────────────────────────────
-            if (!hasSleeperJoiner && daysPassed >= GuaranteeWindowStartDay && daysPassed <= GuaranteeWindowEndDay)
+            // 2. Guaranteed Sleeper window ─────────────────────────────────────
+            if (!hasSleeperJoiner && daysPassed >= _guaranteeStartDay && daysPassed <= _guaranteeEndDay)
             {
-                // During the window, ONLY a Sleeper may spawn and we always
-                // return true to force the incident if the storyteller picks it.
-                return isSleeper;
+                // During the window, we prioritize the Sleeper, but it's not a 100% force
+                // to keep it slightly more random when it actually fires.
+                return isSleeper && Rand.Chance(0.5f);
             }
 
-            // 4. Hard guarantee fallback – if the window expired with no Sleeper
-            // (e.g., storyteller never rolled the incident), we *force* allow
-            // the next Sleeper request regardless of timing.
-            if (!hasSleeperJoiner && daysPassed > GuaranteeWindowEndDay)
+            // 3. Hard guarantee fallback – if the window expired with no Sleeper
+            if (!hasSleeperJoiner && daysPassed > _guaranteeEndDay)
             {
-                return isSleeper; // still block imposters
+                return isSleeper; // force allow next sleeper request
             }
 
-            // 5. Mid-game suppression – until Year 4 we suppress any additional
-            // deceivers to avoid crowding the narrative.
-            if (daysPassed < LateGameUnlockDay)
+            // 4. Mid-game suppression
+            if (daysPassed < _lateGameUnlockDay)
                 return false;
 
-            // 6. Late-game chance curve – configurable in mod settings.
-            //    We further clamp total population to a hard cap.
+            // 5. Late-game chance curve
             if (totalFogJoiners >= HardCapTotalFogJoiners)
                 return false;
 
             // Pull percentage from settings (0‒5). Convert to 0-1 range.
             float chance = Mathf.Clamp(FogSettingsCache.Current.lateJoinerChancePct * 0.01f, 0f, 0.05f);
 
-            // Slightly favour imposters over sleepers in the late game because we
-            // already had (at least) one sleeper.
             if (isSleeper)
-                chance *= 0.6f; // 40% reduction
+                chance *= 0.6f;
 
             return Rand.Chance(chance);
         }
@@ -248,6 +258,12 @@ namespace FogOfPawn
                 Scribe_Values.Look(ref hasImposterJoiner, "hasImposterJoiner");
                 Scribe_Values.Look(ref totalFogJoiners, "totalFogJoiners");
                 Scribe_Values.Look(ref lastFogJoinerTick, "lastFogJoinerTick");
+                
+                Scribe_Values.Look(ref _earliestDay, "earliestDay", -1);
+                Scribe_Values.Look(ref _guaranteeStartDay, "guaranteeStartDay", -1);
+                Scribe_Values.Look(ref _guaranteeEndDay, "guaranteeEndDay", -1);
+                Scribe_Values.Look(ref _spacingDays, "spacingDays", -1);
+                Scribe_Values.Look(ref _lateGameUnlockDay, "lateGameUnlockDay", -1);
             }
             else if (Scribe.mode == LoadSaveMode.LoadingVars)
             {
@@ -259,6 +275,12 @@ namespace FogOfPawn
                 Scribe_Values.Look(ref hasImposterJoiner, "hasImposterJoiner");
                 Scribe_Values.Look(ref totalFogJoiners, "totalFogJoiners");
                 Scribe_Values.Look(ref lastFogJoinerTick, "lastFogJoinerTick");
+
+                Scribe_Values.Look(ref _earliestDay, "earliestDay", -1);
+                Scribe_Values.Look(ref _guaranteeStartDay, "guaranteeStartDay", -1);
+                Scribe_Values.Look(ref _guaranteeEndDay, "guaranteeEndDay", -1);
+                Scribe_Values.Look(ref _spacingDays, "spacingDays", -1);
+                Scribe_Values.Look(ref _lateGameUnlockDay, "lateGameUnlockDay", -1);
             }
         }
 

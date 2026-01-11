@@ -15,7 +15,7 @@ namespace FogOfPawn
         }
     }
 
-    public class CompPawnFog : ThingComp, IExposable
+	public class CompPawnFog : ThingComp
     {
         // Meta
         public bool compInitialized;
@@ -53,6 +53,7 @@ namespace FogOfPawn
         // Set once the imposter has been killed, banished or otherwise removed and
         // the colony‐wide relief thought has already been given. Prevents double applying.
         public bool outcomeProcessed;
+        // legacy: lastInterrogatedTick used by removed Interrogate feature (kept for save compatibility)
         public int lastInterrogatedTick;
         public bool wasPlayerColonist;
 
@@ -62,6 +63,18 @@ namespace FogOfPawn
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
+            // Add the player-facing Accuse gizmo first
+            if (!fullyRevealed && tier != DeceptionTier.Truthful && parent.Faction == Faction.OfPlayer)
+            {
+                yield return new Command_Action
+                {
+                    defaultLabel = "FogOfPawn.Accuse.Label".Translate(),
+                    defaultDesc = "FogOfPawn.Accuse.Desc".Translate(),
+                    icon = ContentFinder<Texture2D>.Get("Things/Item/disguise-kit", false) ?? ContentFinder<Texture2D>.Get("UI/Commands/LaunchReport", true),
+                    action = HandleAccuse
+                };
+            }
+
             if (!Prefs.DevMode) yield break;
 
             yield return new Command_Action
@@ -116,7 +129,7 @@ namespace FogOfPawn
             yield return new Command_Action
             {
                 defaultLabel = "Dev: Print Deception Profile",
-                defaultDesc = "Logs this pawn's deception tier and altered skills.",
+                defaultDesc = "Logs this pawn's deception tier, mask state, and RenderContext status.",
                 action = () =>
                 {
                     if (parent is Pawn p)
@@ -125,7 +138,27 @@ namespace FogOfPawn
                         var maskedSkills = comp.maskOffsets.Count > 0 ? 
                             string.Join(",", comp.maskOffsets.Select(kv => $"{kv.Key.defName}({kv.Value:+0;-0;+0})")) : 
                             "none";
-                        FogLog.Verbose($"[PROFILE] {p.LabelShort}: Tier={comp.tier}, RevealedSkills={comp.revealedSkills.Count}, MaskedSkills={maskedSkills}");
+                        var hiddenTraits = p.story?.traits?.allTraits
+                            .Where(t => !comp.revealedTraits.Contains(t.def))
+                            .Select(t => t.def.defName) ?? Enumerable.Empty<string>();
+                        var hiddenTraitsStr = hiddenTraits.Any() ? string.Join(",", hiddenTraits) : "none";
+                        
+                        FogLog.Verbose($"[PROFILE] {p.LabelShort}:");
+                        FogLog.Verbose($"  Tier={comp.tier}, FullyRevealed={comp.fullyRevealed}, Initialized={comp.compInitialized}");
+                        FogLog.Verbose($"  MaskOffsets count={comp.maskOffsets.Count}: {maskedSkills}");
+                        FogLog.Verbose($"  RevealedSkills count={comp.revealedSkills.Count}");
+                        FogLog.Verbose($"  RevealedTraits count={comp.revealedTraits.Count}");
+                        FogLog.Verbose($"  HiddenTraits: {hiddenTraitsStr}");
+                        FogLog.Verbose($"  RenderContext.IsRendering={RenderContext.IsRendering}");
+                        FogLog.Verbose($"  FogSettings.fogSkills={FogSettingsCache.Current.fogSkills}");
+                        
+                        // Show actual vs masked skill levels
+                        foreach (var skill in p.skills.skills.Take(5))
+                        {
+                            bool shouldMask = FogMaskUtility.ShouldMaskSkill(p, skill.def, comp);
+                            int masked = shouldMask ? FogMaskUtility.GetMaskedSkillLevel(p, skill.def, comp) : skill.levelInt;
+                            FogLog.Verbose($"    {skill.def.defName}: real={skill.levelInt}, masked={masked}, shouldMask={shouldMask}");
+                        }
                     }
                 }
             };
@@ -191,6 +224,87 @@ namespace FogOfPawn
                         FogLog.Verbose($"[PROFILE] Manually set tier of {parent.LabelShort} to {tier}");
                     }
                 };
+            }
+        }
+
+        private void HandleAccuse()
+        {
+            if (parent is not Pawn pawn) return;
+
+            string title = "FogOfPawn.Accuse.Dialog.Title".Translate(pawn.LabelShort);
+            string text = $"FogOfPawn.Accuse.Dialog.Text.{Rand.RangeInclusive(1, 3)}".Translate(pawn.LabelShort);
+
+            var dialog = new UI.Dialog_Accuse(
+                text,
+                title,
+                pawn,
+                () => PerformAccusation(pawn)
+            );
+
+            Find.WindowStack.Add(dialog);
+        }
+
+        private void PerformAccusation(Pawn pawn)
+        {
+            // A success is if the pawn is currently hiding ANYTHING.
+            // If they are Truthful or already fully revealed, it's a false accusation.
+            bool isActuallyHidingSecrets = !fullyRevealed && (tier != DeceptionTier.Truthful);
+            
+            // Check for the "Major" win (Imposter or Sleeper)
+            bool isMalicious = (tier == DeceptionTier.DeceiverImposter || tier == DeceptionTier.DeceiverSleeper);
+
+            if (isMalicious)
+            {
+                // MAJOR SUCCESS logic (Imposter/Sleeper)
+                FogUtility.TriggerFullReveal(pawn, "ImposterCalledOut");
+
+                Messages.Message("FogOfPawn.Accuse.Success.Text".Translate(pawn.LabelShort), pawn, MessageTypeDefOf.PositiveEvent);
+
+                var thought = DefDatabase<ThoughtDef>.GetNamedSilentFail("Fog_ExposedImposter");
+                if (thought != null)
+                {
+                    foreach (var other in pawn.MapHeld?.mapPawns?.FreeColonistsSpawned ?? Enumerable.Empty<Pawn>())
+                    {
+                        if (other == pawn) continue;
+                        other.needs?.mood?.thoughts?.memories?.TryGainMemory(thought);
+                    }
+                }
+            }
+            else if (isActuallyHidingSecrets)
+            {
+                // MINOR SUCCESS logic (Slightly Deceived)
+                // They were lying, but it wasn't a "threat". 
+                // We reveal everything, but give a smaller colony-wide buff.
+                FogUtility.TriggerFullReveal(pawn, "ImposterCalledOut");
+                
+                Messages.Message("FogOfPawn.Accuse.Success.Text".Translate(pawn.LabelShort), pawn, MessageTypeDefOf.PositiveEvent);
+                
+                // Smaller colony-wide mood buff for "Slightly Deceived"
+                var thought = DefDatabase<ThoughtDef>.GetNamedSilentFail("Fog_ExposedMinorLiar");
+                if (thought != null)
+                {
+                    foreach (var other in pawn.MapHeld?.mapPawns?.FreeColonistsSpawned ?? Enumerable.Empty<Pawn>())
+                    {
+                        if (other == pawn) continue;
+                        other.needs?.mood?.thoughts?.memories?.TryGainMemory(thought);
+                    }
+                }
+            }
+            else
+            {
+                // FAILURE logic (pawn was actually truthful/revealed)
+                var thought = DefDatabase<ThoughtDef>.GetNamedSilentFail("Fog_FalselyAccused");
+                if (thought != null)
+                {
+                    pawn.needs?.mood?.thoughts?.memories?.TryGainMemory(thought);
+                }
+
+                Find.LetterStack.ReceiveLetter(
+                    "FogOfPawn.Accuse.Failure.Label".Translate(),
+                    "FogOfPawn.Accuse.Failure.Text".Translate(pawn.LabelShort),
+                    LetterDefOf.NegativeEvent,
+                    pawn
+                );
             }
         }
 
@@ -307,12 +421,12 @@ namespace FogOfPawn
             
             // Run change detection every 60 ticks (~1 second) for responsiveness
             if (Find.TickManager.TicksGame % 60 == 0)
-            {
+                {
                 DetectAndAutoRevealChanges();
             }
         }
 
-        public void ExposeData()
+		public override void PostExposeData()
         {
             Scribe_Values.Look(ref compInitialized, "compInitialized", false);
             Scribe_Values.Look(ref ticksSinceJoin, "ticksSinceJoin", 0);
@@ -321,11 +435,19 @@ namespace FogOfPawn
             Scribe_Values.Look(ref tierManuallySet, "tierManual", false);
             Scribe_Values.Look(ref fullyRevealed, "fullyRevealed", false);
             Scribe_Values.Look(ref outcomeProcessed, "outcomeProcessed", false);
+            // keep loading/saving for backward save compatibility; otherwise unused
             Scribe_Values.Look(ref lastInterrogatedTick, "lastInterrogatedTick", 0);
             Scribe_Values.Look(ref wasPlayerColonist, "wasPlayerColonist", false);
             
             // Migration flag
             Scribe_Values.Look(ref migratedToOffsets, "migratedToOffsets", false);
+            
+            // Fix for existing saves: Ensure SlightlyDeceived pawns have their revealedTraits populated
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && tier != DeceptionTier.Truthful && (revealedTraits == null || revealedTraits.Count == 0))
+            {
+                FogLog.Verbose($"[MIGRATION] Populating missing revealedTraits for {parent.LabelShort}");
+                FogInitializer.InitializeFogFor((Pawn)parent);
+            }
             
             // NEW format (offset-based)
             Scribe_Collections.Look(ref maskOffsets, "maskOffsets", LookMode.Def, LookMode.Value);
@@ -355,8 +477,8 @@ namespace FogOfPawn
             if (revealedTraits == null) revealedTraits = new HashSet<TraitDef>();
             if (lastKnownTraits == null) lastKnownTraits = new HashSet<TraitDef>();
             
-            // Migration: Convert old format to new format
-            if (Scribe.mode == LoadSaveMode.PostLoadInit && !migratedToOffsets)
+            // Migration: Convert old format to new offset-based system
+			if (Scribe.mode == LoadSaveMode.PostLoadInit && !migratedToOffsets)
             {
                 MigrateToOffsetSystem();
             }
@@ -389,7 +511,7 @@ namespace FogOfPawn
                 
                 // Only store non-zero offsets
                 if (offset != 0)
-                {
+            {
                     maskOffsets[kvp.Key] = offset;
                     FogLog.Verbose($"  {kvp.Key.defName}: trained={currentTrainedLevel}, old_reported={oldReported}, offset={offset}");
                 }
@@ -434,6 +556,8 @@ namespace FogOfPawn
             if (disguiseKitSpawned || tier != DeceptionTier.DeceiverImposter) return;
 
             disguiseKitSpawned = true;
+
+            if (!FogSettingsCache.Current.spawnDisguiseKitOnReveal) return;
 
             var kitDef = DefDatabase<ThingDef>.GetNamedSilentFail("FogOfPawn_DisguiseKit");
             if (kitDef == null) return;
@@ -483,8 +607,8 @@ namespace FogOfPawn
                         if (Prefs.DevMode)
                         {
                             FogLog.Verbose($"[AUTO-REVEAL] User-added trait {trait.def.defName} revealed for {pawn.LabelShort}");
-                        }
-                    }
+                }
+            }
                 }
             }
 

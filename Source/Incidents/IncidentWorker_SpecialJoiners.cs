@@ -31,6 +31,7 @@ namespace FogOfPawn
             PawnKindDef kind = PawnKindDefOf.SpaceRefugee;
             Pawn pawn = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kind, null, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true, allowDead: false, allowDowned: false, colonistRelationChanceFactor: 0f));
 
+            // If we wanted a Sleeper, give them some high skills so they are actually useful once revealed.
             if (WantedTier == DeceptionTier.DeceiverSleeper)
             {
                 var skillList = pawn.skills.skills.InRandomOrder().Take(6);
@@ -39,19 +40,18 @@ namespace FogOfPawn
                     if (sk.Level < 10) sk.Level = Rand.RangeInclusive(10, 14);
                 }
             }
-            
-            // string label = "FogOfPawn.SpecialJoiner.Label".Translate();
-            // string text = "FogOfPawn.SpecialJoiner.Text".Translate(pawn.Named("PAWN"));
+
+            // Set the tier and generate masks BEFORE showing the letter so the faked skills
+            // are visible in the choice dialog and inspect pane while the letter is active.
+            var comp = pawn.GetComp<CompPawnFog>();
+            if (comp != null)
+            {
+                comp.tier = WantedTier;
+                comp.tierManuallySet = true;
+                FogInitializer.RegenerateMasksFor(pawn, comp);
+            }
             
             Action acceptAction = () => {
-                var comp = pawn.GetComp<CompPawnFog>();
-                if (comp != null)
-                {
-                    comp.tier = WantedTier;
-                    comp.tierManuallySet = true;
-                    FogInitializer.RegenerateMasksFor(pawn, comp);
-                }
-
                 if (RCellFinder.TryFindRandomPawnEntryCell(out IntVec3 spawnCell, map, CellFinder.EdgeRoadChance_Neutral, false, null))
                 {
                     GenSpawn.Spawn(pawn, spawnCell, map, WipeMode.Vanish);
@@ -59,8 +59,6 @@ namespace FogOfPawn
                     PawnComponentsUtility.AddAndRemoveDynamicComponents(pawn);
                     pawn.workSettings?.EnableAndInitializeIfNotAlreadyInitialized();
                     GameComponent_FogTracker.Get?.RegisterFoggedJoiner(WantedTier);
-                    // Duplicate alert suppressed – ChoiceLetter already informed the player.
-                    // Messages.Message("LetterWandererJoins".Translate(pawn.Named("PAWN")), pawn, MessageTypeDefOf.PositiveEvent);
                 }
             };
 
@@ -85,5 +83,10 @@ namespace FogOfPawn
     public class IncidentWorker_ImposterJoin : IncidentWorker_SpecialJoinerBase
     {
         protected override DeceptionTier WantedTier => DeceptionTier.DeceiverImposter;
+    }
+
+    public class IncidentWorker_InnocentJoin : IncidentWorker_SpecialJoinerBase
+    {
+        protected override DeceptionTier WantedTier => DeceptionTier.Truthful;
     }
 } 

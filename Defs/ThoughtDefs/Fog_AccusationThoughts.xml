@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <!-- Success: We exposed an imposter! -->
+  <ThoughtDef>
+    <defName>Fog_ExposedImposter</defName>
+    <durationDays>7</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>exposed an imposter</label>
+        <description>We caught one! I knew something was off about that person. It's a relief to know the truth.</description>
+        <baseMoodEffect>12</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <!-- Success: We exposed a minor liar (Slightly Deceived) -->
+  <ThoughtDef>
+    <defName>Fog_ExposedMinorLiar</defName>
+    <durationDays>7</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>minor lies exposed</label>
+        <description>It turns out they weren't being entirely honest about their background.</description>
+        <baseMoodEffect>8</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <!-- Failure: We falsely accused a loyal colonist! -->
+  <ThoughtDef>
+    <defName>Fog_FalselyAccused</defName>
+    <durationDays>5</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>falsely accused</label>
+        <description>They called me a liar! I've been working my heart out for this colony, and they treat me like a spy. It's insulting.</description>
+        <baseMoodEffect>-20</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+</Defs>
