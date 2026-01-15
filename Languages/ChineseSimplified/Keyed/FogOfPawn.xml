@@ -143,4 +143,55 @@
 
   <AcceptButton>接受</AcceptButton>
   <RejectButton>拒绝</RejectButton>
+
+  <!-- Skill penalties -->
+  <FogOfPawn.Settings.ApplySkillPenalties>对伪造技能施加惩罚</FogOfPawn.Settings.ApplySkillPenalties>
+  <FogOfPawn.Settings.ApplySkillPenalties_Tooltip>启用后，使用伪造技能（声称比实际更高）的殖民者将在工作速度和成功率上受到固定惩罚。</FogOfPawn.Settings.ApplySkillPenalties_Tooltip>
+  <FogOfPawn.Settings.SkillPenaltyPct>技能惩罚幅度</FogOfPawn.Settings.SkillPenaltyPct>
+
+  <!-- New collapsible section headers -->
+  <FogOfPawn.Settings.Section.SpawnComposition>生成构成</FogOfPawn.Settings.Section.SpawnComposition>
+  <FogOfPawn.Settings.Section.General>通用揭露设置</FogOfPawn.Settings.Section.General>
+  <FogOfPawn.Settings.Section.Toggles>迷雾开关</FogOfPawn.Settings.Section.Toggles>
+  <FogOfPawn.Settings.Section.Ambient>环境揭露调优</FogOfPawn.Settings.Section.Ambient>
+  <FogOfPawn.Settings.Section.Advanced>高级欺骗功能</FogOfPawn.Settings.Section.Advanced>
+  <FogOfPawn.Settings.Section.Mood>基于心情的揭露</FogOfPawn.Settings.Section.Mood>
+  <FogOfPawn.Settings.Section.FullReveal>完全揭露机制</FogOfPawn.Settings.Section.FullReveal>
+
+  <!-- Sub-section headers -->
+  <FogOfPawn.Settings.SubSection.HighMood>高心情</FogOfPawn.Settings.SubSection.HighMood>
+  <FogOfPawn.Settings.SubSection.MoodBreak>精神崩溃</FogOfPawn.Settings.SubSection.MoodBreak>
+  <FogOfPawn.Settings.SubSection.Sleeper>潜伏者</FogOfPawn.Settings.SubSection.Sleeper>
+  <FogOfPawn.Settings.SubSection.Imposter>骗子</FogOfPawn.Settings.SubSection.Imposter>
+  <FogOfPawn.Settings.SubSection.PassiveReveal>被动揭露</FogOfPawn.Settings.SubSection.PassiveReveal>
+  <FogOfPawn.Settings.SubSection.DisguiseKit>伪装工具</FogOfPawn.Settings.SubSection.DisguiseKit>
+  <FogOfPawn.Settings.SubSection.Prisoner>囚犯审讯</FogOfPawn.Settings.SubSection.Prisoner>
+
+  <!-- Prisoner interrogation settings -->
+  <FogOfPawn.Settings.PrisonerRevealChance>囚犯每小时揭露概率</FogOfPawn.Settings.PrisonerRevealChance>
+  <FogOfPawn.Settings.PrisonerRevealChance_Tooltip>囚犯每游戏小时揭露一个隐藏属性的百分比概率。数值越高，被囚禁时揭露越快。</FogOfPawn.Settings.PrisonerRevealChance_Tooltip>
+  <FogOfPawn.Settings.PrisonerCrackChance>揭露时完全崩溃概率</FogOfPawn.Settings.PrisonerCrackChance>
+  <FogOfPawn.Settings.PrisonerCrackChance_Tooltip>当囚犯揭露某项内容时，他们完全崩溃并一次性揭露所有内容的百分比概率。</FogOfPawn.Settings.PrisonerCrackChance_Tooltip>
+
+  <!-- Misc UI text -->
+  <FogOfPawn.Settings.Computed>（自动计算）</FogOfPawn.Settings.Computed>
+
+  <!-- Accusation reveal details -->
+  <FogOfPawn.Accuse.RevealedSecrets>揭露的欺骗行为如下：</FogOfPawn.Accuse.RevealedSecrets>
+  <FogOfPawn.Accuse.Overstated>夸大</FogOfPawn.Accuse.Overstated>
+  <FogOfPawn.Accuse.Understated>低估</FogOfPawn.Accuse.Understated>
+  <FogOfPawn.Accuse.HiddenTrait>隐藏特性</FogOfPawn.Accuse.HiddenTrait>
+  <FogOfPawn.Accuse.DisabledRevealed>欺骗已确认（伪造技能已揭露）</FogOfPawn.Accuse.DisabledRevealed>
+
+  <!-- Minor liar reveal -->
+  <FogOfPawn.Accuse.MinorSuccess.Text>{0}紧张地承认在"简历"上夸大了一些内容。没有恶意——只是为了在殖民地谋得一席之地而进行的小小自我推销。</FogOfPawn.Accuse.MinorSuccess.Text>
+  <Fog.FullReveal.MinorLiarCalledOut.Label>小骗子被揭穿</Fog.FullReveal.MinorLiarCalledOut.Label>
+  <Fog.FullReveal.MinorLiarCalledOut.Text>{PAWN}羞怯地承认美化了自己的背景。并非恶意——只是为了在殖民地站稳脚跟而进行的一点创意自我包装。</Fog.FullReveal.MinorLiarCalledOut.Text>
+
+  <!-- Interrogation reveal -->
+  <Fog.FullReveal.InterrogationCrack.Label>审讯成功</Fog.FullReveal.InterrogationCrack.Label>
+  <Fog.FullReveal.InterrogationCrack.Text>在囚禁和持续审问的压力下，{PAWN}终于崩溃。整个骗局土崩瓦解。</Fog.FullReveal.InterrogationCrack.Text>
+  <FogOfPawn.InterrogationReveal.Label>审讯：属性揭露</FogOfPawn.InterrogationReveal.Label>
+  <FogOfPawn.InterrogationReveal.Text>囚禁的压力迫使{0}露出马脚。你发现了一个隐藏的秘密：{1}。</FogOfPawn.InterrogationReveal.Text>
+
 </LanguageData> 

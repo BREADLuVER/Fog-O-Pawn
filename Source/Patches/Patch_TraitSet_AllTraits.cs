@@ -8,13 +8,10 @@ namespace FogOfPawn.Patches
 {
     /// <summary>
     /// Core trait masking patch using the RenderContext system.
-    /// During UI rendering, returns a filtered list of traits (hidden traits removed).
-    /// During game logic, returns the full real trait list.
-    /// 
-    /// This single patch handles ALL trait list reads across the entire game,
-    /// eliminating the need to patch individual UI components.
+    /// NOTE: Disabled [HarmonyPatch] because TraitSet.allTraits is a field in RimWorld 1.5/1.6,
+    /// and fields cannot be patched directly. UI masking is handled via specific UI patches.
     /// </summary>
-    [HarmonyPatch(typeof(TraitSet), "get_allTraits")]
+    // [HarmonyPatch(typeof(TraitSet), "get_allTraits")]
     public static class Patch_TraitSet_AllTraits
     {
         static void Postfix(TraitSet __instance, ref List<Trait> __result)

@@ -63,16 +63,25 @@ namespace FogOfPawn
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
-            // Add the player-facing Accuse gizmo first
-            if (!fullyRevealed && tier != DeceptionTier.Truthful && parent.Faction == Faction.OfPlayer)
+            // Add the player-facing Accuse gizmo for ALL colonists (not just deceivers)
+            // This is critical - if we only show it for deceivers, it reveals who's lying!
+            if (!fullyRevealed && parent.Faction?.IsPlayer == true && compInitialized)
             {
-                yield return new Command_Action
+                var accuseCmd = new Command_Action
                 {
                     defaultLabel = "FogOfPawn.Accuse.Label".Translate(),
                     defaultDesc = "FogOfPawn.Accuse.Desc".Translate(),
                     icon = ContentFinder<Texture2D>.Get("Things/Item/disguise-kit", false) ?? ContentFinder<Texture2D>.Get("UI/Commands/LaunchReport", true),
                     action = HandleAccuse
                 };
+
+                // Disable if any masked skill has been revealed, as the player already has proof of deception
+                if (maskOffsets.Any(kv => kv.Value != 0 && revealedSkills.Contains(kv.Key)))
+                {
+                    accuseCmd.Disable("FogOfPawn.Accuse.DisabledRevealed".Translate());
+                }
+
+                yield return accuseCmd;
             }
 
             if (!Prefs.DevMode) yield break;
@@ -246,17 +255,21 @@ namespace FogOfPawn
 
         private void PerformAccusation(Pawn pawn)
         {
+            // Check what's actually being hidden BEFORE we reveal
+            var hiddenDetails = GetHiddenSecretsDescription(pawn);
+            bool hasHiddenSecrets = !string.IsNullOrEmpty(hiddenDetails);
+            
             // A success is if the pawn is currently hiding ANYTHING.
             // If they are Truthful or already fully revealed, it's a false accusation.
-            bool isActuallyHidingSecrets = !fullyRevealed && (tier != DeceptionTier.Truthful);
+            bool isActuallyHidingSecrets = !fullyRevealed && (tier != DeceptionTier.Truthful) && hasHiddenSecrets;
             
             // Check for the "Major" win (Imposter or Sleeper)
             bool isMalicious = (tier == DeceptionTier.DeceiverImposter || tier == DeceptionTier.DeceiverSleeper);
 
-            if (isMalicious)
+            if (isMalicious && hasHiddenSecrets)
             {
                 // MAJOR SUCCESS logic (Imposter/Sleeper)
-                FogUtility.TriggerFullReveal(pawn, "ImposterCalledOut");
+                FogUtility.TriggerFullRevealWithDetails(pawn, "ImposterCalledOut", hiddenDetails);
 
                 Messages.Message("FogOfPawn.Accuse.Success.Text".Translate(pawn.LabelShort), pawn, MessageTypeDefOf.PositiveEvent);
 
@@ -275,9 +288,9 @@ namespace FogOfPawn
                 // MINOR SUCCESS logic (Slightly Deceived)
                 // They were lying, but it wasn't a "threat". 
                 // We reveal everything, but give a smaller colony-wide buff.
-                FogUtility.TriggerFullReveal(pawn, "ImposterCalledOut");
+                FogUtility.TriggerFullRevealWithDetails(pawn, "MinorLiarCalledOut", hiddenDetails);
                 
-                Messages.Message("FogOfPawn.Accuse.Success.Text".Translate(pawn.LabelShort), pawn, MessageTypeDefOf.PositiveEvent);
+                Messages.Message("FogOfPawn.Accuse.MinorSuccess.Text".Translate(pawn.LabelShort), pawn, MessageTypeDefOf.PositiveEvent);
                 
                 // Smaller colony-wide mood buff for "Slightly Deceived"
                 var thought = DefDatabase<ThoughtDef>.GetNamedSilentFail("Fog_ExposedMinorLiar");
@@ -292,7 +305,10 @@ namespace FogOfPawn
             }
             else
             {
-                // FAILURE logic (pawn was actually truthful/revealed)
+                // FAILURE logic (pawn was actually truthful/revealed or had no real lies)
+                // Mark as fully revealed since they've been accused
+                fullyRevealed = true;
+                
                 var thought = DefDatabase<ThoughtDef>.GetNamedSilentFail("Fog_FalselyAccused");
                 if (thought != null)
                 {
@@ -306,6 +322,53 @@ namespace FogOfPawn
                     pawn
                 );
             }
+        }
+        
+        /// <summary>
+        /// Builds a human-readable description of what secrets this pawn is currently hiding.
+        /// Returns null/empty if nothing is actually being hidden.
+        /// </summary>
+        private string GetHiddenSecretsDescription(Pawn pawn)
+        {
+            var secrets = new List<string>();
+            
+            // Check for masked skills with actual differences
+            if (FogSettingsCache.Current.fogSkills && pawn.skills != null)
+            {
+                foreach (var kvp in maskOffsets)
+                {
+                    if (revealedSkills.Contains(kvp.Key)) continue;
+                    if (kvp.Value == 0) continue; // No actual difference
+                    
+                    var skill = pawn.skills.GetSkill(kvp.Key);
+                    if (skill == null) continue;
+                    
+                    int realLevel = skill.levelInt;
+                    int maskedLevel = Mathf.Clamp(realLevel + kvp.Value, 0, 20);
+                    
+                    if (realLevel != maskedLevel)
+                    {
+                        string direction = kvp.Value > 0 ? "FogOfPawn.Accuse.Overstated".Translate().ToString() : "FogOfPawn.Accuse.Understated".Translate().ToString();
+                        secrets.Add($"• {kvp.Key.label}: {direction} ({maskedLevel} → {realLevel})");
+                    }
+                }
+            }
+            
+            // Check for hidden traits
+            if (FogSettingsCache.Current.fogTraits && pawn.story?.traits != null)
+            {
+                foreach (var trait in pawn.story.traits.allTraits)
+                {
+                    if (!revealedTraits.Contains(trait.def))
+                    {
+                        secrets.Add($"• {"FogOfPawn.Accuse.HiddenTrait".Translate()}: {trait.Label}");
+                    }
+                }
+            }
+            
+            if (secrets.Count == 0) return null;
+            
+            return string.Join("\n", secrets);
         }
 
         public void RevealSkill(SkillDef skillDef)
@@ -421,8 +484,14 @@ namespace FogOfPawn
             
             // Run change detection every 60 ticks (~1 second) for responsiveness
             if (Find.TickManager.TicksGame % 60 == 0)
-                {
+            {
                 DetectAndAutoRevealChanges();
+            }
+
+            // Check prisoner interrogation logic every 2500 ticks (~1 hour)
+            if (Find.TickManager.TicksGame % 2500 == 0)
+            {
+                CheckPrisonerInterrogation();
             }
         }
 
@@ -615,6 +684,54 @@ namespace FogOfPawn
             // Update tracking
             lastKnownTraits = currentTraits;
             lastTraitCheckTick = currentTick;
+        }
+
+        /// <summary>
+        /// Handles the "Interrogation" workflow.
+        /// If a pawn is a prisoner of the colony, they are subject to constant observation/interrogation pressure.
+        /// This accelerates the reveal of hidden attributes or storylines.
+        /// </summary>
+        private void CheckPrisonerInterrogation()
+        {
+            var pawn = parent as Pawn;
+            if (pawn == null || !pawn.IsPrisonerOfColony) return;
+            if (fullyRevealed) return;
+
+            // Chance to reveal something per hour (tunable in settings)
+            float revealChance = FogSettingsCache.Current.prisonerRevealChancePct / 100f;
+            if (!Rand.Chance(revealChance)) return;
+
+            // Attempt to reveal a random attribute
+            bool revealedSomething = FogUtility.RevealRandomFoggedAttribute(pawn, preferSkill: false);
+            
+            if (revealedSomething)
+            {
+                // Check for major breaks (Imposter/Sleeper cracking)
+                if (tier == DeceptionTier.DeceiverImposter || tier == DeceptionTier.DeceiverSleeper)
+                {
+                    // Chance for full crack on reveal (tunable in settings)
+                    float crackChance = FogSettingsCache.Current.prisonerCrackChancePct / 100f;
+                    if (Rand.Chance(crackChance))
+                    {
+                        FogUtility.TriggerFullReveal(pawn, "InterrogationCrack");
+                        return;
+                    }
+                }
+
+                // If it's a Sleeper, interrogation might advance their plot even without a reveal
+                if (tier == DeceptionTier.DeceiverSleeper)
+                {
+                     GameComponent_FogTracker.Get?.DevAdvanceSleeperStory(pawn);
+                }
+            }
+            else
+            {
+                 // Even if no attribute was revealed, if they are a Sleeper, we might advance the story
+                 if (tier == DeceptionTier.DeceiverSleeper && Rand.Chance(0.05f))
+                 {
+                     GameComponent_FogTracker.Get?.DevAdvanceSleeperStory(pawn);
+                 }
+            }
         }
     }
 }

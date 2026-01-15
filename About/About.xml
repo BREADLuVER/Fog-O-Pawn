@@ -14,7 +14,34 @@
         </li>
     </modDependencies>
     <description>
-        Adds uncertainty and deception to new colonists by hiding or faking skills, passions, traits until they are discovered through gameplay.
+        Not all pawns are what they seem. Skills, passions, and traits can be hidden or faked when colonists join, creating uncertainty and emergent stories.
+
+FOUR DECEPTION TIERS:
+• Truthful – All attributes shown accurately (default ~65%)
+• Slightly Deceived – Minor skill/passion alterations
+• Imposter – Low-skill pawns faking competence. When exposed, they drop disguise kits, suffer permanent social penalties, and trigger mood buffs if removed.
+• Sleeper – Elite pawns hiding their power. Trigger a 1-2 season incident chain with suspicious activity letters, culminating in a dramatic reveal where you choose to keep, capture, or exile them.
+
+HOW IT WORKS:
+• Every pawn shows at least one real trait
+• Fogged skills function at true levels but with a 5% failure penalty when using faked skills
+• Hidden attributes reveal through time, mood, social interactions, skill use (XP), mental breaks, prisoner interrogation, and manual accusation
+
+REVEALS:
+• Time + Mood – Longer stay and high mood increase reveal chances
+• Skill Use – XP accumulation may reveal true values
+• Social Interaction – Conversations can trigger reveals
+• Mental Breaks – Scale with time in colony
+• Prisoner Interrogation – Speeds up reveals significantly
+• Manual Accusation – Confront suspicious pawns directly
+
+IMPOSTERS:
+When exposed, they drop disguise kits (reduces wealth), get permanent "Damaged Reputation" social debuff, and trigger colony mood buffs when killed/banished.
+
+SLEEPERS:
+Rare high-value pawns with unique storylines. Their secrets are revealed through an incident chain over 1-2 seasons, not passive mechanics. At the dramatic reveal, you choose: Keep (mood buff + powerhouse), Capture (berserk), or Exile.
+
+Fully configurable spawn rates, reveal mechanics, and penalty amounts in mod settings.
     </description>
     <url>https://github.com/BREADLuVER/Fog-O-Pawn</url>
 </ModMetaData> 

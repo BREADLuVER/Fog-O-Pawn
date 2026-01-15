@@ -58,6 +58,14 @@ namespace FogOfPawn
 
         public static void TriggerFullReveal(Pawn pawn, string reasonKey)
         {
+            TriggerFullRevealWithDetails(pawn, reasonKey, null);
+        }
+        
+        /// <summary>
+        /// Triggers a full reveal with optional details about what was hidden.
+        /// </summary>
+        public static void TriggerFullRevealWithDetails(Pawn pawn, string reasonKey, string hiddenSecretsDetails)
+        {
             if (pawn == null) return;
 
             var comp = pawn.GetComp<CompPawnFog>();
@@ -78,11 +86,18 @@ namespace FogOfPawn
 
             if (ShouldNotifyPlayer(pawn))
             {
-            string labelKey = $"Fog.FullReveal.{reasonKey}.Label";
-            string textKey  = $"Fog.FullReveal.{reasonKey}.Text";
-            string label = labelKey.Translate(pawn.Named("PAWN"));
-            string text  = textKey.Translate(pawn.Named("PAWN"));
-            Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.PositiveEvent, pawn);
+                string labelKey = $"Fog.FullReveal.{reasonKey}.Label";
+                string textKey  = $"Fog.FullReveal.{reasonKey}.Text";
+                string label = labelKey.Translate(pawn.Named("PAWN"));
+                string text  = textKey.Translate(pawn.Named("PAWN"));
+                
+                // Append the hidden secrets details if provided
+                if (!string.IsNullOrEmpty(hiddenSecretsDetails))
+                {
+                    text += "\n\n" + "FogOfPawn.Accuse.RevealedSecrets".Translate() + "\n" + hiddenSecretsDetails;
+                }
+                
+                Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.PositiveEvent, pawn);
             }
 
             // Reputation damage for imposter
@@ -105,6 +120,10 @@ namespace FogOfPawn
             }
 
             FogLog.Verbose($"[FULL REVEAL] {pawn.LabelShort} ({comp.tier}) via {reasonKey}");
+            if (!string.IsNullOrEmpty(hiddenSecretsDetails))
+            {
+                FogLog.Verbose($"[FULL REVEAL] Secrets:\n{hiddenSecretsDetails}");
+            }
         }
 
         private static void TryAddImposterTrait(Pawn pawn)
@@ -157,7 +176,7 @@ namespace FogOfPawn
         public static void GiveMoodBuffForImposterRemoval(Pawn pawn)
         {
             // Pawn must be a player colonist at the time of removal.
-            if (pawn?.Faction != Faction.OfPlayer)
+            if (pawn?.Faction == null || !pawn.Faction.IsPlayer)
             {
                 return;
             }

@@ -7,7 +7,7 @@ namespace FogOfPawn.UI
     [StaticConstructorOnStartup]
     public static class CustomTraitUIDrawer
     {
-        private static readonly Texture2D UnknownTraitIcon = ContentFinder<Texture2D>.Get("UI/Widgets/QuestionMark", false) ?? ContentFinder<Texture2D>.Get("UI/Buttons/Dev/Inspector", true);
+        private static readonly Texture2D UnknownTraitIcon = ContentFinder<Texture2D>.Get("UI/Widgets/QuestionMark", false) ?? ContentFinder<Texture2D>.Get("UI/Buttons/InfoButton", true);
 
         public static void DrawTraitRow(Rect rect, Trait trait, Pawn pawn)
         {

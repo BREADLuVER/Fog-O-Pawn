@@ -138,18 +138,50 @@
   <FogOfPawn.Settings.ScoreBasedLiarChance>Scale deceiver chance by pawn value</FogOfPawn.Settings.ScoreBasedLiarChance>
   <FogOfPawn.Settings.ScoreBasedLiarChance_Tooltip>When enabled, more capable pawns have a higher probability of spawning as liars (Imposters or Sleepers).</FogOfPawn.Settings.ScoreBasedLiarChance_Tooltip>
 
+  <FogOfPawn.Settings.ApplySkillPenalties>Apply penalties to faked skills</FogOfPawn.Settings.ApplySkillPenalties>
+  <FogOfPawn.Settings.ApplySkillPenalties_Tooltip>If enabled, pawns using a faked skill (claiming higher than reality) will suffer a flat penalty to work speed and success chance.</FogOfPawn.Settings.ApplySkillPenalties_Tooltip>
+  <FogOfPawn.Settings.SkillPenaltyPct>Skill penalty amount</FogOfPawn.Settings.SkillPenaltyPct>
+
   <FogOfPawn.Settings.PositiveMoodRevealPct>High-mood reveal chance</FogOfPawn.Settings.PositiveMoodRevealPct>
   <FogOfPawn.Settings.PositiveMoodRevealPctTooltip>Percentage chance per hourly check to reveal a hidden trait or skill when the pawn's mood is above 70%.</FogOfPawn.Settings.PositiveMoodRevealPctTooltip>
 
   <FogOfPawn.Settings.PositiveMoodThresholdPct>High-mood threshold</FogOfPawn.Settings.PositiveMoodThresholdPct>
   <FogOfPawn.Settings.PositiveMoodThresholdPctTooltip>Mood percentage above which the high-mood reveal roll is evaluated.</FogOfPawn.Settings.PositiveMoodThresholdPctTooltip>
 
+  <!-- Old section headers (kept for compatibility) -->
   <FogOfPawn.Settings.SectionGeneral>--- General Reveal Settings ---</FogOfPawn.Settings.SectionGeneral>
   <FogOfPawn.Settings.SectionFogToggles>--- Fogging Toggles ---</FogOfPawn.Settings.SectionFogToggles>
   <FogOfPawn.Settings.SectionAmbient>--- Ambient Reveal Tuning ---</FogOfPawn.Settings.SectionAmbient>
   <FogOfPawn.Settings.SectionAdvanced>--- Advanced Deception Features ---</FogOfPawn.Settings.SectionAdvanced>
   <FogOfPawn.Settings.SectionHighMood>--- High-Mood Reveals ---</FogOfPawn.Settings.SectionHighMood>
   <FogOfPawn.Settings.SectionTraitMasking>--- Trait Masking ---</FogOfPawn.Settings.SectionTraitMasking>
+
+  <!-- New collapsible section headers -->
+  <FogOfPawn.Settings.Section.SpawnComposition>Spawn Composition</FogOfPawn.Settings.Section.SpawnComposition>
+  <FogOfPawn.Settings.Section.General>General Reveal Settings</FogOfPawn.Settings.Section.General>
+  <FogOfPawn.Settings.Section.Toggles>Fogging Toggles</FogOfPawn.Settings.Section.Toggles>
+  <FogOfPawn.Settings.Section.Ambient>Ambient Reveal Tuning</FogOfPawn.Settings.Section.Ambient>
+  <FogOfPawn.Settings.Section.Advanced>Advanced Deception Features</FogOfPawn.Settings.Section.Advanced>
+  <FogOfPawn.Settings.Section.Mood>Mood-Based Reveals</FogOfPawn.Settings.Section.Mood>
+  <FogOfPawn.Settings.Section.FullReveal>Full Reveal Mechanics</FogOfPawn.Settings.Section.FullReveal>
+
+  <!-- Sub-section headers -->
+  <FogOfPawn.Settings.SubSection.HighMood>High Mood</FogOfPawn.Settings.SubSection.HighMood>
+  <FogOfPawn.Settings.SubSection.MoodBreak>Mental Break</FogOfPawn.Settings.SubSection.MoodBreak>
+  <FogOfPawn.Settings.SubSection.Sleeper>Sleeper</FogOfPawn.Settings.SubSection.Sleeper>
+  <FogOfPawn.Settings.SubSection.Imposter>Imposter</FogOfPawn.Settings.SubSection.Imposter>
+  <FogOfPawn.Settings.SubSection.PassiveReveal>Passive Reveal</FogOfPawn.Settings.SubSection.PassiveReveal>
+  <FogOfPawn.Settings.SubSection.DisguiseKit>Disguise Kit</FogOfPawn.Settings.SubSection.DisguiseKit>
+  <FogOfPawn.Settings.SubSection.Prisoner>Prisoner Interrogation</FogOfPawn.Settings.SubSection.Prisoner>
+
+  <!-- Prisoner interrogation settings -->
+  <FogOfPawn.Settings.PrisonerRevealChance>Prisoner reveal chance per hour</FogOfPawn.Settings.PrisonerRevealChance>
+  <FogOfPawn.Settings.PrisonerRevealChance_Tooltip>Percentage chance per in-game hour that a prisoner will reveal a hidden attribute. Higher values mean faster unmasking while imprisoned.</FogOfPawn.Settings.PrisonerRevealChance_Tooltip>
+  <FogOfPawn.Settings.PrisonerCrackChance>Full crack chance on reveal</FogOfPawn.Settings.PrisonerCrackChance>
+  <FogOfPawn.Settings.PrisonerCrackChance_Tooltip>When a prisoner reveals something, this is the percentage chance they completely crack and reveal everything at once (full reveal).</FogOfPawn.Settings.PrisonerCrackChance_Tooltip>
+
+  <!-- Misc UI text -->
+  <FogOfPawn.Settings.Computed>(computed)</FogOfPawn.Settings.Computed>
 
   <!-- Mood-break full reveal settings -->
   <FogOfPawn.Settings.MoodBreakBasePct>Base mood-break reveal chance</FogOfPawn.Settings.MoodBreakBasePct>
@@ -187,7 +219,27 @@
   <FogOfPawn.Accuse.Success.Label>Accusation Proven</FogOfPawn.Accuse.Success.Label>
   <FogOfPawn.Accuse.Success.Text>Your intuition was correct! {0} breaks under the pressure of the colony's gaze and admits their deception.</FogOfPawn.Accuse.Success.Text>
   
+  <FogOfPawn.Accuse.MinorSuccess.Text>{0} nervously admits to exaggerating a few things on their 'resume'. Nothing dangerous, just embarrassing.</FogOfPawn.Accuse.MinorSuccess.Text>
+  
   <FogOfPawn.Accuse.Failure.Label>False Accusation</FogOfPawn.Accuse.Failure.Label>
   <FogOfPawn.Accuse.Failure.Text>"You're paranoid!" {0} screams in frustration. "I've given everything to this colony, and this is how you treat me?"\n\nIt seems your suspicions were unfounded. {0} is deeply insulted.</FogOfPawn.Accuse.Failure.Text>
+
+  <FogOfPawn.Accuse.DisabledRevealed>Deception already confirmed (masked skill revealed)</FogOfPawn.Accuse.DisabledRevealed>
+
+  <!-- Accusation reveal details -->
+  <FogOfPawn.Accuse.RevealedSecrets>The following deceptions were uncovered:</FogOfPawn.Accuse.RevealedSecrets>
+  <FogOfPawn.Accuse.Overstated>overstated</FogOfPawn.Accuse.Overstated>
+  <FogOfPawn.Accuse.Understated>understated</FogOfPawn.Accuse.Understated>
+  <FogOfPawn.Accuse.HiddenTrait>Hidden trait</FogOfPawn.Accuse.HiddenTrait>
+
+  <!-- Minor liar reveal letter -->
+  <Fog.FullReveal.MinorLiarCalledOut.Label>Minor Liar Exposed</Fog.FullReveal.MinorLiarCalledOut.Label>
+  <Fog.FullReveal.MinorLiarCalledOut.Text>{PAWN} sheepishly admits to embellishing their background. It wasn't malicious—just a bit of creative self-promotion to secure a spot in the colony.</Fog.FullReveal.MinorLiarCalledOut.Text>
+
+  <!-- Interrogation reveal -->
+  <Fog.FullReveal.InterrogationCrack.Label>Interrogation Success</Fog.FullReveal.InterrogationCrack.Label>
+  <Fog.FullReveal.InterrogationCrack.Text>Under the pressure of confinement and constant questioning, {PAWN} finally breaks. The entire deception falls apart.</Fog.FullReveal.InterrogationCrack.Text>
+  <FogOfPawn.InterrogationReveal.Label>Interrogation: Attribute Revealed</FogOfPawn.InterrogationReveal.Label>
+  <FogOfPawn.InterrogationReveal.Text>The strain of imprisonment has forced {0} to slip up. You have discovered a hidden secret: {1}.</FogOfPawn.InterrogationReveal.Text>
 
 </LanguageData> 

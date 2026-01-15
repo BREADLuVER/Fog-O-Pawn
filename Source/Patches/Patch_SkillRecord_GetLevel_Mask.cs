@@ -92,8 +92,10 @@ namespace FogOfPawn.Patches
     
     /// <summary>
     /// Passion masking using the same RenderContext system.
+    /// NOTE: Disabled [HarmonyPatch] because SkillRecord.passion is a field in RimWorld 1.5/1.6, 
+    /// and fields cannot be patched directly. UI masking is handled via SkillUI patches.
     /// </summary>
-    [HarmonyPatch(typeof(SkillRecord), "get_passion")]
+    // [HarmonyPatch(typeof(SkillRecord), "get_Passion")]
     public static class Patch_SkillRecord_GetPassion_Mask
     {
         private static readonly System.Reflection.FieldInfo _pawnField = 

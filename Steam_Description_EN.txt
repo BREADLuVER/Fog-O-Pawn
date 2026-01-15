@@ -1,0 +1,73 @@
+[h2]The Core Mechanic: The Fog of Pawn[/h2]
+Not all pawns are what they seem. Key attributes—skills, passions, and traits—can be hidden when a pawn joins. These are revealed over time through events and interactions.
+
+This affects:
+[list]
+[*] Skills & Passions: A pawn might appear to have a skill of 5, but the real value could be 15. Passions can also be faked or hidden.  
+[*] Traits: Traits like Psychopath or Abrasive might be concealed at first.  
+[/list]
+
+[h2]Four Categories of Deception[/h2]
+[list]
+[*] Truthful – Everything shown is accurate. Most pawns fall into this category.  
+[*] Slightly Deceived – A few skill levels or passions are altered but not dramatically.  
+[*] Deceiver – Impostor – Skills are faked to appear better than they are. These pawns are a liability.  
+[*] Deceiver – Sleeper – High-skill pawns who conceal their true power and follow a unique storyline.  
+[/list]
+
+[h2]How Does Fogging Work?[/h2]
+Fogging isn't just visual — it affects how pawns present themselves when joining your colony. Here's how it works behind the scenes:
+
+[b]At Least One Visible Trait[/b]  
+Every pawn always shows at least one trait truthfully. Even the most deceptive ones won't be totally blank.
+
+[b]Fogged Skills Are Real[/b]  
+Skills marked as "fogged" still function at their true levels. For example, a pawn claiming Intelligence 8 but with real Intelligence 1 will research at a snail's pace. However, when using a faked skill, there's a tunable constant failure chance (default 5%) due to instability or self-doubt.
+
+[b]Optional Features (Off by default)[/b]  
+[list]
+[*] Pawns with negative traits like Jealous or Pyromaniac are more likely to lie about their skills or passions. You can toggle this logic in the mod settings.  
+[*] The chance for deception is influenced by the pawn's total value (skills, traits, passions). Low value pawns can have more incentive to lie.  
+[/list]
+
+[h2]How Reveals Work[/h2]
+Reveals happen automatically over time. You'll receive letters and notifications when something is discovered. Key reveal triggers include:
+[list]
+[*] Time + Mood – Longer stay and high mood increase the chance of uncovering hidden traits or skills.  
+[*] Skill Use – When enough XP is gained in a skill, the true value may be revealed.  
+[*] Social Interaction – Pawns talking to each other can trigger reveals, especially with high social skill.  
+[*] Mental Break – Mental break reveals, scales with time in colony.  
+[*] Prisoner Interrogation – Imprisoning a masked pawn significantly speeds up reveals (tunable in settings).  
+[*] Manual Accusation – Confront suspicious pawns directly when they fail work often or show inconsistencies.  
+[/list]
+
+For Imposters, the first reveal causes a cascade—all hidden data is revealed at once.
+
+[h2]Dealing with Imposters[/h2]
+Imposters fake their value and are exposed dramatically.  
+[list]
+[*] Reveal Effect: They get a permanent social debuff with all colonists ("Damaged Reputation") and reduced social impact.  
+[*] Loot Drop: They drop a Disguise Kit (lowers colony wealth by 2000) and cause a mood buff when killed or banished.  
+[/list]
+
+[h2]Dealing with Sleepers[/h2]
+Sleepers are rare, high-value pawns with good stats and traits, plus a personal storyline. Their secrets are revealed through an incident chain, not passive mechanics.  
+
+[b]Story Progression:[/b]  
+[list]
+[*] Incident Trigger – An event fires tied to the sleeper pawn.  
+[*] Buildup – Over 1–2 seasons, letters about suspicious activity appear (e.g., "Suspicion", "Anomaly").  
+[*] Ascension & Choice – The pawn reveals their true high-level skills and gains a powerful trait (e.g., Tough, Iron-willed, Bloodlust). You then choose:  
+[list]
+[*] Keep Them – Accept their new identity. The colony gains a mood buff. The pawn becomes a powerhouse.  
+[*] Capture Them – The sleeper goes berserk and must be subdued.  
+[*] Exile Them – The pawn is banished from the colony.  
+[/list]
+[/list]
+
+[h2]Extensive Customizability[/h2]
+All spawn rates, reveal mechanics, penalty amounts, and interrogation speeds are fully configurable in the mod settings. The settings page has been redesigned for better readability with collapsible sections.
+
+[url=https://steamcommunity.com/sharedfiles/filedetails/?id=YOUR_ITEM_ID]
+[img]https://raw.githubusercontent.com/BREADLuVER/Fog-O-Pawn/main/Textures/fog_modsettings.png[/img]
+[/url]

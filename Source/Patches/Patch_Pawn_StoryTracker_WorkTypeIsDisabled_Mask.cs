@@ -20,21 +20,25 @@ namespace FogOfPawn.Patches
             {
                 var harmony = new Harmony("FogOfPawn.WorkTypeMask");
 
-                // The pre-1.6 method is WorkTypeIsDisabled(WorkTypeDef). RimWorld 1.6 renamed it, so we attempt
-                // a signature search to stay version-agnostic.
-                var target = AccessTools.Method(typeof(Pawn_StoryTracker), "WorkTypeIsDisabled", new[] { typeof(WorkTypeDef) });
+                // Primary target: Pawn_StoryTracker.WorkTypeIsDisabled
+                var target = AccessTools.Method(typeof(Pawn_StoryTracker), "WorkTypeIsDisabled");
 
                 if (target == null)
                 {
-                    // Fallback: find ANY bool-returning instance method with WorkTypeDef parameter.
+                    // Fallback: Pawn.WorkTypeIsDisabled (often a wrapper)
+                    target = AccessTools.Method(typeof(Pawn), "WorkTypeIsDisabled");
+                }
+
+                if (target == null)
+                {
+                    // Advanced Fallback: find ANY bool-returning instance method with WorkTypeDef parameter in StoryTracker
                     foreach (var mi in typeof(Pawn_StoryTracker).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
                     {
                         if (mi.ReturnType != typeof(bool)) continue;
                         var pars = mi.GetParameters();
-                        if (pars.Length != 1) continue;
+                        if (pars.Length == 0) continue;
                         if (pars[0].ParameterType != typeof(WorkTypeDef)) continue;
 
-                        // Heuristic: method name contains "WorkType" and "Disabled" or "IsDisabled"
                         string n = mi.Name;
                         if (n.Contains("WorkType") && (n.Contains("Disabled") || n.Contains("IsDisabled")))
                         {
@@ -46,12 +50,21 @@ namespace FogOfPawn.Patches
 
                 if (target == null)
                 {
-                    FogLog.Fail("WorkTypeIsDisabled", "Could not locate suitable WorkType disabled checker – work-type masking disabled.");
+                    FogLog.Fail("WorkTypeIsDisabled", "Could not locate suitable WorkType disabled checker in Pawn or StoryTracker – work-type masking disabled.");
                     return;
                 }
 
-                harmony.Patch(target, postfix: new HarmonyMethod(typeof(Patch_Pawn_StoryTracker_WorkTypeIsDisabled_Mask), nameof(Postfix)));
-                FogLog.Reflect("WorkTypeMaskPatched", "Patched Pawn_StoryTracker.WorkTypeIsDisabled for fog masking.");
+                // Use the correct postfix based on where we found the method
+                if (target.DeclaringType == typeof(Pawn))
+                {
+                    harmony.Patch(target, postfix: new HarmonyMethod(typeof(Patch_Pawn_StoryTracker_WorkTypeIsDisabled_Mask), nameof(PostfixPawn)));
+                }
+                else
+                {
+                    harmony.Patch(target, postfix: new HarmonyMethod(typeof(Patch_Pawn_StoryTracker_WorkTypeIsDisabled_Mask), nameof(PostfixTracker)));
+                }
+                
+                FogLog.Reflect("WorkTypeMaskPatched", $"Patched {target.DeclaringType.Name}.{target.Name} for fog masking.");
             }
             catch (Exception ex)
             {
@@ -59,20 +72,27 @@ namespace FogOfPawn.Patches
             }
         }
 
-        // Postfix executes only if method exists and was successfully patched.
-        // ReSharper disable once InconsistentNaming – Harmony uses parameter names.
-        public static void Postfix(Pawn_StoryTracker __instance, WorkTypeDef w, ref bool __result)
+        public static void PostfixTracker(Pawn_StoryTracker __instance, WorkTypeDef w, ref bool __result)
         {
-            if (!__result) return; // already enabled
-
+            if (!__result) return;
             Pawn pawn = Traverse.Create(__instance).Field("pawn").GetValue<Pawn>();
-            if (pawn == null) return;
+            ApplyWorkMask(pawn, ref __result);
+        }
 
+        public static void PostfixPawn(Pawn __instance, WorkTypeDef w, ref bool __result)
+        {
+            if (!__result) return;
+            ApplyWorkMask(__instance, ref __result);
+        }
+
+        private static void ApplyWorkMask(Pawn pawn, ref bool result)
+        {
+            if (pawn == null) return;
             var comp = pawn.GetComp<CompPawnFog>();
             if (comp == null || !comp.compInitialized || comp.fullyRevealed) return;
-
-            // Until fully revealed, pretend they can do everything (imposters especially!)
-            __result = false;
+            
+            // Masking logic: until revealed, show as capable
+            result = false;
         }
     }
 } 

@@ -236,6 +236,87 @@ namespace FogOfPawn
         
         #endregion
         
+        #region Helper Overloads for Transpilers
+        
+        private static readonly System.Reflection.FieldInfo _pawnField = 
+            HarmonyLib.AccessTools.Field(typeof(SkillRecord), "pawn");
+
+        public static Pawn GetPawnFromSkillRecord(SkillRecord skill)
+        {
+            if (skill == null) return null;
+            return _pawnField?.GetValue(skill) as Pawn;
+        }
+
+        public static int GetMaskedSkillLevel(SkillRecord skill)
+        {
+            if (skill == null) return 0;
+            // Only mask if RenderContext is active
+            if (!RenderContext.IsRendering) return skill.levelInt;
+
+            var pawn = GetPawnFromSkillRecord(skill);
+            if (pawn == null) return skill.levelInt;
+            
+            var comp = pawn.GetComp<CompPawnFog>();
+            if (comp == null || !comp.compInitialized) return skill.levelInt;
+            
+            if (ShouldMaskSkill(pawn, skill.def, comp))
+            {
+                return GetMaskedSkillLevel(pawn, skill.def, comp);
+            }
+            return skill.levelInt;
+        }
+
+        public static Passion GetMaskedPassion(SkillRecord skill)
+        {
+            if (skill == null) return Passion.None;
+            // Only mask if RenderContext is active
+            if (!RenderContext.IsRendering) return skill.passion;
+
+            var pawn = GetPawnFromSkillRecord(skill);
+            if (pawn == null) return skill.passion;
+            
+            var comp = pawn.GetComp<CompPawnFog>();
+            if (comp == null || !comp.compInitialized) return skill.passion;
+            
+            if (ShouldMaskSkill(pawn, skill.def, comp))
+            {
+                return GetMaskedPassion(pawn, skill.def, comp);
+            }
+            return skill.passion;
+        }
+
+        public static SkillRecord CreateFakeSkillRecord(SkillRecord original)
+        {
+            if (original == null) return null;
+            
+            // Create object without constructor
+            var fake = (SkillRecord)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(typeof(SkillRecord));
+            
+            // Robust copy: Iterate all instance fields (public & private) and copy them over.
+            // This ensures fields like permanentlyDisabled, pawn, def, etc. are all preserved.
+            var fields = typeof(SkillRecord).GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+            foreach (var field in fields)
+            {
+                try
+                {
+                    field.SetValue(fake, field.GetValue(original));
+                }
+                catch { } // Ignore copy errors
+            }
+            
+            // Now overwrite with masked values
+            int maskedLevel = GetMaskedSkillLevel(original);
+            Passion maskedPassion = GetMaskedPassion(original);
+            
+            // Set masked values directly
+            fake.levelInt = maskedLevel;
+            fake.passion = maskedPassion;
+            
+            return fake;
+        }
+        
+        #endregion
+
         #region Initialization Helpers
         
         /// <summary>

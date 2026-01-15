@@ -16,18 +16,18 @@ namespace FogOfPawn.Patches
     {
         static System.Reflection.MethodBase TargetMethod()
         {
-            // ThoughtHandler.GetAllMoodThoughts returns List<Thought>
+            // ThoughtHandler.GetAllMoodThoughts populates a List<Thought> passed as a parameter
             return AccessTools.Method(typeof(ThoughtHandler), "GetAllMoodThoughts");
         }
         
-        static void Postfix(ThoughtHandler __instance, ref List<Thought> __result)
+        static void Postfix(ThoughtHandler __instance, List<Thought> outThoughts)
         {
             // Only filter during UI rendering
             if (!RenderContext.IsRendering) return;
             
             try
             {
-                if (__instance == null || __result == null) return;
+                if (__instance == null || outThoughts == null) return;
                 
                 // Get the pawn from ThoughtHandler
                 Pawn pawn = __instance.pawn;
@@ -38,8 +38,8 @@ namespace FogOfPawn.Patches
                 if (comp.tier == DeceptionTier.Truthful || comp.fullyRevealed) return;
                 if (!FogSettingsCache.Current.fogTraits) return;
                 
-                // Filter out thoughts from hidden traits
-                __result = __result.Where(t => IsThoughtVisible(t, comp)).ToList();
+                // Filter out thoughts from hidden traits in place
+                outThoughts.RemoveAll(t => !IsThoughtVisible(t, comp));
             }
             catch (System.Exception ex)
             {
@@ -105,13 +105,13 @@ namespace FogOfPawn.Patches
             return AccessTools.Method(typeof(ThoughtHandler), "GetDistinctMoodThoughtGroups");
         }
         
-        static void Postfix(ThoughtHandler __instance, ref IEnumerable<Thought> __result)
+        static void Postfix(ThoughtHandler __instance, List<Thought> outThoughts)
         {
             if (!RenderContext.IsRendering) return;
             
             try
             {
-                if (__instance == null || __result == null) return;
+                if (__instance == null || outThoughts == null) return;
                 
                 Pawn pawn = __instance.pawn;
                 if (pawn == null) return;
@@ -121,7 +121,7 @@ namespace FogOfPawn.Patches
                 if (comp.tier == DeceptionTier.Truthful || comp.fullyRevealed) return;
                 if (!FogSettingsCache.Current.fogTraits) return;
                 
-                __result = __result.Where(t => IsThoughtVisibleStatic(t, comp));
+                outThoughts.RemoveAll(t => !IsThoughtVisibleStatic(t, comp));
             }
             catch (System.Exception ex)
             {

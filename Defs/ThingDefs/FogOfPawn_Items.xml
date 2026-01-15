@@ -3,6 +3,7 @@
   <ThingDef>
     <defName>FogOfPawn_DisguiseKit</defName>
     <label>disguise kit</label>
+    <category>Item</category>
     <thingClass>Apparel</thingClass>
     <description>A collection of cheap props, wigs, and makeup used by imposters to hide their true identity. When worn, this kit reduces the wearer's apparent value to the colony, making them seem less wealthy than they actually are. Finding this item indicates that someone in your colony was not who they claimed to be.</description>
     <graphicData>
@@ -43,7 +44,7 @@
     <rotatable>false</rotatable>
     <fillPercent>0.3</fillPercent>
     <pathCost>14</pathCost>
-    <soundInteract>Thing_Metal_Impact_Small</soundInteract>
-    <soundDrop>Thing_Metal_Impact_Small</soundDrop>
+    <soundInteract>Standard_Pickup</soundInteract>
+    <soundDrop>Standard_Drop</soundDrop>
   </ThingDef>
 </Defs> 

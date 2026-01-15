@@ -71,6 +71,13 @@ namespace FogOfPawn.Patches
                 FogLog.Verbose($"Applying fog for newly generated pawn: {__result.NameShortColored}");
 
                 FogInitializer.InitializeFogFor(__result, request);
+
+                // If the pawn is a colonist, re-initialize their work settings now that fog is active.
+                // This ensures their default work priorities match their "fake" skills, not their real ones.
+                if (__result.Faction != null && __result.Faction.IsPlayer && __result.workSettings != null)
+                {
+                    __result.workSettings.EnableAndInitialize();
+                }
             }
             catch (System.Exception ex)
             {
