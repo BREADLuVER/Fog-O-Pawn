@@ -139,7 +139,7 @@
   <FogOfPawn.Settings.SpawnDisguiseKitOnReveal_Tooltip>如果启用（默认），在骗子身份暴露时，伪装工具会掉落在地上。禁用后，工具将完全不再出现。</FogOfPawn.Settings.SpawnDisguiseKitOnReveal_Tooltip>
   
   <FogOfPawn_DisguiseKit.label>伪装工具</FogOfPawn_DisguiseKit.label>
-  <FogOfPawn_DisguiseKit.description>骗子用来隐藏真实身份的道具、假发和化妆品的集合。穿戴时，此工具会降低穿戴者在殖民地中的表面价值，使他们看起来比实际更贫穷。发现此物品表明你殖民地中有人并非他们声称的身份。</FogOfPawn_DisguiseKit.description>
+  <FogOfPawn_DisguiseKit.description>骗子用来隐藏真实身份的道具、假发和化妆品的集合。穿戴时，此工具会降低穿戴者在殖民地中的表面价值，使他们看起来比实际更贫穷。发现此物品表明你殖民地中有人并非他们声称的身份。\n\n你可以通过点击选中时的'丢弃工具'按钮来安全销毁此物品。</FogOfPawn_DisguiseKit.description>
 
   <AcceptButton>接受</AcceptButton>
   <RejectButton>拒绝</RejectButton>

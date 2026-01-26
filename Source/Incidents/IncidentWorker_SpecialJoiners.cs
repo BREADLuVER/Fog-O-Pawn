@@ -6,9 +6,6 @@ using System.Linq;
 
 namespace FogOfPawn
 {
-    /// <summary>
-    /// Base helper for our special joiner incidents; subclasses specify the deception tier.
-    /// </summary>
     public abstract class IncidentWorker_SpecialJoinerBase : IncidentWorker
     {
         protected abstract DeceptionTier WantedTier { get; }
@@ -31,7 +28,6 @@ namespace FogOfPawn
             PawnKindDef kind = PawnKindDefOf.SpaceRefugee;
             Pawn pawn = PawnGenerator.GeneratePawn(new PawnGenerationRequest(kind, null, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true, allowDead: false, allowDowned: false, colonistRelationChanceFactor: 0f));
 
-            // If we wanted a Sleeper, give them some high skills so they are actually useful once revealed.
             if (WantedTier == DeceptionTier.DeceiverSleeper)
             {
                 var skillList = pawn.skills.skills.InRandomOrder().Take(6);
@@ -41,8 +37,6 @@ namespace FogOfPawn
                 }
             }
 
-            // Set the tier and generate masks BEFORE showing the letter so the faked skills
-            // are visible in the choice dialog and inspect pane while the letter is active.
             var comp = pawn.GetComp<CompPawnFog>();
             if (comp != null)
             {

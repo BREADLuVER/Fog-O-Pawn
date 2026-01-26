@@ -15,18 +15,12 @@ namespace FogOfPawn.Patches
                 return;
             }
 
-            // Additional null safety checks
             if (__result.RaceProps == null)
             {
                 FogLog.Verbose($"Skipping fog for {__result?.LabelShort ?? "null pawn"} - RaceProps is null");
                 return;
             }
 
-            // Skip cases where fogging is inappropriate or risky.
-            //  • Player-starter pawns
-            //  • Animals / mechanoids (no skills)
-            //  • Pawns generated as downed refugees etc.
-            //  • Slaves (guest tracker may be null!)
             bool isSlave = __result.guest != null && __result.guest.GuestStatus == GuestStatus.Slave;
 
             if ((__result.Faction?.IsPlayer ?? false) ||
@@ -39,7 +33,6 @@ namespace FogOfPawn.Patches
                 isSlave)
             {
                 FogLog.Verbose($"Skipping fog for {__result.NameShortColored} (Context: {request.Context}, IsSlave: {isSlave}, Animal: {__result.RaceProps?.Animal}, Mech: {__result.RaceProps?.IsMechanoid})");
-                // Ensure starter/skip pawns never trigger reveal pop-ups later.
                 var comp = __result.GetComp<CompPawnFog>();
                 if (comp != null)
                 {
@@ -67,13 +60,10 @@ namespace FogOfPawn.Patches
 
             try
             {
-                // Log that we are attempting to apply fog
                 FogLog.Verbose($"Applying fog for newly generated pawn: {__result.NameShortColored}");
 
                 FogInitializer.InitializeFogFor(__result, request);
 
-                // If the pawn is a colonist, re-initialize their work settings now that fog is active.
-                // This ensures their default work priorities match their "fake" skills, not their real ones.
                 if (__result.Faction != null && __result.Faction.IsPlayer && __result.workSettings != null)
                 {
                     __result.workSettings.EnableAndInitialize();
@@ -83,7 +73,6 @@ namespace FogOfPawn.Patches
             {
                 Log.Error($"[FogOfPawn] Exception while initializing fog for {__result?.LabelShort ?? "null pawn"}: {ex}");
                 
-                // Ensure the pawn has a safe state even if initialization fails
                 var comp = __result?.GetComp<CompPawnFog>();
                 if (comp != null)
                 {

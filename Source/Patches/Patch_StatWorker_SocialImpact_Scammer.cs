@@ -5,9 +5,6 @@ using UnityEngine;
 
 namespace FogOfPawn.Patches
 {
-    /// <summary>
-    /// Applies a -0.30 offset to SocialImpact once a imposter has been revealed to reflect damaged reputation.
-    /// </summary>
     [HarmonyPatch(typeof(StatWorker), "GetValue", new[] { typeof(StatRequest), typeof(bool) })]
     public static class Patch_StatWorker_SocialImpact_Imposter
     {
@@ -19,9 +16,8 @@ namespace FogOfPawn.Patches
             var comp = pawn.GetComp<CompPawnFog>();
             if (comp == null) return;
             if (comp.tier != DeceptionTier.DeceiverImposter) return;
-            if (!comp.fullyRevealed) return; // penalty only after reveal
+            if (!comp.fullyRevealed) return; 
 
-            // Apply offset once – SocialImpact is additive.
             __result = Mathf.Clamp(__result - 0.30f, -1f, 1f);
         }
     }

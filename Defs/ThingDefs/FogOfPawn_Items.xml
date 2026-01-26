@@ -5,7 +5,7 @@
     <label>disguise kit</label>
     <category>Item</category>
     <thingClass>Apparel</thingClass>
-    <description>A collection of cheap props, wigs, and makeup used by imposters to hide their true identity. When worn, this kit reduces the wearer's apparent value to the colony, making them seem less wealthy than they actually are. Finding this item indicates that someone in your colony was not who they claimed to be.</description>
+    <description>A collection of cheap props, wigs, and makeup used by imposters to hide their true identity. When worn, this kit reduces the wearer's apparent value to the colony, making them seem less wealthy than they actually are. Finding this item indicates that someone in your colony was not who they claimed to be.\n\nYou can safely dispose of this item by clicking the 'Discard kit' button when selecting it.</description>
     <graphicData>
       <texPath>Things/Item/disguise-kit</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -18,10 +18,9 @@
     <statBases>
       <MarketValue>1</MarketValue>
       <Mass>0.1</Mass>
-      <MaxHitPoints>120</MaxHitPoints>
-      <DeteriorationRate>2.0</DeteriorationRate>
+      <DeteriorationRate>0.0</DeteriorationRate>
     </statBases>
-    <useHitPoints>true</useHitPoints>
+    <useHitPoints>false</useHitPoints>
     <apparel>
       <bodyPartGroups>
         <li>Torso</li>

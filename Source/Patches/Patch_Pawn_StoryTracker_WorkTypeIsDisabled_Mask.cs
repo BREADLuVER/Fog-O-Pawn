@@ -6,11 +6,6 @@ using System.Reflection;
 
 namespace FogOfPawn.Patches
 {
-    /// <summary>
-    /// Makes fogged pawns appear capable of work types that they are actually incapable of
-    /// until they are revealed. Uses reflection so it remains compatible across game versions
-    /// even if the underlying method name changes.
-    /// </summary>
     [StaticConstructorOnStartup]
     public static class Patch_Pawn_StoryTracker_WorkTypeIsDisabled_Mask
     {
@@ -20,18 +15,15 @@ namespace FogOfPawn.Patches
             {
                 var harmony = new Harmony("FogOfPawn.WorkTypeMask");
 
-                // Primary target: Pawn_StoryTracker.WorkTypeIsDisabled
                 var target = AccessTools.Method(typeof(Pawn_StoryTracker), "WorkTypeIsDisabled");
 
                 if (target == null)
                 {
-                    // Fallback: Pawn.WorkTypeIsDisabled (often a wrapper)
                     target = AccessTools.Method(typeof(Pawn), "WorkTypeIsDisabled");
                 }
 
                 if (target == null)
                 {
-                    // Advanced Fallback: find ANY bool-returning instance method with WorkTypeDef parameter in StoryTracker
                     foreach (var mi in typeof(Pawn_StoryTracker).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
                     {
                         if (mi.ReturnType != typeof(bool)) continue;
@@ -54,7 +46,6 @@ namespace FogOfPawn.Patches
                     return;
                 }
 
-                // Use the correct postfix based on where we found the method
                 if (target.DeclaringType == typeof(Pawn))
                 {
                     harmony.Patch(target, postfix: new HarmonyMethod(typeof(Patch_Pawn_StoryTracker_WorkTypeIsDisabled_Mask), nameof(PostfixPawn)));
@@ -91,7 +82,6 @@ namespace FogOfPawn.Patches
             var comp = pawn.GetComp<CompPawnFog>();
             if (comp == null || !comp.compInitialized || comp.fullyRevealed) return;
             
-            // Masking logic: until revealed, show as capable
             result = false;
         }
     }

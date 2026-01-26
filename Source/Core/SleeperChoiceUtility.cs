@@ -34,19 +34,17 @@ namespace FogOfPawn
             }
             else if (textTS.RawText.Contains(".Text"))
             {
-                text = ""; // avoid showing raw key
+                text = ""; 
             }
 
             DiaNode node = new DiaNode(text);
 
-            // Keep option
             DiaOption keepOpt = new DiaOption("Fog_SleeperOutcome_Keep".Translate())
             {
                 resolveTree = true,
             };
             keepOpt.action = () =>
             {
-                // Positive memory to pawn for being accepted
                 var thought = DefDatabase<ThoughtDef>.GetNamedSilentFail("Fog_SleeperKept_Trusted");
                 if (thought != null)
                 {
@@ -58,15 +56,13 @@ namespace FogOfPawn
             };
             node.options.Add(keepOpt);
 
-            // Capture option
             DiaOption capOpt = new DiaOption("Fog_SleeperOutcome_Capture".Translate())
             {
                 resolveTree = true,
             };
             capOpt.action = () =>
             {
-                // Turn pawn hostile to player
-                var pirateFaction = Find.FactionManager.FirstFactionOfDef(FactionDefOf.Pirate); // may be null if pirates disabled
+                var pirateFaction = Find.FactionManager.FirstFactionOfDef(FactionDefOf.Pirate); 
                 if (pirateFaction == null)
                 {
                     pirateFaction = FactionUtility.DefaultFactionFrom(FactionDefOf.AncientsHostile);
@@ -74,13 +70,11 @@ namespace FogOfPawn
                 if (pirateFaction != null)
                 {
                     pawn.SetFaction(pirateFaction);
-                    // Optional: start immediate aggressive mental state
                     pawn.mindState.mentalStateHandler.TryStartMentalState(MentalStateDefOf.Berserk, null, forceWake: true);
                 }
             };
             node.options.Add(capOpt);
 
-            // Exile option
             DiaOption exileOpt = new DiaOption("Fog_SleeperOutcome_Exile".Translate())
             {
                 resolveTree = true,

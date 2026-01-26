@@ -35,7 +35,6 @@ namespace FogOfPawn.Patches
                 return;
             }
 
-            // If the mental state aligns with a hidden trait, trigger reveal
             bool reveal = false;
             if (stateDef.defName == "FireStartingSpree" && pawn.story?.traits?.HasTrait(TraitDefOf.Pyromaniac) == true)
                 reveal = true;
@@ -52,8 +51,7 @@ namespace FogOfPawn.Patches
 
         private static bool ShouldRevealOnMoodBreak(CompPawnFog comp)
         {
-            // Base 50% chance, increasing linearly with time in colony (days) up to 100% after ~25 days.
-            float daysSinceJoin = comp.ticksSinceJoin / 60000f; // 60k ticks per day
+            float daysSinceJoin = comp.ticksSinceJoin / 60000f; 
             var settings = FogSettingsCache.Current;
             float baseChance = Mathf.Clamp01(settings.moodBreakBasePct / 100f);
             float perDay = Mathf.Clamp(settings.moodBreakPerDayPct / 100f, 0f, 1f);

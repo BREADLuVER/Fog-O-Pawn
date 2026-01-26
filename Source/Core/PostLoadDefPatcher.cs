@@ -13,7 +13,6 @@ namespace FogOfPawn
             {
                 foreach (var def in DefDatabase<ThingDef>.AllDefs)
                 {
-                    // Target any pawn type that has skills.
                     if (def?.race != null && def.race.intelligence == Intelligence.Humanlike)
                     {
                         if (def.comps == null)
@@ -21,7 +20,6 @@ namespace FogOfPawn
                             def.comps = new List<CompProperties>();
                         }
                         
-                        // Check if CompPawnFog is already added
                         bool hasCompPawnFog = false;
                         foreach (var comp in def.comps)
                         {

@@ -5,11 +5,6 @@ using FogOfPawn;
 
 namespace FogOfPawn.Patches
 {
-    /// <summary>
-    /// Patches Pawn_SkillTracker.AverageOfRelevantSkillsFor to ensure it uses MASKED skill levels
-    /// when called during rendering (e.g. for the Work Tab "red box" check).
-    /// The vanilla method often accesses the 'levelInt' field directly, bypassing our property patch.
-    /// </summary>
     [HarmonyPatch(typeof(Pawn_SkillTracker), "AverageOfRelevantSkillsFor")]
     public static class Patch_Pawn_SkillTracker_AverageOfRelevantSkillsFor
     {
@@ -25,12 +20,10 @@ namespace FogOfPawn.Patches
             var comp = pawn.GetComp<CompPawnFog>();
             if (comp == null || !comp.compInitialized || comp.fullyRevealed) return;
             
-            // Skip truthful pawns - they show real values
             if (comp.tier == DeceptionTier.Truthful) return;
 
             if (workDef.relevantSkills.Count == 0) return;
 
-            // Recalculate using masked values where appropriate
             float total = 0f;
             foreach (var skillDef in workDef.relevantSkills)
             {
@@ -39,21 +32,17 @@ namespace FogOfPawn.Patches
                 
                 int level;
                 
-                // Check if this skill should be masked
                 if (FogMaskUtility.ShouldMaskSkill(pawn, skillDef, comp))
                 {
-                    // Use masked level for fogged skills
                     level = FogMaskUtility.GetMaskedSkillLevel(pawn, skillDef, comp);
                 }
                 else
                 {
-                    // Use real level for revealed skills (directly access levelInt to avoid recursion)
                     level = skill.levelInt;
                 }
                 
                 total += level;
                 
-                // Debug logging
                 if (Prefs.DevMode && _debugLogCount < 50 && comp.tier != DeceptionTier.Truthful)
                 {
                     _debugLogCount++;

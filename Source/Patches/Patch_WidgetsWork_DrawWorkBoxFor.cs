@@ -5,11 +5,6 @@ using Verse;
 
 namespace FogOfPawn.Patches
 {
-    /// <summary>
-    /// Patches WidgetsWork.DrawWorkBoxFor to ensure RenderContext is active during Work Tab rendering.
-    /// This provides an additional safety layer for the skill masking system in the Work Tab,
-    /// ensuring the work box colors use masked skill levels instead of real levels.
-    /// </summary>
     [StaticConstructorOnStartup]
     public static class Patch_WidgetsWork_DrawWorkBoxFor
     {
@@ -21,7 +16,6 @@ namespace FogOfPawn.Patches
             {
                 var harmony = new Harmony("FogOfPawn.WidgetsWork");
                 
-                // Find WidgetsWork type
                 Type widgetsWorkType = AccessTools.TypeByName("RimWorld.WidgetsWork")
                                     ?? AccessTools.TypeByName("WidgetsWork");
                 
@@ -31,7 +25,6 @@ namespace FogOfPawn.Patches
                     return;
                 }
                 
-                // Patch DrawWorkBoxFor method(s)
                 var methods = widgetsWorkType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
                 int patchCount = 0;
                 
@@ -58,7 +51,6 @@ namespace FogOfPawn.Patches
                     }
                 }
                 
-                // Also try to patch MainTabWindow_Work.DoWindowContents for complete coverage
                 Type mainTabWorkType = AccessTools.TypeByName("RimWorld.MainTabWindow_Work")
                                     ?? AccessTools.TypeByName("MainTabWindow_Work");
                 
@@ -98,7 +90,6 @@ namespace FogOfPawn.Patches
         {
             RenderContext.BeginRender();
             
-            // Debug logging on first call
             if (Prefs.DevMode && _debugLogCount < 5)
             {
                 _debugLogCount++;

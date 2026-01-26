@@ -15,9 +15,8 @@ namespace FogOfPawn.Patches
             var pawn = __instance.pawn;
             var comp = pawn.GetComp<CompPawnFog>();
             if (comp == null || !comp.compInitialized) return;
-            if (comp.tier == DeceptionTier.Truthful || comp.fullyRevealed) return; // Never mask truthful/revealed pawns
+            if (comp.tier == DeceptionTier.Truthful || comp.fullyRevealed) return; 
             
-            // A pawn igniting something is a dead giveaway for a pyromaniac
             var pyroTrait = pawn.story.traits.GetTrait(TraitDefOf.Pyromaniac);
             if (pyroTrait != null)
             {

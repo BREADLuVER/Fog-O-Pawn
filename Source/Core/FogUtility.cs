@@ -14,12 +14,11 @@ namespace FogOfPawn
             if (comp == null || !comp.compInitialized) return false;
 
             if (comp.tier == DeceptionTier.DeceiverSleeper)
-                return false; // Sleepers only reveal via story beats
+                return false; 
 
             var settings = FogSettingsCache.Current;
             List<System.Action> candidates = new();
 
-            // Skills
             if (settings.fogSkills)
             {
                 foreach (var sk in pawn.skills.skills)
@@ -34,7 +33,6 @@ namespace FogOfPawn
                 }
             }
 
-            // Traits
             if (settings.fogTraits && pawn.story?.traits != null)
             {
                 foreach (var tr in pawn.story.traits.allTraits)
@@ -43,7 +41,7 @@ namespace FogOfPawn
                     {
                         if ((preferSkill && settings.allowSocialTraitReveal) || (!preferSkill && settings.allowPassiveTraitReveal))
                         {
-                            var captured = tr; // closure copy
+                            var captured = tr; 
                             candidates.Add(() => comp.RevealTrait(captured));
                         }
                     }
@@ -61,9 +59,6 @@ namespace FogOfPawn
             TriggerFullRevealWithDetails(pawn, reasonKey, null);
         }
         
-        /// <summary>
-        /// Triggers a full reveal with optional details about what was hidden.
-        /// </summary>
         public static void TriggerFullRevealWithDetails(Pawn pawn, string reasonKey, string hiddenSecretsDetails)
         {
             if (pawn == null) return;
@@ -81,7 +76,6 @@ namespace FogOfPawn
             comp.RevealAll();
             comp.fullyRevealed = true;
 
-            // Force disguise kit logic (Imposter only)
             comp.GetType().GetMethod("MaybeDropDisguiseKit", System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance)?.Invoke(comp, null);
 
             if (ShouldNotifyPlayer(pawn))
@@ -91,7 +85,6 @@ namespace FogOfPawn
                 string label = labelKey.Translate(pawn.Named("PAWN"));
                 string text  = textKey.Translate(pawn.Named("PAWN"));
                 
-                // Append the hidden secrets details if provided
                 if (!string.IsNullOrEmpty(hiddenSecretsDetails))
                 {
                     text += "\n\n" + "FogOfPawn.Accuse.RevealedSecrets".Translate() + "\n" + hiddenSecretsDetails;
@@ -100,7 +93,6 @@ namespace FogOfPawn
                 Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.PositiveEvent, pawn);
             }
 
-            // Reputation damage for imposter
             if (comp.tier == DeceptionTier.DeceiverImposter)
             {
                 var thought = DefDatabase<ThoughtDef>.GetNamedSilentFail("Fog_ImposterRevealed_Betrayed");
@@ -130,8 +122,6 @@ namespace FogOfPawn
         {
             if (pawn?.story?.traits == null) return;
 
-            // If the pawn already has any negative trait, don't add another one.
-            // This ensures Imposters don't end up with too many harsh penalties.
             if (pawn.story.traits.allTraits.Any(t => FogInitializer.IsNegativeTrait(t.def)))
             {
                 FogLog.Verbose($"[IMPOSTER REVEAL] {pawn.LabelShort} already has negative traits. Skipping additional trait assignment.");
@@ -175,7 +165,6 @@ namespace FogOfPawn
 
         public static void GiveMoodBuffForImposterRemoval(Pawn pawn)
         {
-            // Pawn must be a player colonist at the time of removal.
             if (pawn?.Faction == null || !pawn.Faction.IsPlayer)
             {
                 return;
@@ -187,7 +176,6 @@ namespace FogOfPawn
                 return;
             }
 
-            // At this point, the pawn is a player-faction imposter who is being removed.
             var thoughtDef = DefDatabase<ThoughtDef>.GetNamedSilentFail("Fog_ImposterRemoved");
             if (thoughtDef == null)
             {
@@ -195,7 +183,6 @@ namespace FogOfPawn
                 return;
             }
 
-            // Apply mood buff to all colonists on the same map.
             var map = pawn.MapHeld;
             if (map == null) return;
 

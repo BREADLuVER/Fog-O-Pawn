@@ -5,11 +5,6 @@ using UnityEngine;
 
 namespace FogOfPawn.Patches
 {
-    /// <summary>
-    /// Core skill masking patch using the RenderContext system.
-    /// During UI rendering (RenderContext.IsRendering = true), returns masked skill levels.
-    /// During game logic, returns real skill levels.
-    /// </summary>
     [HarmonyPatch(typeof(SkillRecord), "get_Level")]
     public static class Patch_SkillRecord_GetLevel_Mask
     {
@@ -35,7 +30,6 @@ namespace FogOfPawn.Patches
                 
                 var comp = pawn.GetComp<CompPawnFog>();
                 
-                // Detailed debug logging for specific pawn to track Artistic
                 if (Prefs.DevMode && _debugLogCount < 200 && pawn.LabelShort == "Olive")
                 {
                     _debugLogCount++;
@@ -45,7 +39,6 @@ namespace FogOfPawn.Patches
                     else if (comp.fullyRevealed) reason = "Fully revealed";
                     else if (comp.tier == DeceptionTier.Truthful) reason = "Truthful tier";
                     else if (comp.revealedSkills.Contains(instance.def)) reason = "Already revealed";
-                    else if (FogMaskUtility.HasVisibleGeneAptitude(pawn, instance.def)) reason = "Gene aptitude visible";
                     
                     if (reason != "")
                     {
@@ -77,9 +70,6 @@ namespace FogOfPawn.Patches
         }
     }
 
-    /// <summary>
-    /// Patch for GetLevel(bool includeGenes) which is used by many mods (like RimHUD).
-    /// </summary>
     [HarmonyPatch(typeof(SkillRecord), "GetLevel")]
     public static class Patch_SkillRecord_GetLevel_Method_Mask
     {
@@ -90,12 +80,6 @@ namespace FogOfPawn.Patches
         }
     }
     
-    /// <summary>
-    /// Passion masking using the same RenderContext system.
-    /// NOTE: Disabled [HarmonyPatch] because SkillRecord.passion is a field in RimWorld 1.5/1.6, 
-    /// and fields cannot be patched directly. UI masking is handled via SkillUI patches.
-    /// </summary>
-    // [HarmonyPatch(typeof(SkillRecord), "get_Passion")]
     public static class Patch_SkillRecord_GetPassion_Mask
     {
         private static readonly System.Reflection.FieldInfo _pawnField = 
@@ -103,7 +87,6 @@ namespace FogOfPawn.Patches
         
         static void Postfix(SkillRecord __instance, ref Passion __result)
         {
-            // Only mask during UI rendering
             if (!RenderContext.IsRendering) return;
             
             try
@@ -116,7 +99,6 @@ namespace FogOfPawn.Patches
                 var comp = pawn.GetComp<CompPawnFog>();
                 if (comp == null || !comp.compInitialized) return;
                 
-                // Check if this skill should be masked (including gene awareness)
                 if (FogMaskUtility.ShouldMaskSkill(pawn, __instance.def, comp))
                 {
                     __result = FogMaskUtility.GetMaskedPassion(pawn, __instance.def, comp);

@@ -6,30 +6,22 @@ using Verse;
 
 namespace FogOfPawn.Patches
 {
-    /// <summary>
-    /// Filters mood thoughts during UI rendering to hide thoughts from hidden traits.
-    /// The actual mood value is NOT affected - only what's shown in the breakdown.
-    /// This creates the intended "tell" where mood is lower than visible thoughts would suggest.
-    /// </summary>
     [HarmonyPatch]
     public static class Patch_ThoughtHandler_GetAllMoodThoughts
     {
         static System.Reflection.MethodBase TargetMethod()
         {
-            // ThoughtHandler.GetAllMoodThoughts populates a List<Thought> passed as a parameter
             return AccessTools.Method(typeof(ThoughtHandler), "GetAllMoodThoughts");
         }
         
         static void Postfix(ThoughtHandler __instance, List<Thought> outThoughts)
         {
-            // Only filter during UI rendering
             if (!RenderContext.IsRendering) return;
             
             try
             {
                 if (__instance == null || outThoughts == null) return;
                 
-                // Get the pawn from ThoughtHandler
                 Pawn pawn = __instance.pawn;
                 if (pawn == null) return;
                 
@@ -38,7 +30,6 @@ namespace FogOfPawn.Patches
                 if (comp.tier == DeceptionTier.Truthful || comp.fullyRevealed) return;
                 if (!FogSettingsCache.Current.fogTraits) return;
                 
-                // Filter out thoughts from hidden traits in place
                 outThoughts.RemoveAll(t => !IsThoughtVisible(t, comp));
             }
             catch (System.Exception ex)
@@ -54,24 +45,19 @@ namespace FogOfPawn.Patches
         {
             if (thought?.def == null) return true;
             
-            // Check if this thought requires a trait that is hidden
             if (thought.def.requiredTraits != null && thought.def.requiredTraits.Count > 0)
             {
                 foreach (var requiredTrait in thought.def.requiredTraits)
                 {
                     if (!comp.revealedTraits.Contains(requiredTrait))
                     {
-                        // This thought requires a hidden trait - hide it
                         return false;
                     }
                 }
             }
             
-            // Check the thought's source trait if it's a situational thought
-            // Situational thoughts (like Pessimist, Night Owl) are linked to traits
             if (thought is Thought_Situational situational)
             {
-                // Some situational thoughts have their trait in the def
                 if (thought.def.requiredTraits != null)
                 {
                     foreach (var trait in thought.def.requiredTraits)
@@ -88,15 +74,11 @@ namespace FogOfPawn.Patches
         }
     }
     
-    /// <summary>
-    /// Alternative patch for getting distinct thought groups (used in some UI displays).
-    /// </summary>
     [HarmonyPatch]
     public static class Patch_ThoughtHandler_GetDistinctMoodThoughtGroups
     {
         static bool Prepare()
         {
-            // Only apply if this method exists (varies by RW version)
             return AccessTools.Method(typeof(ThoughtHandler), "GetDistinctMoodThoughtGroups") != null;
         }
         

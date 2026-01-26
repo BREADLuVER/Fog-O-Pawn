@@ -21,16 +21,12 @@ namespace FogOfPawn.Patches
             var comp = pawn.GetComp<CompPawnFog>();
             if (comp == null) return;
 
-            // Reveal Brawler trait if present
             Trait brawler = pawn.story?.traits?.GetTrait(TraitDefOf.Brawler);
             if (brawler != null)
             {
                 comp.RevealTrait(brawler);
-                // Optional: Notify the player
-                // Find.LetterStack.ReceiveLetter("Trait Revealed: Brawler", $"{pawn.LabelShort}'s recent scuffle has revealed they are a Brawler.", LetterDefOf.NeutralEvent, pawn);
             }
             
-            // Future: Could also check for other traits like Abrasive, etc.
         }
     }
 } 

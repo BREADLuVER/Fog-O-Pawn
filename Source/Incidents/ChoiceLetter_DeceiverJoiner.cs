@@ -5,10 +5,6 @@ using System;
 
 namespace FogOfPawn
 {
-    /// <summary>
-    /// Letter that mimics vanilla "Wanderer joins" accept/reject/postpone behaviour but routes the callbacks
-    /// through custom actions so we can still perform our Sleeper / Imposter bookkeeping.
-    /// </summary>
     public class ChoiceLetter_DeceiverJoiner : ChoiceLetter
     {
         public Pawn pawn;
@@ -19,7 +15,6 @@ namespace FogOfPawn
         {
             get
             {
-                // Accept
                 DiaOption accept = new DiaOption("AcceptButton".Translate())
                 {
                     resolveTree = true,
@@ -32,7 +27,6 @@ namespace FogOfPawn
                 };
                 yield return accept;
 
-                // Reject
                 DiaOption reject = new DiaOption("RejectLetter".Translate())
                 {
                     resolveTree = true,
@@ -45,7 +39,6 @@ namespace FogOfPawn
                 };
                 yield return reject;
 
-                // Postpone (does nothing, keep letter open)
                 DiaOption postpone = new DiaOption("PostponeLetter".Translate())
                 {
                     resolveTree = false

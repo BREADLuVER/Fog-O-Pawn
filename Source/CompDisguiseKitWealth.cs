@@ -7,7 +7,7 @@ namespace FogOfPawn
 {
     public class CompProperties_DisguiseKitWealth : CompProperties
     {
-        public float wealthReductionPercent = 0.5f; // 50% reduction by default
+        public float wealthReductionPercent = 0.5f; 
 
         public CompProperties_DisguiseKitWealth()
         {
@@ -36,8 +36,6 @@ namespace FogOfPawn
                 yield return g;
             }
 
-            // Only allow disposal if not being worn by someone currently.
-            // parent.ParentHolder is the container or pawn.
             if (!(parent.ParentHolder is Pawn_ApparelTracker))
             {
                 yield return new Command_Action

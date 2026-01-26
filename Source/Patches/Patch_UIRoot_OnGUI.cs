@@ -5,15 +5,6 @@ using Verse;
 
 namespace FogOfPawn.Patches
 {
-    /// <summary>
-    /// Master RenderContext activation patch.
-    /// We patch Root.OnGUI which is the Unity entry point for ALL UI rendering.
-    /// This ensures RenderContext.IsRendering is true for:
-    /// - Map gizmos (SimpleSidearms, etc.)
-    /// - Inspect pane (RimHUD, etc.)
-    /// - Windows
-    /// - Everything else in the UI
-    /// </summary>
     [StaticConstructorOnStartup]
     public static class Patch_Root_OnGUI
     {
@@ -25,7 +16,6 @@ namespace FogOfPawn.Patches
             {
                 var harmony = new Harmony("FogOfPawn.RootOnGUI");
                 
-                // Patch Root.OnGUI - this is the Unity OnGUI entry point
                 Type rootType = typeof(Root);
                 var onGUIMethod = AccessTools.Method(rootType, "OnGUI");
                 
@@ -42,7 +32,6 @@ namespace FogOfPawn.Patches
                     Log.Warning("[FogOfPawn] Could not find Root.OnGUI method!");
                 }
                 
-                // Also patch UIRoot_Play.UIRootOnGUI as backup for in-game UI
                 Type uiRootPlayType = AccessTools.TypeByName("RimWorld.UIRoot_Play");
                 if (uiRootPlayType != null)
                 {
@@ -57,7 +46,6 @@ namespace FogOfPawn.Patches
                     }
                 }
                 
-                // Patch GizmoGridDrawer as an additional safety measure for gizmos (SimpleSidearms, etc.)
                 Type gizmoDrawerType = typeof(GizmoGridDrawer);
                 var drawGizmoGridMethod = AccessTools.Method(gizmoDrawerType, "DrawGizmoGrid");
                 if (drawGizmoGridMethod != null)
@@ -78,7 +66,6 @@ namespace FogOfPawn.Patches
         {
             RenderContext.BeginRender();
             
-            // Log first time to confirm patch is working
             if (!_firstRenderLogged)
             {
                 _firstRenderLogged = true;
@@ -93,10 +80,6 @@ namespace FogOfPawn.Patches
     }
     
     
-    /// <summary>
-    /// Additional patches for specific UI areas that may need extra coverage.
-    /// These add redundant RenderContext activation for safety.
-    /// </summary>
     [StaticConstructorOnStartup]
     public static class Patch_CharacterCard_Dynamic
     {
@@ -106,7 +89,6 @@ namespace FogOfPawn.Patches
             {
                 var harmony = new Harmony("FogOfPawn.CharacterCard");
                 
-                // Try to find CharacterCardUtility - it handles pawn bio display
                 Type cardType = AccessTools.TypeByName("RimWorld.CharacterCardUtility") 
                              ?? AccessTools.TypeByName("CharacterCardUtility");
                 
@@ -122,13 +104,11 @@ namespace FogOfPawn.Patches
                     }
                 }
                 
-                // Also try SkillUI
                 Type skillUIType = AccessTools.TypeByName("RimWorld.SkillUI") 
                                 ?? AccessTools.TypeByName("SkillUI");
                 
                 if (skillUIType != null)
                 {
-                    // Find any DrawSkills method
                     var methods = skillUIType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
                     foreach (var method in methods)
                     {

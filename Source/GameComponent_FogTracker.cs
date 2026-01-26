@@ -13,34 +13,29 @@ namespace FogOfPawn
         private struct SleeperStory
         {
             public int pawnId;
-            public int stage;   // 1=suspicion,2=anomaly,3=queued reveal
-            public int dueTick; // absolute game tick when next stage fires
+            public int stage;   
+            public int dueTick; 
         }
 
         private List<SleeperStory> _stories = new();
 
-        // interval control
-        private const int CheckInterval = 2500; // roughly 1 in-game hour
-        private const int TicksPerSeason = 900000; // 15 days
-        private static int NextBeatIntervalTicks => Rand.Range(TicksPerSeason + TicksPerSeason / 2, TicksPerSeason * 2); // 1.5–2 seasons
+        private const int CheckInterval = 2500; 
+        private const int TicksPerSeason = 900000; 
+        private static int NextBeatIntervalTicks => Rand.Range(TicksPerSeason + TicksPerSeason / 2, TicksPerSeason * 2); 
 
-        // --- Joiner timing state (initialized randomly) -----------------------------------
         private int _earliestDay = -1;
         private int _guaranteeStartDay = -1;
         private int _guaranteeEndDay = -1;
         private int _lateGameUnlockDay = -1;
         private int _spacingDays = -1;
 
-        // Add joiner tracking fields and methods
         public bool hasSleeperJoiner;
         public bool hasImposterJoiner;
         public int totalFogJoiners;
         public int lastFogJoinerTick = -999999;
 
-        // Constants
         private const int TicksPerDay = 60000;
 
-        // Clamp total deceivers to avoid saturation – especially valuable for long runs.
         private const int HardCapTotalFogJoiners = 4;
 
         public static GameComponent_FogTracker Get => Current.Game.GetComponent<GameComponent_FogTracker>();
@@ -49,19 +44,14 @@ namespace FogOfPawn
         {
             if (_earliestDay != -1) return;
 
-            // Earliest arrival: anywhere from 15 days (1 season) to 45 days (3 seasons)
             _earliestDay = Rand.RangeInclusive(15, 45);
 
-            // Guarantee window: starts 5-15 days after earliest arrival
             _guaranteeStartDay = _earliestDay + Rand.RangeInclusive(5, 15);
             
-            // Guarantee window duration: 15-45 days
             _guaranteeEndDay = _guaranteeStartDay + Rand.RangeInclusive(15, 45);
 
-            // Spacing: 15-45 days
             _spacingDays = Rand.RangeInclusive(15, 45);
 
-            // Late game unlock (Year 2-3): 60-120 days
             _lateGameUnlockDay = Rand.RangeInclusive(60, 120);
 
             FogLog.Verbose($"[FogTracker] Initialized randomized timing: Earliest={_earliestDay}, Guarantee={_guaranteeStartDay}-{_guaranteeEndDay}, Spacing={_spacingDays}, Unlock={_lateGameUnlockDay}");
@@ -74,47 +64,35 @@ namespace FogOfPawn
             int nowTicks = Find.TickManager.TicksGame;
             float daysPassed = nowTicks / (float)TicksPerDay;
 
-            // Spacing rule – always leave breathing room between arrivals.
-            // This now applies to ALL special joiners (Innocent, Imposter, Sleeper)
-            // to spread them out and make the "Special Joiner" event type itself rare.
             if (lastFogJoinerTick > 0 && (nowTicks - lastFogJoinerTick) < _spacingDays * TicksPerDay)
                 return false;
 
             if (tier == DeceptionTier.Truthful)
             {
-                // Truthful joiners are allowed whenever spacing allows.
                 return true;
             }
 
-            // 1. Early-game block ──────────────────────────────────────────────
             if (daysPassed < _earliestDay)
                 return false;
 
             bool isSleeper = tier == DeceptionTier.DeceiverSleeper;
 
-            // 2. Guaranteed Sleeper window ─────────────────────────────────────
             if (!hasSleeperJoiner && daysPassed >= _guaranteeStartDay && daysPassed <= _guaranteeEndDay)
             {
-                // During the window, we prioritize the Sleeper, but it's not a 100% force
-                // to keep it slightly more random when it actually fires.
                 return isSleeper && Rand.Chance(0.5f);
             }
 
-            // 3. Hard guarantee fallback – if the window expired with no Sleeper
             if (!hasSleeperJoiner && daysPassed > _guaranteeEndDay)
             {
-                return isSleeper; // force allow next sleeper request
+                return isSleeper; 
             }
 
-            // 4. Mid-game suppression
             if (daysPassed < _lateGameUnlockDay)
                 return false;
 
-            // 5. Late-game chance curve
             if (totalFogJoiners >= HardCapTotalFogJoiners)
                 return false;
 
-            // Pull percentage from settings (0‒5). Convert to 0-1 range.
             float chance = Mathf.Clamp(FogSettingsCache.Current.lateJoinerChancePct * 0.01f, 0f, 0.05f);
 
             if (isSleeper)
@@ -161,7 +139,6 @@ namespace FogOfPawn
         {
             if (Find.TickManager.TicksGame % CheckInterval != 0) return;
 
-            // First, process any imposters that have been killed, banished or otherwise removed.
             CheckImposterOutcomes();
 
             if (_stories.Count == 0) return;
@@ -204,13 +181,13 @@ namespace FogOfPawn
         public void StartSleeperStory(Pawn pawn)
         {
             if (pawn == null) return;
-            if (_stories.Any(s => s.pawnId == pawn.thingIDNumber)) return; // already running
+            if (_stories.Any(s => s.pawnId == pawn.thingIDNumber)) return; 
 
             var entry = new SleeperStory
             {
                 pawnId = pawn.thingIDNumber,
-                stage = 2, // we already sent suspicion now
-                dueTick = Find.TickManager.TicksGame + NextBeatIntervalTicks // first beat interval
+                stage = 2, 
+                dueTick = Find.TickManager.TicksGame + NextBeatIntervalTicks 
             };
             _stories.Add(entry);
 
@@ -225,7 +202,6 @@ namespace FogOfPawn
             TaggedString textTS = baseKey.Translate(pawn.Named("PAWN"));
             string text = textTS;
 
-            // Check for numbered variants ( .Text.1 .. .Text.5 ) and randomly pick one if they exist.
             var variants = new List<string>();
             for (int i = 1; i <= 5; i++)
             {
@@ -241,7 +217,7 @@ namespace FogOfPawn
             }
             else if (textTS.RawText.Contains(".Text"))
             {
-                text = ruleDefName; // fallback label
+                text = ruleDefName; 
             }
 
             Find.LetterStack.ReceiveLetter(label, text, LetterDefOf.NeutralEvent, pawn);
@@ -292,7 +268,6 @@ namespace FogOfPawn
         private static void AddSleeperAscensionTrait(Pawn pawn)
         {
             if (pawn?.story?.traits == null) return;
-            // Define pool of strong traits
             List<TraitDef> pool = new()
             {
                 DefDatabase<TraitDef>.GetNamedSilentFail("Tough"),
@@ -323,19 +298,17 @@ namespace FogOfPawn
             {
                 if (_stories[i].pawnId != pawn.thingIDNumber) continue;
                 var entry = _stories[i];
-                entry.dueTick = Find.TickManager.TicksGame - 1; // make it overdue
+                entry.dueTick = Find.TickManager.TicksGame - 1; 
                 _stories[i] = entry;
                 ProcessStoryImmediate(pawn);
                 return;
             }
-            // Not found – start story and send first suspicion letter immediately
             StartSleeperStory(pawn);
             FogLog.Verbose($"[Dev] Started sleeper story for {pawn.LabelShort}");
         }
 
         private void ProcessStoryImmediate(Pawn pawn)
         {
-            // Run the same logic as tick but only for this pawn
             for (int i = _stories.Count - 1; i >= 0; i--)
             {
                 var entry = _stories[i];
@@ -366,17 +339,11 @@ namespace FogOfPawn
             }
         }
 
-        /// <summary>
-        /// Grants a positive mood memory to all colonists once an imposter has been removed from the colony – by death, exile or banishment.
-        /// </summary>
         private static void CheckImposterOutcomes()
         {
             ThoughtDef reliefThought = DefDatabase<ThoughtDef>.GetNamedSilentFail("Fog_ImposterNeutralized_Relief");
             if (reliefThought == null) return;
 
-            // Build a candidate list containing:
-            //   • all world pawns currently alive (used for banished imposters)
-            //   • every pawn present on any map (alive or dead – covers killed imposters prior to being discarded)
             var candidates = new List<Pawn>();
             candidates.AddRange(Find.WorldPawns.AllPawnsAlive);
             foreach (var map in Find.Maps)
@@ -389,13 +356,12 @@ namespace FogOfPawn
                 var comp = pawn.GetComp<CompPawnFog>();
                 if (comp == null) continue;
                 if (comp.tier != DeceptionTier.DeceiverImposter) continue;
-                if (!comp.wasPlayerColonist) continue; // ignore imposters who never joined us
-                if (!comp.fullyRevealed) continue; // only care if we knew they were imposters
+                if (!comp.wasPlayerColonist) continue; 
+                if (!comp.fullyRevealed) continue; 
                 if (comp.outcomeProcessed) continue;
 
                 bool neutralized = pawn.Dead || pawn.Destroyed;
 
-                // Banished or exiled pawns keep player faction but are no longer free colonists.
                 if (!neutralized)
                 {
                     neutralized = !pawn.IsFreeColonist;
@@ -405,7 +371,6 @@ namespace FogOfPawn
 
                 if (!neutralized) continue;
 
-                // Give mood buff to every current colonist (maps + caravans)
                 foreach (var map in Find.Maps)
                 {
                     foreach (var col in map.mapPawns.FreeColonistsSpawned)

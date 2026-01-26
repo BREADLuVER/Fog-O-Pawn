@@ -7,7 +7,6 @@ namespace FogOfPawn.Patches
     [HarmonyPatch]
     public static class Patch_PawnBanishUtility_Banish
     {
-        // Skip if we cannot find an overload that takes (Pawn, bool) – signature changed.
         static bool Prepare()
         {
             var method = TargetMethod();
@@ -20,7 +19,6 @@ namespace FogOfPawn.Patches
 
         static System.Reflection.MethodBase TargetMethod()
         {
-            // Prefer the (Pawn,bool) overload used by SleeperChoiceUtility; adjust if future versions add more params.
             return AccessTools.Method(typeof(PawnBanishUtility), "Banish", new[] { typeof(Pawn), typeof(bool) });
         }
 

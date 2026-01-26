@@ -6,20 +6,8 @@ using System.Reflection;
 
 namespace FogOfPawn
 {
-    /// <summary>
-    /// Utility that shows an unobtrusive ChoiceLetter (blue notification on the right-hand side) offering the player
-    /// the option to accept or reject a special sleeper / imposter wanderer. This mirrors the behaviour of the
-    /// vanilla Wanderer joins event and avoids the intrusive Dialog_NodeTree previously used.
-    /// </summary>
     public static class JoinerChoiceUtility
     {
-        /// <summary>
-        /// Creates and dispatches a letter with Accept / Reject choices for the supplied pawn.
-        /// </summary>
-        /// <param name="pawn">Pawn that is offering to join.</param>
-        /// <param name="tier">The deception tier of the pawn (sleeper / imposter) – only used for tracking.</param>
-        /// <param name="acceptAction">Action to execute when the player accepts the pawn.</param>
-        /// <param name="rejectAction">Action to execute when the player rejects the pawn.</param>
         public static void ShowJoinerChoice(Pawn pawn, DeceptionTier tier, Action acceptAction, Action rejectAction)
         {
             if (pawn == null) return;

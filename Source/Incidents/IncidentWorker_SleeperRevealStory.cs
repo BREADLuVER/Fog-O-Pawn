@@ -11,7 +11,6 @@ namespace FogOfPawn
             Map map = (Map)parms.target;
             if (map == null || !map.IsPlayerHome) return false;
 
-            // Need at least one sleeper colonist not yet revealed and not already in a story.
             return FindSleeperCandidate(map) != null;
         }
 
@@ -21,7 +20,6 @@ namespace FogOfPawn
             Pawn pawn = FindSleeperCandidate(map);
             if (pawn == null) return false;
 
-            // Kick off story in the fog tracker
             var comp = Current.Game.GetComponent<GameComponent_FogTracker>();
             comp.StartSleeperStory(pawn);
             return true;
@@ -34,7 +32,6 @@ namespace FogOfPawn
                 var fog = p.GetComp<CompPawnFog>();
                 if (fog != null && fog.tier == DeceptionTier.DeceiverSleeper && !fog.fullyRevealed)
                 {
-                    // ensure not already in tracker
                     var tracker = Current.Game.GetComponent<GameComponent_FogTracker>();
                     if (!tracker.IsSleeperStoryActive(p))
                         return p;
